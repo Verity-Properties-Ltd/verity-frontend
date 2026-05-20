@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Verity — Brand Package · Live Showcase</title>
+<link rel="stylesheet" href="tokens/index.css">
+<style>
+  body{padding:0;margin:0}
+  .shell{max-width:1200px;margin:0 auto;padding:56px 40px}
+  .hero{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:1px solid var(--line);padding-bottom:32px;margin-bottom:48px}
+  .hero h1{font-family:var(--f-serif);font-weight:500;font-size:48px;letter-spacing:-0.015em}
+  .hero h1 em{color:var(--gold-deep);font-style:italic}
+  .meta{font-family:var(--f-mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--slate);text-align:right;line-height:1.7}
+  .section{margin-top:48px}
+  .section h2{font-family:var(--f-serif);font-size:24px;font-weight:600;margin-bottom:6px}
+  .section .sub{font-family:var(--f-mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold-deep);margin-bottom:24px;display:flex;align-items:center;gap:12px}
+  .section .sub::before{content:'';height:1px;width:24px;background:var(--gold)}
+  .grid{display:grid;gap:1px;background:var(--line);border:1px solid var(--line)}
+  .g3{grid-template-columns:repeat(3,1fr)}
+  .g4{grid-template-columns:repeat(4,1fr)}
+  .g2{grid-template-columns:1fr 1fr}
+  .cell{background:var(--cream);padding:32px 28px;display:flex;flex-direction:column;gap:14px}
+  .cell.dark{background:var(--navy);color:var(--cream)}
+  .stack{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+  .file{font-family:var(--f-mono);font-size:10px;color:var(--slate);letter-spacing:0.04em;margin-top:auto}
+  .label{font-family:var(--f-mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--slate)}
+</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<div class="shell">
+
+  <div class="hero">
+    <div>
+      <div class="t-eyebrow" style="margin-bottom:10px">— BRAND PACKAGE · v1.0</div>
+      <h1>Verity, <em>brand assets.</em></h1>
+    </div>
+    <div class="meta">
+      <div>SVG · CSS · JSX</div>
+      <div>FILED 2026·MAY·06</div>
+    </div>
+  </div>
+
+  <!-- LOGOS -->
+  <div class="section">
+    <h2>Logo masters</h2>
+    <div class="sub">— /logos · drop-in SVG files</div>
+    <div class="grid g4">
+      <div class="cell"><img src="logos/verity-mark.svg" style="height:60px;margin:auto 0"><div class="label">— mark</div><div class="file">verity-mark.svg</div></div>
+      <div class="cell dark"><img src="logos/verity-mark-cream.svg" style="height:60px;margin:auto 0"><div class="label" style="color:rgba(245,242,237,0.5)">— mark · cream</div><div class="file" style="color:rgba(245,242,237,0.5)">verity-mark-cream.svg</div></div>
+      <div class="cell"><img src="logos/verity-wordmark.svg" style="height:36px;margin:auto 0"><div class="label">— wordmark</div><div class="file">verity-wordmark.svg</div></div>
+      <div class="cell"><img src="logos/verity-lockup-horizontal.svg" style="height:50px;margin:auto 0"><div class="label">— horizontal lockup</div><div class="file">verity-lockup-horizontal.svg</div></div>
+      <div class="cell"><img src="logos/verity-lockup-stacked.svg" style="height:100px;margin:auto 0"><div class="label">— stacked lockup</div><div class="file">verity-lockup-stacked.svg</div></div>
+      <div class="cell" style="grid-column:span 2"><img src="logos/verity-lockup-full.svg" style="height:80px;margin:auto 0"><div class="label">— full lockup with tagline</div><div class="file">verity-lockup-full.svg</div></div>
+      <div class="cell"><img src="logos/verity-app-icon.svg" style="width:100px;border-radius:22px;margin:auto 0"><div class="label">— app icon · 1024²</div><div class="file">verity-app-icon.svg</div></div>
+    </div>
+  </div>
+
+  <!-- LIVE COMPONENTS -->
+  <div class="section">
+    <h2>Live components · powered by JSX</h2>
+    <div class="sub">— /jsx · React drop-ins, no bundler required</div>
+    <div id="root"></div>
+  </div>
+
+</div>
+
+<script type="text/babel" src="jsx/Logo.jsx"></script>
+<script type="text/babel" src="jsx/Button.jsx"></script>
+<script type="text/babel" src="jsx/Badge.jsx"></script>
+<script type="text/babel" src="jsx/Alert.jsx"></script>
+<script type="text/babel" src="jsx/Card.jsx"></script>
+<script type="text/babel" src="jsx/Avatar.jsx"></script>
+<script type="text/babel" src="jsx/FormField.jsx"></script>
+<script type="text/babel" src="jsx/Toggle.jsx"></script>
+<script type="text/babel" src="jsx/Tabs.jsx"></script>
+<script type="text/babel" src="jsx/Pagination.jsx"></script>
+<script type="text/babel" src="jsx/Progress.jsx"></script>
+<script type="text/babel" src="jsx/index.jsx"></script>
+<script type="text/babel">
+function Showcase() {
+  const [tab, setTab] = React.useState('Records');
+  const [seg, setSeg] = React.useState('Records');
+  const [check, setCheck] = React.useState(true);
+  const [tog, setTog] = React.useState(true);
+  const [page, setPage] = React.useState(2);
+
+  return (
+    <div className="grid g2">
+      <div className="cell">
+        <div className="label">— Buttons</div>
+        <div className="stack">
+          <Button variant="primary">Verify a title</Button>
+          <Button variant="secondary">Issuer login</Button>
+          <Button variant="gold">Get verified</Button>
+          <Button variant="tertiary">Learn more</Button>
+          <Button variant="danger">Revoke</Button>
+        </div>
+
+        <div className="label" style={{marginTop:24}}>— Badges</div>
+        <div className="stack">
+          <Badge kind="verified">Verified</Badge>
+          <Badge kind="pending">Pending</Badge>
+          <Badge kind="revoked">Revoked</Badge>
+          <Badge kind="info">In transfer</Badge>
+          <Badge kind="gold">Witnessed</Badge>
+        </div>
+
+        <div className="label" style={{marginTop:24}}>— Avatars</div>
+        <div className="stack">
+          <Avatar size="lg">SB</Avatar>
+          <Avatar tone="gold">MC</Avatar>
+          <Avatar tone="cream">OA</Avatar>
+          <AvatarStack>
+            <Avatar>SB</Avatar>
+            <Avatar tone="gold">MC</Avatar>
+            <Avatar tone="cream">OA</Avatar>
+          </AvatarStack>
+        </div>
+
+        <div className="label" style={{marginTop:24}}>— Tabs &amp; Pagination</div>
+        <Tabs value={tab} options={['Records','Witnesses','Reissues','Audit log']} onChange={setTab} />
+        <div style={{marginTop:14}}>
+          <Pagination page={page} total={12} onChange={setPage} />
+        </div>
+
+        <div className="label" style={{marginTop:24}}>— Progress</div>
+        <Progress value={75} />
+        <Progress value={42} gold />
+      </div>
+
+      <div className="cell" style={{background:'var(--cream-shade)'}}>
+        <div className="label">— Alerts</div>
+        <Alert kind="info" title="Chain extended.">Title 0xA9F2 has a new ledger entry.</Alert>
+        <Alert kind="success" title="Verified.">The credential is anchored, signed, unbroken.</Alert>
+        <Alert kind="warning" title="Re-issuance pending.">Two witnesses required.</Alert>
+
+        <div className="label" style={{marginTop:24}}>— Form controls</div>
+        <FormField label="Title number" required help="— enter the 8-character folio of record.">
+          <Input placeholder="0xA9F2…" />
+        </FormField>
+        <FormField label="Issuer">
+          <Select>
+            <option>Bank of England — Registry</option>
+            <option>Land Registry · England &amp; Wales</option>
+          </Select>
+        </FormField>
+        <Checkbox checked={check} onChange={setCheck} label="Public chain · anyone can verify" />
+        <div style={{display:'flex',justifyContent:'space-between',padding:'10px 0',borderTop:'1px solid var(--line)'}}>
+          <span style={{fontFamily:'var(--f-serif)',fontSize:14}}>Witness mode</span>
+          <Toggle on={tog} onChange={setTog} />
+        </div>
+        <Segmented value={seg} options={['Records','Issuers','Holders']} onChange={setSeg} />
+
+        <div className="label" style={{marginTop:24}}>— Cards</div>
+        <Card
+          eyebrow="— Title of record"
+          title="Brookline Deed"
+          sub="verified seven minutes ago"
+          meta={['FOLIO 0xA9F2','2026·APR·19']}
+        >
+          A residential title, anchored to the <em style={{fontStyle:'italic',color:'var(--gold-deep)'}}>Cambridge Land Registry</em>.
+        </Card>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<Showcase />);
+</script>
+</body>
+</html>

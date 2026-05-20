@@ -1,0 +1,13 @@
+/* Verity — Typography Tokens
+   Three families. Cormorant Garamond for headings/body. DM Mono for labels
+   and meta. Tenor Sans is reserved for the wordmark only.
+   DM Sans is used for the brand system documentation surface only. */
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600;700&family=Tenor+Sans&display=swap');
+
+:root{
+  --f-serif:'Cormorant Garamond', serif;
+  --f-mono:'DM Mono', monospace;
+  --f-word:'Tenor Sans', sans-serif;
+  --f-sans:'DM Sans', sans-serif;
+}

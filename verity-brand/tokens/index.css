@@ -1,0 +1,6 @@
+/* Verity — Brand Tokens · aggregate entry
+   Import order matters: colors define the variables that typography and
+   components consume. */
+@import url('./colors.css');
+@import url('./typography.css');
+@import url('./components.css');

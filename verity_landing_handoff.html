@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>VERITY — Landing page · design handoff</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Mono:wght@300;400;500&family=Tenor+Sans&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#1E2260; --navy-deep:#171A4A; --cream:#F5F2ED; --cream-shade:#EEEAE0; --cream-deep:#E5E0D2;
+  --gold:#C9A961; --gold-soft:#E0C994; --gold-deep:#A88A45;
+  --slate:#6B6F77; --slate-soft:#9DA1A8;
+  --line:rgba(30,34,96,0.12); --line-strong:rgba(30,34,96,0.22); --line-dark:rgba(245,242,237,0.14);
+  --f-display:'Cormorant Garamond',serif; --f-mono:'DM Mono',monospace; --f-word:'Tenor Sans',serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--f-display);background:var(--cream);color:var(--navy);-webkit-font-smoothing:antialiased;font-size:16px;line-height:1.55}
+
+/* Grain — same body texture as the live page */
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  opacity:.20;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 240 240' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.92 0 0 0 0 0.89 0 0 0 0 0.83 0 0 0 0.06 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")
+}
+
+.shell{max-width:1600px;margin:0 auto;padding:0 64px;position:relative;z-index:2}
+@media(max-width:900px){.shell{padding:0 28px}}
+
+/* ===== COVER ===== */
+.cover{padding:88px 0 64px;border-bottom:1px solid var(--line-strong)}
+.cover .crumb{font-family:var(--f-mono);font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--gold-deep);margin-bottom:32px}
+.cover .crumb .sep{margin:0 12px;color:var(--gold);font-weight:300}
+.cover h1{font-family:var(--f-display);font-weight:400;font-size:84px;line-height:1.02;letter-spacing:-0.015em;margin-bottom:28px;max-width:18ch}
+.cover h1 em{font-style:italic;color:var(--gold-deep)}
+@media(max-width:900px){.cover h1{font-size:54px}}
+.cover .lede{font-family:var(--f-display);font-style:italic;font-size:22px;color:var(--slate);max-width:64ch;line-height:1.5;margin-bottom:48px}
+.cover-meta{display:grid;grid-template-columns:repeat(4,1fr);gap:32px;padding-top:32px;border-top:1px solid var(--line)}
+@media(max-width:900px){.cover-meta{grid-template-columns:repeat(2,1fr);gap:24px}}
+.cover-meta .col{display:flex;flex-direction:column;gap:6px}
+.cover-meta .k{font-family:var(--f-mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--slate)}
+.cover-meta .v{font-family:var(--f-display);font-size:16px;color:var(--navy)}
+.cover-meta .v em{font-style:italic;color:var(--gold-deep)}
+
+/* ===== TOC ===== */
+.toc{padding:48px 0 64px;border-bottom:1px solid var(--line)}
+.toc h2{font-family:var(--f-word);font-size:13px;letter-spacing:.28em;text-transform:uppercase;color:var(--slate);margin-bottom:32px}
+.toc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line-strong);border:1px solid var(--line-strong)}
+@media(max-width:900px){.toc-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.toc-grid{grid-template-columns:1fr}}
+.toc-item{background:var(--cream);padding:24px 22px;display:flex;flex-direction:column;gap:8px;text-decoration:none;color:var(--navy);transition:background .14s}
+.toc-item:hover{background:var(--cream-shade)}
+.toc-item .num{font-family:var(--f-display);font-style:italic;font-size:24px;color:var(--gold-deep)}
+.toc-item .name{font-family:var(--f-display);font-size:19px;letter-spacing:-0.005em}
+.toc-item .desc{font-family:var(--f-mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--slate);margin-top:4px}
+
+/* ===== SECTION HEADER ===== */
+.section{padding:80px 0;border-bottom:1px solid var(--line)}
+.section-head{display:flex;align-items:flex-start;gap:24px;margin-bottom:48px;flex-wrap:wrap}
+.section-head .num{font-family:var(--f-display);font-style:italic;font-size:40px;color:var(--gold-deep);line-height:1;flex-shrink:0}
+.section-head .body{flex:1;min-width:260px}
+.section-head h2{font-family:var(--f-display);font-weight:400;font-size:42px;letter-spacing:-0.01em;line-height:1.1;margin-bottom:10px}
+.section-head h2 em{font-style:italic;color:var(--gold-deep)}
+.section-head p{font-family:var(--f-display);font-style:italic;font-size:17px;color:var(--slate);max-width:64ch;line-height:1.55}
+.section-head .meta{font-family:var(--f-mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--slate);align-self:center}
+
+/* ===== VIEWPORT MATRIX ===== */
+.vp-row{display:flex;gap:48px;align-items:flex-start;flex-wrap:wrap;margin-bottom:80px}
+.vp-row:last-child{margin-bottom:0}
+.vp-cap{font-family:var(--f-mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--slate);margin-bottom:14px;display:flex;justify-content:space-between;align-items:baseline;gap:14px}
+.vp-cap .name{color:var(--navy)}
+.vp-cap .dim{color:var(--gold-deep)}
+
+.vp-frame{
+  background:#fff;
+  border:1px solid var(--line-strong);
+  box-shadow:0 20px 40px -20px rgba(30,34,96,0.18), 0 0 0 1px rgba(30,34,96,0.04);
+  overflow:hidden;
+  position:relative;
+}
+.vp-frame iframe{display:block;border:0;background:var(--cream)}
+/* Annotation pill on viewport */
+.vp-frame .annotate{
+  position:absolute;left:14px;top:14px;z-index:3;
+  font-family:var(--f-mono);font-size:9px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--navy);background:rgba(245,242,237,0.94);
+  padding:6px 10px;border:1px solid var(--line);border-radius:2px;
+  backdrop-filter:blur(6px);
+}
+
+/* Specific viewport sizes — scaled to fit handoff page */
+/* Desktop 1440 wide, scaled to fit; total height proportionally reduced */
+.vp-desktop{width:100%;max-width:1280px;height:840px}
+.vp-desktop iframe{width:1440px;height:1140px;transform-origin:top left;transform:scale(0.7778)} /* 1280/1440 */
+/* Tablet portrait 768 wide */
+.vp-tablet{width:540px;height:760px}
+.vp-tablet iframe{width:768px;height:1080px;transform-origin:top left;transform:scale(0.7031)} /* 540/768 */
+/* Mobile 390 wide */
+.vp-mobile{width:390px;height:760px}
+.vp-mobile iframe{width:390px;height:760px}
+@media(max-width:900px){
+  .vp-desktop{width:100%;height:540px}
+  .vp-desktop iframe{transform:scale(0.5)}
+  .vp-tablet{width:100%;max-width:540px}
+}
+
+/* Side-by-side row of all three viewports */
+.vp-triptych{display:flex;gap:32px;align-items:flex-start;overflow-x:auto;padding-bottom:14px;flex-wrap:wrap}
+.vp-triptych>div{flex-shrink:0}
+
+/* ===== STATE MATRIX ===== */
+.states{display:grid;grid-template-columns:repeat(2,1fr);gap:48px}
+@media(max-width:1100px){.states{grid-template-columns:1fr}}
+.state-frame{width:100%;height:620px}
+.state-frame iframe{width:1440px;height:980px;transform-origin:top left;transform:scale(0.5)}
+@media(max-width:1100px){.state-frame{height:540px} .state-frame iframe{transform:scale(0.45)}}
+
+/* ===== COMPONENT INVENTORY ===== */
+.comp-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px}
+@media(max-width:900px){.comp-grid{grid-template-columns:1fr}}
+.comp-card{background:var(--cream);border:1px solid var(--line);padding:0;overflow:hidden;display:flex;flex-direction:column}
+.comp-head{padding:18px 22px 14px;border-bottom:1px solid var(--line);background:var(--cream)}
+.comp-head .id{font-family:var(--f-mono);font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold-deep);margin-bottom:4px}
+.comp-head .name{font-family:var(--f-display);font-size:22px;letter-spacing:-0.005em}
+.comp-head .name em{font-style:italic;color:var(--gold-deep)}
+.comp-head .meta{font-family:var(--f-mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--slate);margin-top:6px}
+.comp-stage{padding:32px 22px;background:var(--cream);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:18px;min-height:140px}
+.comp-stage.dark{background:var(--navy);color:var(--cream)}
+.comp-code{padding:18px 22px;background:#15183C;color:#E0C994;font-family:var(--f-mono);font-size:11.5px;line-height:1.7;overflow-x:auto;flex:1}
+.comp-code .t{color:#FFA864}
+.comp-code .a{color:#9CC4FF}
+.comp-code .s{color:#E0C994}
+.comp-code .c{color:#6B6F77;font-style:italic}
+
+/* live component previews — match the landing exactly */
+.btn-demo{font-family:var(--f-mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;font-weight:400;padding:14px 0 10px;border:none;border-bottom:1px solid currentColor;background:transparent;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:14px;line-height:1}
+.btn-demo.primary{color:var(--navy)}
+.btn-demo.gold{color:var(--gold);border-bottom-color:var(--gold)}
+.btn-demo.dark{color:var(--cream);border-bottom-color:var(--cream)}
+
+.input-demo{font-family:var(--f-display);font-size:16px;padding:14px 16px;background:var(--navy-deep);border:1px solid var(--line-dark);border-radius:3px;color:var(--cream);min-height:52px;width:280px}
+.input-demo::placeholder{color:rgba(245,242,237,0.3);font-style:italic}
+
+.eyebrow-demo{font-family:var(--f-mono);font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--gold-deep);display:inline-flex;align-items:center;gap:12px}
+.eyebrow-demo::before{content:'';height:1px;width:32px;background:var(--gold)}
+
+.status-demo{display:inline-flex;align-items:center;gap:10px;font-family:var(--f-mono);font-size:10px;letter-spacing:.20em;text-transform:uppercase;color:var(--slate)}
+.status-demo .dot{width:6px;height:6px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 4px rgba(201,169,97,0.18)}
+
+.seg-demo{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--line-dark);background:var(--navy);max-width:380px}
+.seg-demo .s{padding:18px 0;font-family:var(--f-mono);font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:rgba(245,242,237,0.45);text-align:center;border-bottom:2px solid transparent;margin-bottom:-1px}
+.seg-demo .s.on{color:var(--gold);border-bottom-color:var(--gold)}
+
+.label-demo{font-family:var(--f-mono);font-size:10px;letter-spacing:.20em;text-transform:uppercase;color:var(--gold)}
+.label-demo .req{opacity:0.7;margin-left:6px}
+
+.check-demo{width:54px;height:54px;border-radius:50%;background:var(--gold);color:var(--navy);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:600;font-family:var(--f-mono)}
+
+/* ===== TOKEN STRIP ===== */
+.tokens{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border:1px solid var(--line-strong);background:var(--line-strong);margin-top:8px}
+@media(max-width:900px){.tokens{grid-template-columns:repeat(2,1fr)}}
+.token{background:var(--cream);padding:18px 20px;display:flex;flex-direction:column;gap:6px}
+.token .swatch{height:42px;border:1px solid var(--line);margin-bottom:8px}
+.token .name{font-family:var(--f-mono);font-size:10px;letter-spacing:.16em;color:var(--navy);text-transform:uppercase}
+.token .val{font-family:var(--f-mono);font-size:11px;color:var(--slate)}
+
+/* ===== ASSET LIST ===== */
+.asset-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line-strong);border:1px solid var(--line-strong)}
+@media(max-width:900px){.asset-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.asset-grid{grid-template-columns:1fr}}
+.asset{background:var(--cream);padding:24px;display:flex;flex-direction:column;gap:14px}
+.asset .preview{height:120px;background:#fff;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;padding:18px}
+.asset.dark .preview{background:var(--navy);border-color:var(--line-strong)}
+.asset .name{font-family:var(--f-mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--navy)}
+.asset .desc{font-family:var(--f-display);font-style:italic;font-size:14px;color:var(--slate);line-height:1.5}
+
+.font-row{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;margin-top:8px}
+@media(max-width:900px){.font-row{grid-template-columns:1fr}}
+.font-card{padding:32px;background:var(--cream);border:1px solid var(--line)}
+.font-card .id{font-family:var(--f-mono);font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold-deep);margin-bottom:14px}
+.font-card .sample{font-size:64px;line-height:1;margin-bottom:18px;color:var(--navy)}
+.font-card.serif .sample{font-family:'Cormorant Garamond',serif;font-weight:500;letter-spacing:-0.01em}
+.font-card.serif .sample em{font-style:italic;color:var(--gold-deep)}
+.font-card.word .sample{font-family:'Tenor Sans',serif;letter-spacing:0.04em;font-size:42px}
+.font-card.mono .sample{font-family:'DM Mono',monospace;font-size:32px;letter-spacing:0.04em}
+.font-card .name{font-family:var(--f-display);font-size:20px;margin-bottom:6px}
+.font-card .meta{font-family:var(--f-mono);font-size:10px;letter-spacing:.16em;color:var(--slate);text-transform:uppercase;line-height:1.7}
+
+/* ===== FOOTER ===== */
+.foot{padding:48px 0;background:var(--cream-shade);border-top:1px solid var(--line-strong)}
+.foot-inner{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:18px}
+.foot .id{font-family:var(--f-mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--slate)}
+.foot .v{font-family:var(--f-display);font-style:italic;color:var(--gold-deep)}
+
+/* ===== ANCHOR OFFSET ===== */
+section[id]{scroll-margin-top:24px}
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+  <!-- ===== COVER ===== -->
+  <header class="cover">
+    <div class="crumb">
+      VERITY
+      <span class="sep">/</span>
+      Phase 1
+      <span class="sep">/</span>
+      Marketing surface
+      <span class="sep">/</span>
+      Landing page
+    </div>
+    <h1>Landing page · <em>design handoff</em></h1>
+    <p class="lede">
+      One document covering the entire <code style="font-family:var(--f-mono);font-size:18px;color:var(--gold-deep);font-style:normal">verity_landing.html</code> surface — three viewports,
+      four states, every component, every asset. Built for engineers picking up the build and designers continuing the work.
+    </p>
+    <div class="cover-meta">
+      <div class="col">
+        <span class="k">Surface</span>
+        <span class="v">Marketing landing · <em>pre-launch</em></span>
+      </div>
+      <div class="col">
+        <span class="k">Audience</span>
+        <span class="v">Diaspora buyers · Lagos developers</span>
+      </div>
+      <div class="col">
+        <span class="k">Live preview</span>
+        <span class="v"><a href="verity_landing.html" style="color:var(--navy);border-bottom:1px solid var(--gold);text-decoration:none">verity_landing.html →</a></span>
+      </div>
+      <div class="col">
+        <span class="k">Updated</span>
+        <span class="v">11 May 2026</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== TOC ===== -->
+  <nav class="toc">
+    <h2>Contents</h2>
+    <div class="toc-grid">
+      <a class="toc-item" href="#anatomy">
+        <span class="num">i.</span>
+        <span class="name">Anatomy</span>
+        <span class="desc">Sections · order · purpose</span>
+      </a>
+      <a class="toc-item" href="#viewports">
+        <span class="num">ii.</span>
+        <span class="name">Viewports</span>
+        <span class="desc">Desktop · Tablet · Mobile</span>
+      </a>
+      <a class="toc-item" href="#states">
+        <span class="num">iii.</span>
+        <span class="name">States</span>
+        <span class="desc">Default · Buyer · Dev · Confirm</span>
+      </a>
+      <a class="toc-item" href="#tokens">
+        <span class="num">iv.</span>
+        <span class="name">Tokens</span>
+        <span class="desc">Color · Type · Spacing</span>
+      </a>
+      <a class="toc-item" href="#components">
+        <span class="num">v.</span>
+        <span class="name">Components</span>
+        <span class="desc">Buttons · Inputs · Toggles</span>
+      </a>
+      <a class="toc-item" href="#assets">
+        <span class="num">vi.</span>
+        <span class="name">Assets</span>
+        <span class="desc">SVGs · Fonts · Texture</span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- ===== i · ANATOMY ===== -->
+  <section class="section" id="anatomy">
+    <header class="section-head">
+      <span class="num">i.</span>
+      <div class="body">
+        <h2>Anatomy of the <em>page.</em></h2>
+        <p>Five vertical sections, top to bottom. Built as a single document — no SPA framework, no React. One HTML file, one stylesheet, one short script for form toggle and submit.</p>
+      </div>
+      <span class="meta">5 sections · 1 document</span>
+    </header>
+
+    <div class="toc-grid">
+      <div class="toc-item" style="cursor:default">
+        <span class="num">01</span>
+        <span class="name">Sticky header</span>
+        <span class="desc">Brand · status pill</span>
+      </div>
+      <div class="toc-item" style="cursor:default">
+        <span class="num">02</span>
+        <span class="name">Hero</span>
+        <span class="desc">Eyebrow · h1 · lede · trust strip</span>
+      </div>
+      <div class="toc-item" style="cursor:default">
+        <span class="num">03</span>
+        <span class="name">Two paths</span>
+        <span class="desc">Buyer (light) · Developer (dark)</span>
+      </div>
+      <div class="toc-item" style="cursor:default">
+        <span class="num">04</span>
+        <span class="name">Credibility</span>
+        <span class="desc">Three signals · cream-shade</span>
+      </div>
+      <div class="toc-item" style="cursor:default">
+        <span class="num">05</span>
+        <span class="name">Waitlist</span>
+        <span class="desc">Navy · toggle · buyer/dev forms</span>
+      </div>
+      <div class="toc-item" style="cursor:default">
+        <span class="num">06</span>
+        <span class="name">Footer</span>
+        <span class="desc">Copy · contact</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== ii · VIEWPORTS ===== -->
+  <section class="section" id="viewports">
+    <header class="section-head">
+      <span class="num">ii.</span>
+      <div class="body">
+        <h2>Three <em>viewports.</em></h2>
+        <p>Desktop is the canonical reference. Tablet portrait collapses the two-path grid to a single column; mobile stacks everything and hides the hero diagram.</p>
+      </div>
+      <span class="meta">3 breakpoints</span>
+    </header>
+
+    <!-- DESKTOP -->
+    <div class="vp-row" style="flex-direction:column;align-items:stretch">
+      <div class="vp-cap">
+        <span class="name">Desktop · canonical</span>
+        <span class="dim">1440 × auto · 64px gutter</span>
+      </div>
+      <div class="vp-frame vp-desktop">
+        <span class="annotate">01 · DESKTOP</span>
+        <iframe src="verity_landing.html" title="Verity landing — desktop 1440px" loading="lazy"></iframe>
+      </div>
+    </div>
+
+    <!-- TABLET + MOBILE TRIPTYCH -->
+    <div class="vp-row" style="margin-top:48px">
+      <div>
+        <div class="vp-cap">
+          <span class="name">Tablet portrait</span>
+          <span class="dim">768 × auto · 28px gutter</span>
+        </div>
+        <div class="vp-frame vp-tablet">
+          <span class="annotate">02 · TABLET 768</span>
+          <iframe src="verity_landing.html" title="Verity landing — tablet 768px" loading="lazy"></iframe>
+        </div>
+      </div>
+
+      <div>
+        <div class="vp-cap">
+          <span class="name">Mobile</span>
+          <span class="dim">390 × auto · 22px gutter</span>
+        </div>
+        <div class="vp-frame vp-mobile">
+          <span class="annotate">03 · MOBILE 390</span>
+          <iframe src="verity_landing.html" title="Verity landing — mobile 390px" loading="lazy"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <!-- Breakpoint notes -->
+    <div style="margin-top:48px;padding:24px 28px;background:var(--cream-shade);border:1px solid var(--line);display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px">
+      <div>
+        <div style="font-family:var(--f-mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold-deep);margin-bottom:8px">— BREAKPOINT 1100</div>
+        <div style="font-family:var(--f-display);font-style:italic;font-size:15px;color:var(--slate);line-height:1.5">Hero accent diagram hidden.</div>
+      </div>
+      <div>
+        <div style="font-family:var(--f-mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold-deep);margin-bottom:8px">— BREAKPOINT 900</div>
+        <div style="font-family:var(--f-display);font-style:italic;font-size:15px;color:var(--slate);line-height:1.5">Hero h1 → 52px. Two-path grid stays. Signals → single column.</div>
+      </div>
+      <div>
+        <div style="font-family:var(--f-mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold-deep);margin-bottom:8px">— BREAKPOINT 680</div>
+        <div style="font-family:var(--f-display);font-style:italic;font-size:15px;color:var(--slate);line-height:1.5">Shell gutter → 22px. Hero h1 → 40px. Two-path → single column. Form grid → single column.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== iii · STATES ===== -->
+  <section class="section" id="states">
+    <header class="section-head">
+      <span class="num">iii.</span>
+      <div class="body">
+        <h2>Four <em>states.</em></h2>
+        <p>The page surfaces three interactive states beyond the default: switching between buyer and developer waitlist forms, and the post-submit confirmation. All three are shown scrolled to the waitlist section.</p>
+      </div>
+      <span class="meta">4 states</span>
+    </header>
+
+    <div class="states">
+      <div>
+        <div class="vp-cap">
+          <span class="name">A · Default · top of page</span>
+          <span class="dim">1440 · scroll = 0</span>
+        </div>
+        <div class="vp-frame state-frame">
+          <iframe src="verity_landing.html" data-state="default" title="Default state" loading="lazy"></iframe>
+        </div>
+      </div>
+
+      <div>
+        <div class="vp-cap">
+          <span class="name">B · Buyer waitlist form</span>
+          <span class="dim">tab = buyer · scrolled</span>
+        </div>
+        <div class="vp-frame state-frame">
+          <iframe src="verity_landing.html#waitlist" data-state="buyer" title="Buyer waitlist" loading="lazy"></iframe>
+        </div>
+      </div>
+
+      <div>
+        <div class="vp-cap">
+          <span class="name">C · Developer Founding 50 form</span>
+          <span class="dim">tab = developer · scrolled</span>
+        </div>
+        <div class="vp-frame state-frame">
+          <iframe src="verity_landing.html#waitlist" data-state="developer" title="Developer Founding 50" loading="lazy"></iframe>
+        </div>
+      </div>
+
+      <div>
+        <div class="vp-cap">
+          <span class="name">D · Submitted · confirmation</span>
+          <span class="dim">post-submit · scrolled</span>
+        </div>
+        <div class="vp-frame state-frame">
+          <iframe src="verity_landing.html#waitlist" data-state="confirm" title="Confirmation" loading="lazy"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:36px;padding:20px 24px;background:var(--cream-shade);border:1px solid var(--line);font-family:var(--f-display);font-style:italic;font-size:15px;color:var(--slate);line-height:1.55;max-width:84ch">
+      — Notes · Tab switching is instant (no transition). Form submit is intercepted client-side and swaps the active form for the confirmation panel — no network request fires in this preview build.
+    </div>
+  </section>
+
+  <!-- ===== iv · TOKENS ===== -->
+  <section class="section" id="tokens">
+    <header class="section-head">
+      <span class="num">iv.</span>
+      <div class="body">
+        <h2>Design <em>tokens.</em></h2>
+        <p>Lifted from the brand system. Defined once in <code style="font-family:var(--f-mono);font-size:14px;color:var(--gold-deep);font-style:normal">:root</code> at the top of the stylesheet — eight colors, three font families, three line types.</p>
+      </div>
+      <span class="meta">CSS custom properties</span>
+    </header>
+
+    <div style="font-family:var(--f-mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--slate);margin-bottom:14px">— COLOR · 8 TOKENS</div>
+    <div class="tokens">
+      <div class="token"><div class="swatch" style="background:var(--navy)"></div><span class="name">--navy</span><span class="val">#1E2260</span></div>
+      <div class="token"><div class="swatch" style="background:var(--navy-deep)"></div><span class="name">--navy-deep</span><span class="val">#171A4A</span></div>
+      <div class="token"><div class="swatch" style="background:var(--cream)"></div><span class="name">--cream</span><span class="val">#F5F2ED</span></div>
+      <div class="token"><div class="swatch" style="background:var(--cream-shade)"></div><span class="name">--cream-shade</span><span class="val">#EEEAE0</span></div>
+      <div class="token"><div class="swatch" style="background:var(--gold)"></div><span class="name">--gold</span><span class="val">#C9A961</span></div>
+      <div class="token"><div class="swatch" style="background:var(--gold-deep)"></div><span class="name">--gold-deep</span><span class="val">#A88A45</span></div>
+      <div class="token"><div class="swatch" style="background:var(--slate)"></div><span class="name">--slate</span><span class="val">#6B6F77</span></div>
+      <div class="token"><div class="swatch" style="background:var(--slate-soft)"></div><span class="name">--slate-soft</span><span class="val">#9DA1A8</span></div>
+    </div>
+
+    <div style="font-family:var(--f-mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--slate);margin:40px 0 14px">— TYPE · 3 FAMILIES</div>
+    <div class="font-row">
+      <div class="font-card serif">
+        <div class="id">— PRIMARY · DISPLAY &amp; BODY</div>
+        <div class="sample">Aa <em>Aa</em></div>
+        <div class="name">Cormorant Garamond</div>
+        <div class="meta">
+          400 · 500 · 600 · 700<br>
+          400 italic · 500 italic · 600 italic
+        </div>
+      </div>
+      <div class="font-card word">
+        <div class="id">— BRAND WORDMARK</div>
+        <div class="sample">VERITY</div>
+        <div class="name">Tenor Sans</div>
+        <div class="meta">400 regular only<br>Used for wordmark only</div>
+      </div>
+      <div class="font-card mono">
+        <div class="id">— MONO · LABELS &amp; CHROME</div>
+        <div class="sample">A01·B02</div>
+        <div class="name">DM Mono</div>
+        <div class="meta">300 · 400 · 500<br>Eyebrows · labels · meta</div>
+      </div>
+    </div>
+
+    <div style="font-family:var(--f-mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--slate);margin:40px 0 14px">— SPACING · KEY VALUES</div>
+    <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:1px;background:var(--line-strong);border:1px solid var(--line-strong)">
+      <div class="token" style="text-align:center"><span class="name" style="font-size:22px;color:var(--navy);font-family:var(--f-display);letter-spacing:0;text-transform:none;font-weight:400">40 / 22</span><span class="val">Shell gutter · desktop / mobile</span></div>
+      <div class="token" style="text-align:center"><span class="name" style="font-size:22px;color:var(--navy);font-family:var(--f-display);letter-spacing:0;text-transform:none;font-weight:400">88 / 96</span><span class="val">Section · top / bottom padding</span></div>
+      <div class="token" style="text-align:center"><span class="name" style="font-size:22px;color:var(--navy);font-family:var(--f-display);letter-spacing:0;text-transform:none;font-weight:400">48 / 44</span><span class="val">Path card padding · y / x</span></div>
+      <div class="token" style="text-align:center"><span class="name" style="font-size:22px;color:var(--navy);font-family:var(--f-display);letter-spacing:0;text-transform:none;font-weight:400">22</span><span class="val">Form field gap</span></div>
+      <div class="token" style="text-align:center"><span class="name" style="font-size:22px;color:var(--navy);font-family:var(--f-display);letter-spacing:0;text-transform:none;font-weight:400">14×16</span><span class="val">Input padding · y × x</span></div>
+      <div class="token" style="text-align:center"><span class="name" style="font-size:22px;color:var(--navy);font-family:var(--f-display);letter-spacing:0;text-transform:none;font-weight:400">52</span><span class="val">Input min-height</span></div>
+    </div>
+  </section>
+
+  <!-- ===== v · COMPONENTS ===== -->
+  <section class="section" id="components">
+    <header class="section-head">
+      <span class="num">v.</span>
+      <div class="body">
+        <h2>Component <em>inventory.</em></h2>
+        <p>Every reusable element on the page. Code snippets are the exact markup used in <code style="font-family:var(--f-mono);font-size:14px;color:var(--gold-deep);font-style:normal">verity_landing.html</code> — copy-paste ready.</p>
+      </div>
+      <span class="meta">8 components</span>
+    </header>
+
+    <div class="comp-grid">
+
+      <!-- BUTTON PRIMARY -->
+      <article class="comp-card">
+        <header class="comp-head">
+          <div class="id">— COMPONENT · 01</div>
+          <div class="name">Button · <em>primary</em></div>
+          <div class="meta">.btn .btn-primary · light surface</div>
+        </header>
+        <div class="comp-stage">
+          <a class="btn-demo primary">Join the buyer waitlist <span>→</span></a>
+        </div>
+        <pre class="comp-code">&lt;a href="#waitlist" <span class="a">class</span>=<span class="s">"btn btn-primary"</span>&gt;
+  Join the buyer waitlist
+  &lt;span <span class="a">class</span>=<span class="s">"arrow"</span>&gt;→&lt;/span&gt;
+&lt;/a&gt;</pre>
+      </article>
+
+      <!-- BUTTON GOLD -->
+      <article class="comp-card">
+        <header class="comp-head">
+          <div class="id">— COMPONENT · 02</div>
+          <div class="name">Button · <em>gold</em></div>
+          <div class="meta">.btn .btn-gold · dark surface or accent</div>
+        </header>
+        <div class="comp-stage dark">
+          <a class="btn-demo gold">Apply for Founding 50 <span>→</span></a>
+        </div>
+        <pre class="comp-code">&lt;a href="#waitlist" <span class="a">class</span>=<span class="s">"btn btn-gold"</span>&gt;
+  Apply for Founding 50
+  &lt;span <span class="a">class</span>=<span class="s">"arrow"</span>&gt;→&lt;/span&gt;
+&lt;/a&gt;</pre>
+      </article>
+
+      <!-- EYEBROW -->
+      <article class="comp-card">
+        <header class="comp-head">
+          <div class="id">— COMPONENT · 03</div>
+          <div class="name">Eyebrow · <em>section label</em></div>
+          <div class="meta">.eyebrow · gold rule + mono text</div>
+        </header>
+        <div class="comp-stage">
+          <span class="eyebrow-demo">Coming to Lagos, 2026</span>
+        </div>
+        <pre class="comp-code">&lt;div <span class="a">class</span>=<span class="s">"eyebrow"</span>&gt;Coming to Lagos, 2026&lt;/div&gt;
+<span class="c">/* ::before pseudo draws the 32px gold rule */</span></pre>
+      </article>
+
+      <!-- STATUS PILL -->
+      <article class="comp-card">
+        <header class="comp-head">
+          <div class="id">— COMPONENT · 04</div>
+          <div class="name">Status · <em>pulse dot</em></div>
+          <div class="meta">.status · header right · animated</div>
+        </header>
+        <div class="comp-stage">
+          <span class="status-demo">
+            <span class="dot"></span>
+            <span>In build · Lagos · 2026</span>
+          </span>
+        </div>
+        <pre class="comp-code">&lt;div <span class="a">class</span>=<span class="s">"status"</span>&gt;
+  &lt;span <span class="a">class</span>=<span class="s">"dot"</span>&gt;&lt;/span&gt;
+  &lt;span <span class="a">class</span>=<span class="s">"label"</span>&gt;In build · Lagos · 2026&lt;/span&gt;
+&lt;/div&gt;</pre>
+      </article>
+
+      <!-- TEXT INPUT -->
+      <article class="comp-card">
+        <header class="comp-head">
+          <div class="id">— COMPONENT · 05</div>
+          <div class="name">Text input · <em>navy field</em></div>
+          <div class="meta">.input · 52px min-height · 16px serif</div>
+        </header>
+        <div class="comp-stage dark" style="flex-direction:column;align-items:flex-start;gap:8px;padding:32px 32px">
+          <span class="label-demo">Your name <span class="req">— required</span></span>
+          <input class="input-demo" placeholder="Folake Adeyemi"/>
+        </div>
+        <pre class="comp-code">&lt;div <span class="a">class</span>=<span class="s">"field"</span>&gt;
+  &lt;label&gt;Your name &lt;span <span class="a">class</span>=<span class="s">"req"</span>&gt;— required&lt;/span&gt;&lt;/label&gt;
+  &lt;input <span class="a">class</span>=<span class="s">"input"</span> <span class="a">type</span>=<span class="s">"text"</span> <span class="a">placeholder</span>=<span class="s">"Folake Adeyemi"</span>&gt;
+&lt;/div&gt;</pre>
+      </article>
+
+      <!-- SEGMENTED TOGGLE -->
+      <article class="comp-card">
+        <header class="comp-head">
+          <div class="id">— COMPONENT · 06</div>
+          <div class="name">Segmented · <em>tab toggle</em></div>
+          <div class="meta">.toggle-row · 2-up · waitlist switch</div>
+        </header>
+        <div class="comp-stage dark" style="padding:32px 18px">
+          <div class="seg-demo">
+            <div class="s on">I'm a buyer</div>
+            <div class="s">I'm a developer</div>
+          </div>
+        </div>
+        <pre class="comp-code">&lt;div <span class="a">class</span>=<span class="s">"toggle-row"</span> <span class="a">role</span>=<span class="s">"tablist"</span>&gt;
+  &lt;button <span class="a">class</span>=<span class="s">"seg active"</span> <span class="a">data-form</span>=<span class="s">"buyer"</span>&gt;I'm a buyer&lt;/button&gt;
+  &lt;button <span class="a">class</span>=<span class="s">"seg"</span> <span class="a">data-form</span>=<span class="s">"developer"</span>&gt;I'm a developer&lt;/button&gt;
+&lt;/div&gt;</pre>
+      </article>
+
+      <!-- PATH CARD -->
+      <article class="comp-card">
+        <header class="comp-head">
+          <div class="id">— COMPONENT · 07</div>
+          <div class="name">Path card · <em>two-up</em></div>
+          <div class="meta">.path / .path.dark · 1px hairline grid</div>
+        </header>
+        <div class="comp-stage" style="padding:0;flex-direction:row;align-items:stretch;gap:0;background:var(--line);min-height:200px">
+          <div style="background:var(--cream);padding:24px;flex:1;display:flex;flex-direction:column;gap:8px">
+            <span style="font-family:var(--f-display);font-style:italic;font-size:24px;color:var(--gold-deep);line-height:1">i.</span>
+            <span style="font-family:var(--f-mono);font-size:9px;letter-spacing:.22em;color:var(--slate);text-transform:uppercase">For buyers</span>
+            <h4 style="font-family:var(--f-display);font-weight:500;font-size:18px;line-height:1.2;letter-spacing:-0.005em;margin-top:4px">Buying property in Lagos?</h4>
+          </div>
+          <div style="background:var(--navy);padding:24px;flex:1;display:flex;flex-direction:column;gap:8px;color:var(--cream)">
+            <span style="font-family:var(--f-display);font-style:italic;font-size:24px;color:var(--gold);line-height:1">ii.</span>
+            <span style="font-family:var(--f-mono);font-size:9px;letter-spacing:.22em;color:rgba(245,242,237,0.55);text-transform:uppercase">For developers</span>
+            <h4 style="font-family:var(--f-display);font-weight:500;font-size:18px;line-height:1.2;letter-spacing:-0.005em;margin-top:4px">Active portfolio?</h4>
+          </div>
+        </div>
+        <pre class="comp-code">&lt;div <span class="a">class</span>=<span class="s">"paths"</span>&gt;
+  &lt;div <span class="a">class</span>=<span class="s">"path"</span>&gt;        <span class="c">&lt;!-- light --&gt;</span>
+    &lt;span <span class="a">class</span>=<span class="s">"path-num"</span>&gt;i.&lt;/span&gt;
+    &lt;span <span class="a">class</span>=<span class="s">"path-tag"</span>&gt;For buyers&lt;/span&gt;
+    &lt;h2&gt;Buying property in Lagos?&lt;/h2&gt;
+  &lt;/div&gt;
+  &lt;div <span class="a">class</span>=<span class="s">"path dark"</span>&gt;   <span class="c">&lt;!-- inverted --&gt;</span>
+    …
+  &lt;/div&gt;
+&lt;/div&gt;</pre>
+      </article>
+
+      <!-- CONFIRMATION -->
+      <article class="comp-card">
+        <header class="comp-head">
+          <div class="id">— COMPONENT · 08</div>
+          <div class="name">Confirmation · <em>panel</em></div>
+          <div class="meta">.confirm · post-submit acknowledgement</div>
+        </header>
+        <div class="comp-stage dark" style="flex-direction:column;gap:12px;padding:36px 24px">
+          <span class="check-demo">✓</span>
+          <div style="font-family:var(--f-display);font-weight:500;font-size:22px;color:var(--cream)">You're on the list.</div>
+          <div style="font-family:var(--f-display);font-size:14px;color:rgba(245,242,237,0.75);text-align:center;max-width:32ch">We'll be in touch. Check your email for a confirmation.</div>
+        </div>
+        <pre class="comp-code">&lt;div <span class="a">class</span>=<span class="s">"confirm shown"</span>&gt;
+  &lt;div <span class="a">class</span>=<span class="s">"check"</span>&gt;✓&lt;/div&gt;
+  &lt;h3&gt;You're on the list.&lt;/h3&gt;
+  &lt;p&gt;We'll be in touch…&lt;/p&gt;
+&lt;/div&gt;</pre>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ===== vi · ASSETS ===== -->
+  <section class="section" id="assets" style="border-bottom:none">
+    <header class="section-head">
+      <span class="num">vi.</span>
+      <div class="body">
+        <h2>Assets &amp; <em>imports.</em></h2>
+        <p>Everything the page loads — three font families from Google Fonts, two inline SVGs, one inline noise texture. No external image assets, no icon libraries.</p>
+      </div>
+      <span class="meta">3 fonts · 3 SVGs</span>
+    </header>
+
+    <div style="font-family:var(--f-mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--slate);margin-bottom:14px">— FONT IMPORTS · GOOGLE FONTS</div>
+    <pre class="comp-code" style="margin-bottom:48px">&lt;link <span class="a">rel</span>=<span class="s">"preconnect"</span> <span class="a">href</span>=<span class="s">"https://fonts.googleapis.com"</span>&gt;
+&lt;link <span class="a">rel</span>=<span class="s">"preconnect"</span> <span class="a">href</span>=<span class="s">"https://fonts.gstatic.com"</span> crossorigin&gt;
+&lt;link <span class="a">href</span>=<span class="s">"https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&amp;family=DM+Mono:wght@300;400;500&amp;family=Tenor+Sans&amp;display=swap"</span> <span class="a">rel</span>=<span class="s">"stylesheet"</span>&gt;</pre>
+
+    <div style="font-family:var(--f-mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--slate);margin-bottom:14px">— INLINE SVG ASSETS · 3</div>
+    <div class="asset-grid">
+      <div class="asset">
+        <div class="preview">
+          <svg width="56" height="64" viewBox="0 0 44 50">
+            <path d="M 4 0 L 40 0 Q 44 0 44 4 L 44 34 Q 44 37 41.5 38.5 L 24.5 48.3 Q 22 49.7 19.5 48.3 L 2.5 38.5 Q 0 37 0 34 L 0 4 Q 0 0 4 0 Z" fill="#1E2260"/>
+            <path d="M 30 7 L 37 7 L 37 14" stroke="#C9A961" stroke-width="2" fill="none" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <span class="name">— VERITY shield mark</span>
+        <span class="desc">22×25 in header · 18×20 in footer. Navy fill, gold inner corner.</span>
+      </div>
+
+      <div class="asset">
+        <div class="preview" style="background:var(--cream);padding:8px">
+          <svg viewBox="0 0 240 200" fill="none" width="180" height="150">
+            <g stroke="#C9A961" stroke-width="0.8" opacity="0.7">
+              <line x1="20" y1="40" x2="220" y2="40" stroke-dasharray="2 4"/>
+              <line x1="20" y1="80" x2="220" y2="80" stroke-dasharray="2 4"/>
+              <line x1="20" y1="120" x2="220" y2="120" stroke-dasharray="2 4"/>
+              <line x1="20" y1="160" x2="220" y2="160" stroke-dasharray="2 4"/>
+            </g>
+            <g stroke="#1E2260" stroke-width="1.2" fill="none">
+              <circle cx="60" cy="40" r="3" fill="#1E2260"/>
+              <circle cx="120" cy="80" r="3" fill="#C9A961"/>
+              <circle cx="180" cy="120" r="3" fill="#1E2260"/>
+              <circle cx="100" cy="160" r="3" fill="#1E2260"/>
+              <path d="M60 40 L120 80 L180 120 L100 160" stroke-dasharray="0"/>
+            </g>
+            <text x="20" y="195" font-family="DM Mono" font-size="8" fill="#6B6F77" letter-spacing="1.5">CHAIN OF VERIFICATION · LAGOS · 2026</text>
+          </svg>
+        </div>
+        <span class="name">— Hero accent · chain diagram</span>
+        <span class="desc">240×200. Right of hero copy, hidden ≤1100px. Dashed grid + connected nodes signal chain of verification.</span>
+      </div>
+
+      <div class="asset">
+        <div class="preview" style="background:var(--cream-shade);position:relative;overflow:hidden">
+          <div style="position:absolute;inset:0;opacity:.4;mix-blend-mode:multiply;background-image:url(&quot;data:image/svg+xml,%3Csvg viewBox='0 0 240 240' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.92 0 0 0 0 0.89 0 0 0 0 0.83 0 0 0 0.06 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E&quot;)"></div>
+          <span style="position:relative;z-index:1;font-family:var(--f-mono);font-size:9px;letter-spacing:.22em;color:var(--slate);text-transform:uppercase">— SAMPLE</span>
+        </div>
+        <span class="name">— Body grain texture · SVG</span>
+        <span class="desc">240×240 tile, fractalNoise filter, 6% opacity, multiply blend. Fixed position over entire body. Cream warmth.</span>
+      </div>
+    </div>
+
+    <div style="margin-top:48px;font-family:var(--f-mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--slate);margin-bottom:14px">— DROP-DOWN CARET · SVG · INLINED IN CSS</div>
+    <div class="asset-grid" style="grid-template-columns:1fr">
+      <div class="asset" style="flex-direction:row;align-items:center;gap:32px">
+        <div style="background:var(--navy-deep);padding:24px 28px;border:1px solid var(--line-dark);border-radius:3px;display:flex;align-items:center;gap:14px;color:var(--cream);font-family:var(--f-display);font-size:16px">
+          When are you buying?
+          <svg width="10" height="6" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4" stroke="#C9A961" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg>
+        </div>
+        <div style="flex:1">
+          <span class="name">— Select caret</span>
+          <p class="desc" style="margin-top:6px">10×6 SVG, gold stroke, inlined via <code style="font-family:var(--f-mono);font-size:13px;color:var(--gold-deep);font-style:normal">background-image: url(data:…)</code> on <code style="font-family:var(--f-mono);font-size:13px;color:var(--gold-deep);font-style:normal">.select</code>. Avoids loading a separate file.</p>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:48px;padding:24px 28px;background:var(--cream-shade);border:1px solid var(--line);font-family:var(--f-display);font-style:italic;font-size:15px;color:var(--slate);line-height:1.55;max-width:84ch">
+      — Total external loads · <strong style="font-style:normal;color:var(--navy)">3</strong> · two preconnect hints + one stylesheet from Google Fonts. Zero image files. Zero icon libraries. The page is one HTML file + one font-CDN request.
+    </div>
+  </section>
+
+</div>
+
+<!-- ===== FOOTER ===== -->
+<footer class="foot">
+  <div class="shell">
+    <div class="foot-inner">
+      <span class="id">— VERITY · LANDING · HANDOFF · v1</span>
+      <span class="id">Live · <a href="verity_landing.html" style="color:var(--gold-deep);text-decoration:none;border-bottom:1px solid rgba(201,169,97,0.4);padding-bottom:1px" class="v">verity_landing.html</a></span>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Drive iframe state for the "States" section.
+// All iframes are same-origin → safe to call into their script after load.
+document.querySelectorAll('iframe[data-state]').forEach(frame => {
+  frame.addEventListener('load', () => {
+    try {
+      const doc = frame.contentDocument;
+      const win = frame.contentWindow;
+      if (!doc || !win) return;
+      const state = frame.dataset.state;
+
+      // Hide sticky header inside iframe so the embedded view feels like a "shot"
+      // (optional — keeps the focus on the form area).
+
+      if (state === 'buyer' || state === 'developer' || state === 'confirm') {
+        const targetForm = state === 'developer' ? 'developer' : 'buyer';
+        const segs = doc.querySelectorAll('.toggle-row .seg');
+        segs.forEach(s => {
+          const isActive = s.dataset.form === targetForm;
+          s.classList.toggle('active', isActive);
+          s.setAttribute('aria-selected', isActive);
+        });
+        const buyer = doc.getElementById('form-buyer');
+        const dev = doc.getElementById('form-developer');
+        const confirm = doc.getElementById('confirm');
+        if (buyer && dev && confirm) {
+          confirm.classList.remove('shown');
+          if (state === 'confirm') {
+            buyer.style.display = 'none';
+            dev.style.display = 'none';
+            confirm.classList.add('shown');
+          } else {
+            buyer.style.display = targetForm === 'buyer' ? 'block' : 'none';
+            dev.style.display = targetForm === 'developer' ? 'block' : 'none';
+          }
+        }
+      }
+
+      // Scroll the waitlist section into the top of the frame on all non-default states.
+      if (state !== 'default') {
+        const waitlist = doc.getElementById('waitlist');
+        if (waitlist) {
+          // Scroll without animation so the screenshot is stable.
+          const top = waitlist.getBoundingClientRect().top + win.scrollY;
+          win.scrollTo({ top, left: 0, behavior: 'instant' });
+        }
+      }
+    } catch (e) {
+      // Same-origin should be fine, but swallow defensively.
+      console.warn('State init skipped:', e.message);
+    }
+  });
+});
+</script>
+
+</body>
+</html>

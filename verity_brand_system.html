@@ -1,0 +1,2098 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>VERITY — Full Brand System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600;700&family=Tenor+Sans&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#1E2260;
+  --navy-deep:#171A4A;
+  --navy-soft:#2C3078;
+  --cream:#F5F2ED;
+  --cream-shade:#EEEAE0;
+  --gold:#C9A961;
+  --gold-soft:#E0C994;
+  --gold-deep:#A88A45;
+  --slate:#6B6F77;
+  --slate-soft:#9DA1A8;
+  --line:rgba(30,34,96,0.12);
+  --line-strong:rgba(30,34,96,0.22);
+  --line-dark:rgba(245,242,237,0.14);
+  --success:#3A7A5C;
+  --warning:#B8862A;
+  --danger:#A8302A;
+  --info:#3C5A9C;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Cormorant Garamond',serif;background:var(--cream);color:var(--navy);-webkit-font-smoothing:antialiased;font-size:16px;line-height:1.6}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.28;mix-blend-mode:multiply;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 240 240' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.92 0 0 0 0 0.89 0 0 0 0 0.83 0 0 0 0.06 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+.shell{max-width:1320px;margin:0 auto;padding:56px 40px;position:relative;z-index:2}
+
+h1.page-title{font-family:'Cormorant Garamond',serif;font-size:48px;font-weight:400;letter-spacing:-0.015em;margin-bottom:8px}
+h1.page-title em{color:var(--gold-deep);font-style:italic}
+.subtitle{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--slate);margin-bottom:16px}
+
+.intro-note{background:var(--cream-shade);border-left:2px solid var(--gold);padding:20px 24px;margin-bottom:48px;font-size:14px;line-height:1.65;max-width:880px;font-family:'DM Sans',sans-serif}
+.intro-note em{color:var(--gold-deep);font-style:italic;font-family:'Cormorant Garamond',serif;font-size:15px}
+.intro-note strong{color:var(--gold-deep)}
+
+/* TOC */
+.toc{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);margin-bottom:64px}
+@media (max-width:1100px){.toc{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:900px){.toc{grid-template-columns:repeat(2,1fr)}}
+.toc a{background:var(--cream);padding:18px 22px;text-decoration:none;color:var(--navy);font-family:'Cormorant Garamond',serif;font-size:15px;display:flex;flex-direction:column;gap:4px;transition:background .15s}
+.toc a:hover{background:var(--cream-shade)}
+.toc a .num{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.18em;color:var(--gold-deep)}
+.toc a em{font-style:italic;color:var(--gold-deep);font-size:13px}
+
+/* Section shell */
+.section{margin-top:56px;border:1px solid var(--line)}
+.section-head{display:flex;align-items:baseline;gap:20px;padding:22px 28px;border-bottom:1px solid var(--line);background:var(--cream)}
+.section-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:32px;font-weight:500;color:var(--gold-deep)}
+.section-title{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:500;flex-grow:1}
+.section-meta{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--slate)}
+.section-body{padding:36px 28px;background:var(--cream)}
+.section-body.shade{background:var(--cream-shade)}
+.section-body.split{padding:0}
+
+.subhead{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold-deep);margin-bottom:18px;display:flex;align-items:center;gap:12px}
+.subhead::before{content:'';height:1px;width:24px;background:var(--gold)}
+
+.row{display:grid;gap:1px;background:var(--line);border-top:1px solid var(--line)}
+.row.r2{grid-template-columns:1fr 1fr}
+.row.r3{grid-template-columns:repeat(3,1fr)}
+.row.r4{grid-template-columns:repeat(4,1fr)}
+@media (max-width:900px){.row.r2,.row.r3,.row.r4{grid-template-columns:1fr}}
+.cell{background:var(--cream);padding:32px 28px}
+.cell.shade{background:var(--cream-shade)}
+.cell.navy{background:var(--navy);color:var(--cream)}
+.cell.deep{background:var(--navy-deep);color:var(--cream)}
+
+/* COLOR TOKENS */
+.swatch{padding:24px 22px;min-height:160px;display:flex;flex-direction:column;justify-content:flex-end;gap:4px;position:relative;overflow:hidden}
+.swatch .role{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;margin-bottom:6px;opacity:.85}
+.swatch .name{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase}
+.swatch .hex{font-family:'DM Mono',monospace;font-size:10px;opacity:.7}
+.swatch .var{font-family:'DM Mono',monospace;font-size:9px;opacity:.5;letter-spacing:.06em}
+
+/* TYPE SCALE */
+.type-row{display:grid;grid-template-columns:120px 1fr 200px;gap:24px;padding:22px 0;border-bottom:1px solid var(--line);align-items:baseline}
+.type-row:last-child{border-bottom:none}
+.type-row .label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--slate)}
+.type-row .label em{display:block;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;text-transform:none;letter-spacing:0;color:var(--gold-deep);margin-top:4px}
+.type-row .meta{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.06em;color:var(--slate);text-align:right;line-height:1.6}
+
+/* Buttons */
+.btn{font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:500;padding:11px 22px;border-radius:4px;border:1px solid transparent;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:all .15s;line-height:1;letter-spacing:0.005em;white-space:nowrap}
+.btn:focus{outline:2px solid var(--gold);outline-offset:2px}
+
+.btn-primary{background:var(--navy);color:var(--cream);border-color:var(--navy)}
+.btn-primary:hover{background:var(--navy-deep);border-color:var(--navy-deep)}
+.btn-primary:active{background:#0E1030}
+
+.btn-secondary{background:transparent;color:var(--navy);border-color:var(--navy)}
+.btn-secondary:hover{background:var(--navy);color:var(--cream)}
+
+.btn-tertiary{background:transparent;color:var(--navy);border-color:transparent;text-decoration:underline;text-underline-offset:4px;text-decoration-color:var(--gold);text-decoration-thickness:1px}
+.btn-tertiary:hover{color:var(--gold-deep)}
+
+.btn-gold{background:var(--gold);color:var(--navy);border-color:var(--gold)}
+.btn-gold:hover{background:var(--gold-deep);color:var(--cream);border-color:var(--gold-deep)}
+
+.btn-danger{background:transparent;color:var(--danger);border-color:var(--danger)}
+.btn-danger:hover{background:var(--danger);color:var(--cream)}
+
+.btn-disabled,.btn[disabled]{background:var(--cream-shade);color:var(--slate-soft);border-color:transparent;cursor:not-allowed;pointer-events:none}
+
+.btn-sm{font-size:13px;padding:8px 16px}
+.btn-lg{font-size:17px;padding:14px 28px}
+.btn-icon{padding:11px 13px}
+
+.btn.dark-bg{background:transparent;color:var(--cream);border-color:var(--cream)}
+.btn.dark-bg:hover{background:var(--cream);color:var(--navy)}
+.btn.dark-bg.btn-primary{background:var(--cream);color:var(--navy);border-color:var(--cream)}
+.btn.dark-bg.btn-primary:hover{background:var(--gold);border-color:var(--gold)}
+
+.btn-stack{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+
+/* Form */
+.field{display:flex;flex-direction:column;gap:6px;font-family:'Cormorant Garamond',serif}
+.field-label{font-size:14px;font-weight:500;color:var(--navy);display:flex;justify-content:space-between;align-items:baseline}
+.field-label .req{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.18em;color:var(--gold-deep);text-transform:uppercase}
+.input,.textarea,.select{font-family:'Cormorant Garamond',serif;font-size:15px;padding:11px 14px;background:#fff;border:1px solid var(--line-strong);border-radius:4px;color:var(--navy);transition:border-color .15s,box-shadow .15s}
+.input:focus,.textarea:focus,.select:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,169,97,0.2)}
+.input::placeholder{color:var(--slate-soft);font-style:italic}
+.textarea{min-height:96px;resize:vertical;font-family:'Cormorant Garamond',serif}
+.field-help{font-size:12px;font-style:italic;color:var(--slate);font-family:'Cormorant Garamond',serif}
+.field-error{font-size:12px;color:var(--danger);font-family:'DM Mono',monospace;letter-spacing:0.04em}
+.field.error .input{border-color:var(--danger)}
+.field.error .input:focus{box-shadow:0 0 0 3px rgba(168,48,42,0.18)}
+
+.check-row{display:flex;align-items:flex-start;gap:10px;font-family:'Cormorant Garamond',serif;font-size:14px;cursor:pointer}
+.check{width:18px;height:18px;border:1px solid var(--line-strong);border-radius:3px;background:#fff;flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;position:relative}
+.check.checked{background:var(--navy);border-color:var(--navy)}
+.check.checked::after{content:'';width:5px;height:9px;border:solid var(--gold);border-width:0 1.5px 1.5px 0;transform:rotate(45deg);margin-top:-2px}
+.radio{width:18px;height:18px;border:1px solid var(--line-strong);border-radius:50%;background:#fff;flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center}
+.radio.checked{border-color:var(--navy);border-width:1.5px}
+.radio.checked::after{content:'';width:8px;height:8px;border-radius:50%;background:var(--gold)}
+
+.toggle{width:38px;height:22px;background:var(--line-strong);border-radius:999px;position:relative;flex-shrink:0;cursor:pointer;transition:background .2s}
+.toggle::after{content:'';position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;transition:left .2s}
+.toggle.on{background:var(--navy)}
+.toggle.on::after{left:18px;background:var(--gold)}
+
+.segmented{display:inline-flex;background:var(--cream-shade);border-radius:4px;padding:3px;gap:2px;font-family:'Cormorant Garamond',serif;font-size:13px}
+.segmented .seg{padding:7px 16px;border-radius:3px;color:var(--navy);cursor:pointer}
+.segmented .seg.active{background:var(--navy);color:var(--cream)}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase}
+.badge::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor}
+.badge-verified{background:rgba(58,122,92,0.12);color:var(--success)}
+.badge-pending{background:rgba(184,134,42,0.14);color:var(--warning)}
+.badge-revoked{background:rgba(168,48,42,0.12);color:var(--danger)}
+.badge-info{background:rgba(60,90,156,0.14);color:var(--info)}
+.badge-gold{background:rgba(201,169,97,0.18);color:var(--gold-deep)}
+.badge-neutral{background:var(--cream-shade);color:var(--slate)}
+.badge-solid{background:var(--navy);color:var(--cream)}
+
+.tag{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:3px;font-family:'Cormorant Garamond',serif;font-size:13px;background:var(--cream-shade);color:var(--navy);border:1px solid var(--line)}
+.tag-removable::after{content:'×';margin-left:4px;color:var(--slate);font-size:14px;line-height:1}
+
+/* ALERTS */
+.alert{display:flex;gap:14px;padding:18px 22px;border-radius:4px;font-family:'Cormorant Garamond',serif;font-size:14px;border-left:3px solid;align-items:flex-start;line-height:1.5}
+.alert .alert-icon{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'DM Mono',monospace;font-size:12px;font-weight:500}
+.alert-info{background:rgba(60,90,156,0.08);border-color:var(--info);color:var(--navy)}
+.alert-info .alert-icon{background:var(--info);color:var(--cream)}
+.alert-success{background:rgba(58,122,92,0.08);border-color:var(--success);color:var(--navy)}
+.alert-success .alert-icon{background:var(--success);color:var(--cream)}
+.alert-warning{background:rgba(184,134,42,0.10);border-color:var(--warning);color:var(--navy)}
+.alert-warning .alert-icon{background:var(--warning);color:var(--cream)}
+.alert-danger{background:rgba(168,48,42,0.08);border-color:var(--danger);color:var(--navy)}
+.alert-danger .alert-icon{background:var(--danger);color:var(--cream)}
+.alert strong{font-weight:600;display:block;margin-bottom:2px}
+.alert em{font-style:italic;color:var(--gold-deep)}
+
+/* CARDS */
+.card{background:#fff;border:1px solid var(--line);border-radius:6px;padding:24px;display:flex;flex-direction:column;gap:14px;box-shadow:0 14px 30px -16px rgba(30,34,96,0.10)}
+.card.dark{background:var(--navy-deep);color:var(--cream);border-color:transparent}
+.card-eyebrow{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold-deep);display:flex;align-items:center;gap:10px}
+.card-eyebrow::before{content:'';width:18px;height:1px;background:var(--gold)}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:22px;line-height:1.2}
+.card-sub{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:14px;color:var(--gold-deep)}
+.card.dark .card-sub{color:var(--gold)}
+.card-body{font-family:'Cormorant Garamond',serif;font-size:15px;line-height:1.55}
+.card-meta{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--slate);display:flex;justify-content:space-between;border-top:1px solid var(--line);padding-top:12px}
+.card.dark .card-meta{color:rgba(245,242,237,0.5);border-top-color:var(--line-dark)}
+.card-cert{padding:0;overflow:hidden}
+.card-cert .seal-strip{background:var(--navy);color:var(--cream);padding:14px 20px;display:flex;align-items:center;gap:10px;font-family:'Tenor Sans',sans-serif;font-size:14px;letter-spacing:0.06em}
+.card-cert-body{padding:22px 24px;display:flex;flex-direction:column;gap:10px}
+
+/* Tabs */
+.tabs{display:flex;border-bottom:1px solid var(--line);font-family:'Cormorant Garamond',serif;font-size:15px;gap:0}
+.tabs .tab{padding:14px 22px;border-bottom:2px solid transparent;color:var(--slate);cursor:pointer;margin-bottom:-1px}
+.tabs .tab.active{color:var(--navy);border-bottom-color:var(--gold)}
+
+/* Breadcrumbs */
+.breadcrumbs{display:flex;align-items:center;gap:8px;font-family:'Cormorant Garamond',serif;font-size:14px;color:var(--slate);font-style:italic}
+.breadcrumbs a{color:var(--slate);text-decoration:none}
+.breadcrumbs a:hover{color:var(--gold-deep)}
+.breadcrumbs .here{color:var(--navy);font-style:normal}
+.breadcrumbs .sep{color:var(--gold)}
+
+/* PAGINATION */
+.pagination{display:inline-flex;font-family:'Cormorant Garamond',serif;font-size:14px;border:1px solid var(--line);border-radius:4px;overflow:hidden}
+.pagination .pg{padding:8px 14px;border-right:1px solid var(--line);cursor:pointer;color:var(--navy);background:#fff}
+.pagination .pg:last-child{border-right:none}
+.pagination .pg:hover{background:var(--cream-shade)}
+.pagination .pg.active{background:var(--navy);color:var(--cream)}
+.pagination .pg.disabled{color:var(--slate-soft);cursor:not-allowed}
+
+/* Avatar */
+.avatar{width:40px;height:40px;border-radius:50%;background:var(--navy);color:var(--cream);display:inline-flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:15px;border:1px solid var(--line)}
+.avatar.gold{background:var(--gold);color:var(--navy)}
+.avatar.cream{background:var(--cream-shade);color:var(--navy)}
+.avatar.lg{width:64px;height:64px;font-size:22px}
+.avatar.sm{width:28px;height:28px;font-size:11px}
+.avatar-stack{display:inline-flex}
+.avatar-stack .avatar{margin-left:-8px;border:2px solid var(--cream)}
+.avatar-stack .avatar:first-child{margin-left:0}
+
+/* Progress */
+.progress{height:6px;background:var(--cream-shade);border-radius:999px;overflow:hidden;width:100%}
+.progress-bar{height:100%;background:var(--navy);border-radius:999px;position:relative}
+.progress-bar.gold{background:var(--gold)}
+.progress-bar::after{content:'';position:absolute;right:0;top:0;bottom:0;width:2px;background:var(--gold)}
+
+.divider-rule{display:flex;align-items:center;gap:14px;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold-deep);margin:32px 0 18px}
+.divider-rule::before,.divider-rule::after{content:'';flex-grow:1;height:1px;background:var(--gold);opacity:.5}
+
+/* Table */
+.tbl{width:100%;font-family:'Cormorant Garamond',serif;font-size:14px;border-collapse:collapse}
+.tbl th{text-align:left;padding:12px 14px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold-deep);background:var(--cream-shade);border-bottom:1px solid var(--line);font-weight:500}
+.tbl td{padding:14px;border-bottom:1px solid var(--line);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.tbl td .meta{font-family:'DM Mono',monospace;font-size:10px;color:var(--slate);letter-spacing:0.04em}
+
+/* Spacing scale */
+.spacing-row{display:grid;grid-template-columns:80px 1fr 80px;gap:18px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);font-family:'Cormorant Garamond',serif;font-size:14px}
+.spacing-row:last-child{border-bottom:none}
+.spacing-row .token{font-family:'DM Mono',monospace;font-size:11px}
+.spacing-row .bar{height:18px;background:var(--gold);border-radius:2px}
+.spacing-row .px{font-family:'DM Mono',monospace;font-size:10px;color:var(--slate);text-align:right}
+
+/* Radius scale */
+.radius-row{display:flex;gap:24px;flex-wrap:wrap}
+.radius-row .r-item{display:flex;flex-direction:column;align-items:center;gap:8px}
+.radius-row .r-box{width:80px;height:80px;background:var(--navy)}
+.radius-row .r-label{font-family:'DM Mono',monospace;font-size:10px;color:var(--slate);letter-spacing:0.06em}
+
+/* Voice cards */
+.voice{padding:24px;background:var(--cream-shade);border-left:2px solid var(--gold);font-family:'Cormorant Garamond',serif}
+.voice h4{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold-deep);margin-bottom:10px}
+.voice p{font-size:15px;line-height:1.55;margin-bottom:8px}
+.voice .yes::before{content:'✓ ';color:var(--success)}
+.voice .no::before{content:'✕ ';color:var(--danger)}
+.voice .yes,.voice .no{display:block;font-size:14px;line-height:1.5;padding:4px 0}
+
+/* App preview */
+.app-preview{background:var(--navy);border-radius:14px;padding:24px;color:var(--cream);min-height:480px;display:flex;flex-direction:column;gap:18px;box-shadow:0 30px 60px -24px rgba(30,34,96,0.5)}
+.app-preview .ap-top{display:flex;justify-content:space-between;align-items:center}
+.app-preview .ap-mark{display:flex;align-items:center;gap:8px;font-family:'Tenor Sans',sans-serif;font-size:16px;letter-spacing:0.06em}
+.app-preview .ap-mark .t{color:var(--gold)}
+.app-preview .ap-h{font-family:'Cormorant Garamond',serif;font-size:30px;line-height:1.1;font-weight:500;margin-top:8px}
+.app-preview .ap-h em{color:var(--gold);font-style:italic}
+.app-preview .ap-card{background:var(--navy-deep);border-radius:8px;padding:16px;border-left:2px solid var(--gold)}
+.app-preview .ap-card h5{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:600}
+.app-preview .ap-card .ap-meta{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:rgba(245,242,237,0.55);margin-top:8px;display:flex;justify-content:space-between}
+
+/* Closing */
+.closing{margin-top:64px;background:var(--navy);color:var(--cream);padding:32px 36px;border-left:2px solid var(--gold);font-family:'DM Sans',sans-serif}
+.closing p{font-size:15px;line-height:1.7;max-width:760px}
+.closing p+p{margin-top:14px}
+.closing em{color:var(--gold);font-style:italic;font-family:'Cormorant Garamond',serif;font-size:16px}
+.closing-eyebrow{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
+
+a{color:var(--navy);text-decoration:underline;text-decoration-color:var(--gold);text-underline-offset:3px;text-decoration-thickness:1px}
+a:hover{color:var(--gold-deep)}
+
+code,kbd{font-family:'DM Mono',monospace;font-size:12px;background:var(--cream-shade);padding:2px 6px;border-radius:3px;color:var(--navy);border:1px solid var(--line)}
+
+/* ============================================================
+   CONFIDENCE BAND — the signature visual treatment.
+   A horizontal stratified gauge that appears on every record,
+   showing how confident Verity is in a credential's chain.
+   Five tiers, gold-deep → cream, with a numerical score.
+============================================================ */
+.cb-tiers{
+  --t-witnessed:#A88A45; /* gold-deep   — full chain */
+  --t-verified: #C9A961; /* gold        — issuer + ledger */
+  --t-pending:  #D9C99B; /* gold-soft   — in-flight */
+  --t-claimed:  #E5DCC3; /* gold-pale   — self-attested */
+  --t-unverified:#D8D2C5; /* cream-warm — no anchor */
+}
+.cband{display:flex;flex-direction:column;gap:10px;font-family:'Cormorant Garamond',serif}
+.cband-head{display:flex;justify-content:space-between;align-items:baseline;gap:16px}
+.cband-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold-deep)}
+.cband-score{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:500;color:var(--navy)}
+.cband-score em{font-style:italic;color:var(--gold-deep);font-weight:500}
+.cband-score .denom{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.06em;color:var(--slate);margin-left:4px}
+
+/* The stratified gauge itself */
+.cb-gauge{display:flex;height:14px;background:var(--cream-shade);border:1px solid var(--line);border-radius:2px;overflow:hidden;position:relative}
+.cb-gauge .seg{flex:1;border-right:1px solid rgba(245,242,237,0.7);position:relative}
+.cb-gauge .seg:last-child{border-right:none}
+.cb-gauge .seg.witnessed {background:#A88A45}
+.cb-gauge .seg.verified  {background:#C9A961}
+.cb-gauge .seg.pending   {background:#D9C99B}
+.cb-gauge .seg.claimed   {background:#E5DCC3}
+.cb-gauge .seg.unverified{background:transparent}
+.cb-gauge .marker{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--navy);box-shadow:0 0 0 2px var(--cream)}
+.cb-gauge .marker::after{content:'';position:absolute;top:-4px;left:-3px;width:8px;height:8px;background:var(--navy);transform:rotate(45deg)}
+
+/* Tick legend below the gauge */
+.cb-ticks{display:grid;grid-template-columns:repeat(5,1fr);gap:0;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--slate);margin-top:2px}
+.cb-ticks span{padding-right:8px;line-height:1.4}
+.cb-ticks span.is-current{color:var(--gold-deep);font-weight:500}
+
+/* Compact inline pill version for table rows */
+.cb-pill{display:inline-flex;align-items:center;gap:8px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--navy)}
+.cb-pill .cb-mini{display:inline-flex;height:6px;width:60px;background:var(--cream-shade);border-radius:1px;overflow:hidden;border:1px solid var(--line)}
+.cb-pill .cb-mini i{height:100%;display:block}
+
+/* Hero-style large band — used on certificates and detail pages */
+.cb-hero{padding:20px 22px;background:#fff;border:1px solid var(--line);border-radius:6px;display:flex;flex-direction:column;gap:14px}
+.cb-hero .cb-headline{display:flex;justify-content:space-between;align-items:flex-end;gap:24px}
+.cb-hero .cb-big{font-family:'Cormorant Garamond',serif;font-weight:500;font-size:42px;letter-spacing:-0.01em;line-height:1;color:var(--navy)}
+.cb-hero .cb-big em{font-style:italic;color:var(--gold-deep)}
+.cb-hero .cb-tier{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:18px;color:var(--gold-deep)}
+.cb-hero .cb-meta{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--slate);text-align:right;line-height:1.7}
+.cb-hero .cb-gauge{height:18px}
+
+/* Confidence factors — what made up the score */
+.cb-factors{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}
+@media (max-width:700px){.cb-factors{grid-template-columns:1fr}}
+.cb-factor{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--cream-shade);border-left:2px solid var(--gold);font-family:'Cormorant Garamond',serif;font-size:13px}
+.cb-factor.miss{border-left-color:var(--line-strong);color:var(--slate)}
+.cb-factor .ok{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--success)}
+.cb-factor.miss .ok{color:var(--slate-soft)}
+
+/* ============================================================
+   ICONOGRAPHY — line system, 1.5px stroke, optional gold-tick
+============================================================ */
+.icon-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:1px;background:var(--line);border:1px solid var(--line)}
+@media (max-width:900px){.icon-grid{grid-template-columns:repeat(3,1fr)}}
+.icon-cell{background:var(--cream);padding:22px 18px;display:flex;flex-direction:column;align-items:center;gap:12px}
+.icon-cell svg{width:28px;height:28px}
+.icon-cell .ic-name{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--slate)}
+
+.icon-spec{display:flex;gap:24px;flex-wrap:wrap;align-items:flex-end;padding:24px 0}
+.icon-spec .spec-item{display:flex;flex-direction:column;align-items:center;gap:8px;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--slate)}
+
+/* ============================================================
+   GRID PREVIEW — for layout section
+============================================================ */
+.grid-preview{position:relative;background:var(--cream-shade);border:1px solid var(--line);padding:14px;display:grid;grid-template-columns:repeat(12,1fr);gap:12px;height:160px}
+.grid-preview .col{background:rgba(201,169,97,0.18);border:1px dashed rgba(201,169,97,0.55);border-radius:2px}
+.grid-preview .col.span-3{grid-column:span 3;background:rgba(30,34,96,0.10);border-color:rgba(30,34,96,0.25)}
+.grid-preview .col.span-6{grid-column:span 6}
+.grid-preview .col.span-12{grid-column:span 12}
+.grid-preview .label{position:absolute;top:8px;left:14px;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold-deep)}
+
+.bp-row{display:grid;grid-template-columns:120px 1fr 140px;gap:18px;align-items:center;padding:14px 0;border-bottom:1px solid var(--line);font-family:'Cormorant Garamond',serif;font-size:14px}
+.bp-row:last-child{border-bottom:none}
+.bp-row .bp-name{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.06em;color:var(--navy)}
+.bp-row .bp-name em{display:block;font-family:'Cormorant Garamond',serif;font-size:13px;font-style:italic;color:var(--gold-deep);text-transform:none;letter-spacing:0;margin-top:2px}
+.bp-row .bp-bar{height:10px;background:var(--gold);border-radius:1px;opacity:.6}
+.bp-row .bp-meta{font-family:'DM Mono',monospace;font-size:10px;color:var(--slate);text-align:right;letter-spacing:.04em}
+
+/* ============================================================
+   MOTION
+============================================================ */
+.motion-row{display:grid;grid-template-columns:160px 1fr 200px;gap:18px;align-items:center;padding:14px 0;border-bottom:1px solid var(--line);font-family:'Cormorant Garamond',serif;font-size:14px}
+.motion-row:last-child{border-bottom:none}
+.motion-row .m-name{font-family:'DM Mono',monospace;font-size:11px;color:var(--navy);letter-spacing:.04em}
+.motion-row .m-name em{display:block;font-family:'Cormorant Garamond',serif;font-size:13px;font-style:italic;color:var(--gold-deep);text-transform:none;letter-spacing:0;margin-top:2px}
+.motion-row .m-meta{font-family:'DM Mono',monospace;font-size:10px;color:var(--slate);text-align:right;letter-spacing:.04em}
+.motion-demo{height:32px;display:flex;align-items:center;background:var(--cream-shade);border:1px solid var(--line);border-radius:2px;padding:0 4px;overflow:hidden;position:relative;cursor:pointer}
+.motion-demo .dot{width:14px;height:14px;background:var(--gold);border-radius:50%;animation:m-glide 2.6s infinite}
+.motion-demo.linear .dot{animation-timing-function:linear}
+.motion-demo.standard .dot{animation-timing-function:cubic-bezier(0.2,0.7,0.2,1)}
+.motion-demo.quick .dot{animation-duration:1.4s;animation-timing-function:cubic-bezier(0.4,0,0.2,1)}
+.motion-demo.entrance .dot{animation-timing-function:cubic-bezier(0,0,0.2,1)}
+.motion-demo.exit .dot{animation-timing-function:cubic-bezier(0.4,0,1,1)}
+@keyframes m-glide{
+  0%,5%{transform:translateX(0);opacity:.4}
+  50%{transform:translateX(calc(100% + 200px));opacity:1}
+  55%,100%{transform:translateX(calc(100% + 200px));opacity:0}
+}
+
+/* ============================================================
+   COMPONENT INVENTORY MAP
+============================================================ */
+.inventory{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line)}
+@media (max-width:900px){.inventory{grid-template-columns:repeat(2,1fr)}}
+.inv-cell{background:var(--cream);padding:18px 20px;display:flex;flex-direction:column;gap:6px;min-height:104px;text-decoration:none;color:inherit;transition:background .15s}
+.inv-cell:hover{background:var(--cream-shade)}
+.inv-cell .inv-num{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.18em;color:var(--gold-deep)}
+.inv-cell .inv-name{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;color:var(--navy);line-height:1.2}
+.inv-cell .inv-sub{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:var(--slate)}
+.inv-cell .inv-tag{margin-top:auto;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--success);display:inline-flex;align-items:center;gap:6px}
+.inv-cell .inv-tag::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor}
+.inv-cell.draft .inv-tag{color:var(--warning)}
+.inv-cell.planned .inv-tag{color:var(--slate-soft)}
+
+/* ============================================================
+   LOGO USAGE
+============================================================ */
+.logo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line)}
+@media (max-width:900px){.logo-grid{grid-template-columns:1fr}}
+.logo-cell{background:var(--cream);padding:36px 24px;display:flex;flex-direction:column;align-items:center;gap:18px;min-height:200px;justify-content:center;position:relative}
+.logo-cell.dark{background:var(--navy);color:var(--cream)}
+.logo-cell .lc-name{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--slate);position:absolute;top:14px;left:18px}
+.logo-cell.dark .lc-name{color:rgba(245,242,237,0.55)}
+
+.dont-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);margin-top:24px}
+@media (max-width:900px){.dont-grid{grid-template-columns:1fr}}
+.dont-cell{background:var(--cream);padding:28px 22px;display:flex;flex-direction:column;gap:14px;align-items:center;text-align:center}
+.dont-cell .dc-mark{height:60px;display:flex;align-items:center;justify-content:center;width:100%}
+.dont-cell .dc-x{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--danger);display:flex;align-items:center;gap:8px}
+.dont-cell .dc-x::before{content:'\00d7';display:inline-flex;width:14px;height:14px;align-items:center;justify-content:center;background:var(--danger);color:var(--cream);border-radius:50%;font-size:10px}
+.dont-cell p{font-family:'Cormorant Garamond',serif;font-size:13px;color:var(--slate);font-style:italic}
+
+/* ============================================================
+   DATA VIZ — chains, ledgers, timelines
+============================================================ */
+.chain{display:flex;flex-direction:column;gap:0;font-family:'Cormorant Garamond',serif;position:relative;padding-left:28px}
+.chain::before{content:'';position:absolute;left:7px;top:14px;bottom:14px;width:1px;background:var(--gold);opacity:.5}
+.chain-event{display:grid;grid-template-columns:1fr 140px;gap:18px;padding:14px 0;align-items:flex-start;position:relative}
+.chain-event::before{content:'';position:absolute;left:-25px;top:18px;width:10px;height:10px;border-radius:50%;background:var(--cream);border:1.5px solid var(--gold)}
+.chain-event.current::before{background:var(--navy);border-color:var(--navy)}
+.chain-event.current::after{content:'';position:absolute;left:-29px;top:14px;width:18px;height:18px;border-radius:50%;background:rgba(201,169,97,0.2);animation:pulse-soft 2.4s infinite}
+@keyframes pulse-soft{0%,100%{transform:scale(0.8);opacity:.6}50%{transform:scale(1.2);opacity:0}}
+.chain-event h5{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:600;color:var(--navy);line-height:1.3}
+.chain-event p{font-family:'Cormorant Garamond',serif;font-size:13px;color:var(--slate);font-style:italic;line-height:1.5;margin-top:2px}
+.chain-event .ce-date{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--slate);text-align:right;line-height:1.5}
+.chain-event .ce-date strong{display:block;color:var(--navy);font-weight:500}
+
+.ledger{font-family:'DM Mono',monospace;font-size:11px;background:var(--navy-deep);color:var(--cream);padding:18px 22px;border-radius:4px;border-left:2px solid var(--gold);line-height:1.7;letter-spacing:.04em;overflow-x:auto;white-space:pre}
+.ledger .lg-key{color:var(--gold)}
+.ledger .lg-hash{color:rgba(245,242,237,0.55)}
+
+/* Tiny stat tile */
+.stat{display:flex;flex-direction:column;gap:6px;padding:18px 20px;background:#fff;border:1px solid var(--line);border-radius:4px}
+.stat .stat-eyebrow{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold-deep)}
+.stat .stat-num{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:500;letter-spacing:-0.01em;color:var(--navy);line-height:1}
+.stat .stat-num em{font-style:italic;color:var(--gold-deep);font-size:24px}
+.stat .stat-sub{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:var(--slate)}
+
+/* Glossary */
+.glossary{display:grid;grid-template-columns:160px 1fr;gap:0 24px;font-family:'Cormorant Garamond',serif;font-size:14px;align-items:baseline}
+.glossary dt{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;color:var(--gold-deep);font-size:15px;padding:10px 0;border-bottom:1px solid var(--line)}
+.glossary dd{padding:10px 0;border-bottom:1px solid var(--line);line-height:1.55;color:var(--navy)}
+
+</style>
+</head>
+<body>
+<div class="shell">
+
+<h1 class="page-title">VERITY, <em>brand system.</em></h1>
+<div class="subtitle">— Foundations · components · UI primitives · in-context applications</div>
+
+<div class="intro-note">
+A complete brand and UI system for <strong>Verity</strong> — the property verification and transaction infrastructure layer for African real estate. Built on five colors, three typefaces, and one logic: <em>navy anchors, cream grounds, gold marks the moment of trust.</em> <strong>This document is the source of truth</strong> — sixteen sections from foundations through the signature <em>confidence band</em> treatment to a full component inventory. Every component composes from the same locked tokens. Click any TOC link to jump.
+</div>
+
+<nav class="toc">
+  <a href="#foundations"><span class="num">— 01 / 16</span><span>Foundations</span><em>palette · spacing · radius</em></a>
+  <a href="#typography"><span class="num">— 02 / 16</span><span>Typography</span><em>scale &amp; hierarchy</em></a>
+  <a href="#logo"><span class="num">— 03 / 16</span><span>Logo system</span><em>marks · clear-space · don'ts</em></a>
+  <a href="#layout"><span class="num">— 04 / 16</span><span>Layout &amp; grid</span><em>breakpoints · columns</em></a>
+  <a href="#elevation"><span class="num">— 05 / 16</span><span>Elevation &amp; depth</span><em>shadows · z-index</em></a>
+  <a href="#iconography"><span class="num">— 06 / 16</span><span>Iconography</span><em>line system · gold-tick</em></a>
+  <a href="#confidence"><span class="num">— 07 / 16</span><span>Confidence band</span><em>signature pattern</em></a>
+  <a href="#buttons"><span class="num">— 08 / 16</span><span>Buttons</span><em>actions &amp; CTAs</em></a>
+  <a href="#forms"><span class="num">— 09 / 16</span><span>Form controls</span><em>inputs · toggles · select</em></a>
+  <a href="#feedback"><span class="num">— 10 / 16</span><span>Status &amp; feedback</span><em>badges · alerts · progress</em></a>
+  <a href="#nav"><span class="num">— 11 / 16</span><span>Navigation</span><em>tabs · breadcrumbs</em></a>
+  <a href="#data"><span class="num">— 12 / 16</span><span>Data display</span><em>cards · tables · avatars</em></a>
+  <a href="#dataviz"><span class="num">— 13 / 16</span><span>Data viz &amp; chains</span><em>timelines · ledgers</em></a>
+  <a href="#motion"><span class="num">— 14 / 16</span><span>Motion</span><em>easing · duration</em></a>
+  <a href="#voice"><span class="num">— 15 / 16</span><span>Voice &amp; copy</span><em>tone · glossary</em></a>
+  <a href="#applied"><span class="num">— 16 / 16</span><span>Applied + inventory</span><em>UI in-context · component map</em></a>
+</nav>
+
+
+<!-- ============================================================
+     1. FOUNDATIONS
+============================================================ -->
+<div class="section" id="foundations">
+  <div class="section-head">
+    <span class="section-num">i.</span>
+    <span class="section-title">Foundations · palette, spacing, radius</span>
+    <span class="section-meta">Five colors · single source of truth</span>
+  </div>
+
+  <div class="section-body">
+    <div class="subhead">Color tokens</div>
+
+    <div class="row r4" style="border:1px solid var(--line)">
+      <div class="cell" style="padding:0">
+        <div class="swatch" style="background:var(--navy);color:var(--cream)">
+          <div class="role">Anchor — both modes</div>
+          <div class="name">Navy</div>
+          <div class="hex">#1E2260</div>
+          <div class="var">--navy</div>
+        </div>
+      </div>
+      <div class="cell" style="padding:0">
+        <div class="swatch" style="background:var(--navy-deep);color:var(--cream)">
+          <div class="role">Elevation on navy</div>
+          <div class="name">Navy deep</div>
+          <div class="hex">#171A4A</div>
+          <div class="var">--navy-deep</div>
+        </div>
+      </div>
+      <div class="cell" style="padding:0">
+        <div class="swatch" style="background:var(--cream);color:var(--navy)">
+          <div class="role">Ground — light</div>
+          <div class="name">Cream</div>
+          <div class="hex">#F5F2ED</div>
+          <div class="var">--cream</div>
+        </div>
+      </div>
+      <div class="cell" style="padding:0">
+        <div class="swatch" style="background:var(--cream-shade);color:var(--navy)">
+          <div class="role">Subtle surface</div>
+          <div class="name">Cream shade</div>
+          <div class="hex">#EEEAE0</div>
+          <div class="var">--cream-shade</div>
+        </div>
+      </div>
+      <div class="cell" style="padding:0">
+        <div class="swatch" style="background:var(--gold);color:var(--navy)">
+          <div class="role">Signal — accent only</div>
+          <div class="name">Gold</div>
+          <div class="hex">#C9A961</div>
+          <div class="var">--gold</div>
+        </div>
+      </div>
+      <div class="cell" style="padding:0">
+        <div class="swatch" style="background:var(--gold-deep);color:var(--cream)">
+          <div class="role">Italic copy on cream</div>
+          <div class="name">Gold deep</div>
+          <div class="hex">#A88A45</div>
+          <div class="var">--gold-deep</div>
+        </div>
+      </div>
+      <div class="cell" style="padding:0">
+        <div class="swatch" style="background:var(--slate);color:var(--cream)">
+          <div class="role">Meta · captions · lines</div>
+          <div class="name">Slate</div>
+          <div class="hex">#6B6F77</div>
+          <div class="var">--slate</div>
+        </div>
+      </div>
+      <div class="cell" style="padding:0">
+        <div class="swatch" style="background:#fff;color:var(--navy);border:1px solid var(--line)">
+          <div class="role">Form ground</div>
+          <div class="name">White</div>
+          <div class="hex">#FFFFFF</div>
+          <div class="var">--white</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider-rule">— Semantic colors —</div>
+
+    <div class="row r4" style="border:1px solid var(--line)">
+      <div class="cell" style="padding:0"><div class="swatch" style="background:var(--success);color:var(--cream)"><div class="role">Verified · success</div><div class="name">Success</div><div class="hex">#3A7A5C</div></div></div>
+      <div class="cell" style="padding:0"><div class="swatch" style="background:var(--warning);color:var(--cream)"><div class="role">Pending · attention</div><div class="name">Warning</div><div class="hex">#B8862A</div></div></div>
+      <div class="cell" style="padding:0"><div class="swatch" style="background:var(--danger);color:var(--cream)"><div class="role">Revoked · error</div><div class="name">Danger</div><div class="hex">#A8302A</div></div></div>
+      <div class="cell" style="padding:0"><div class="swatch" style="background:var(--info);color:var(--cream)"><div class="role">Informational</div><div class="name">Info</div><div class="hex">#3C5A9C</div></div></div>
+    </div>
+  </div>
+
+  <div class="section-body shade" style="border-top:1px solid var(--line)">
+    <div class="row r2">
+      <div class="cell shade">
+        <div class="subhead">Spacing scale · 4px base</div>
+        <div class="spacing-row"><span class="token">--s-1</span><span class="bar" style="width:4px"></span><span class="px">4px</span></div>
+        <div class="spacing-row"><span class="token">--s-2</span><span class="bar" style="width:8px"></span><span class="px">8px</span></div>
+        <div class="spacing-row"><span class="token">--s-3</span><span class="bar" style="width:12px"></span><span class="px">12px</span></div>
+        <div class="spacing-row"><span class="token">--s-4</span><span class="bar" style="width:16px"></span><span class="px">16px</span></div>
+        <div class="spacing-row"><span class="token">--s-6</span><span class="bar" style="width:24px"></span><span class="px">24px</span></div>
+        <div class="spacing-row"><span class="token">--s-8</span><span class="bar" style="width:32px"></span><span class="px">32px</span></div>
+        <div class="spacing-row"><span class="token">--s-12</span><span class="bar" style="width:48px"></span><span class="px">48px</span></div>
+        <div class="spacing-row"><span class="token">--s-16</span><span class="bar" style="width:64px"></span><span class="px">64px</span></div>
+        <div class="spacing-row"><span class="token">--s-24</span><span class="bar" style="width:96px"></span><span class="px">96px</span></div>
+      </div>
+      <div class="cell shade">
+        <div class="subhead">Radius scale · subtle</div>
+        <div class="radius-row" style="margin-top:12px">
+          <div class="r-item"><div class="r-box" style="border-radius:0"></div><div class="r-label">--r-0 · 0px</div></div>
+          <div class="r-item"><div class="r-box" style="border-radius:3px"></div><div class="r-label">--r-1 · 3px</div></div>
+          <div class="r-item"><div class="r-box" style="border-radius:6px"></div><div class="r-label">--r-2 · 6px</div></div>
+          <div class="r-item"><div class="r-box" style="border-radius:10px"></div><div class="r-label">--r-3 · 10px</div></div>
+          <div class="r-item"><div class="r-box" style="border-radius:50%"></div><div class="r-label">--r-full</div></div>
+        </div>
+        <p style="margin-top:24px;font-family:'Cormorant Garamond',serif;font-size:14px;font-style:italic;color:var(--slate);line-height:1.55">— Default <code>--r-1 (3px)</code> for buttons, inputs, badges. Cards <code>--r-2 (6px)</code>. Pills/avatars <code>--r-full</code>. Never higher than 10px on any structural element.</p>
+
+        <div class="subhead" style="margin-top:32px">Elevation</div>
+        <div style="display:flex;gap:18px;flex-wrap:wrap;margin-top:8px">
+          <div style="background:#fff;width:120px;height:80px;border:1px solid var(--line);box-shadow:none;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.16em;color:var(--slate)">FLAT</div>
+          <div style="background:#fff;width:120px;height:80px;border:1px solid var(--line);box-shadow:0 4px 14px -6px rgba(30,34,96,0.12);display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.16em;color:var(--slate)">RAISED</div>
+          <div style="background:#fff;width:120px;height:80px;border:1px solid var(--line);box-shadow:0 14px 30px -16px rgba(30,34,96,0.18);display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.16em;color:var(--slate)">FLOATING</div>
+          <div style="background:#fff;width:120px;height:80px;border:1px solid var(--line);box-shadow:0 30px 60px -24px rgba(30,34,96,0.30);display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.16em;color:var(--slate)">MODAL</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     2. TYPOGRAPHY
+============================================================ -->
+<div class="section" id="typography">
+  <div class="section-head">
+    <span class="section-num">ii.</span>
+    <span class="section-title">Typography · scale &amp; hierarchy</span>
+    <span class="section-meta">Tenor · Cormorant · DM Mono</span>
+  </div>
+
+  <div class="section-body">
+    <div class="subhead">Display + headings · Cormorant Garamond Roman</div>
+
+    <div class="type-row">
+      <span class="label">Display<em>display-1</em></span>
+      <span style="font-family:'Cormorant Garamond',serif;font-weight:500;font-size:64px;letter-spacing:-0.02em;line-height:1.05">Every title, witnessed.</span>
+      <span class="meta">64 / 67<br>weight 500 · −2% LS</span>
+    </div>
+    <div class="type-row">
+      <span class="label">Display<em>display-2</em></span>
+      <span style="font-family:'Cormorant Garamond',serif;font-weight:500;font-size:48px;letter-spacing:-0.015em;line-height:1.1">Records of authority</span>
+      <span class="meta">48 / 53<br>weight 500</span>
+    </div>
+    <div class="type-row">
+      <span class="label">Heading 1<em>h1</em></span>
+      <span style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:36px;letter-spacing:-0.01em;line-height:1.15">Issued credentials of record</span>
+      <span class="meta">36 / 41<br>weight 600</span>
+    </div>
+    <div class="type-row">
+      <span class="label">Heading 2<em>h2</em></span>
+      <span style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:28px;letter-spacing:-0.005em;line-height:1.2">Title of record</span>
+      <span class="meta">28 / 34<br>weight 600</span>
+    </div>
+    <div class="type-row">
+      <span class="label">Heading 3<em>h3</em></span>
+      <span style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:22px;line-height:1.25">Chain of issuance</span>
+      <span class="meta">22 / 28<br>weight 600</span>
+    </div>
+    <div class="type-row">
+      <span class="label">Heading 4<em>h4</em></span>
+      <span style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:18px;line-height:1.3">Holder of record</span>
+      <span class="meta">18 / 24<br>weight 600</span>
+    </div>
+
+    <div class="divider-rule">— Body, captions, meta —</div>
+
+    <div class="type-row">
+      <span class="label">Body lg<em>body-lg</em></span>
+      <span style="font-family:'Cormorant Garamond',serif;font-size:18px;line-height:1.55">Each Verity title is anchored to the issuer of record. Holders may transfer, revoke, or reissue under one chain of authority.</span>
+      <span class="meta">18 / 28<br>weight 400</span>
+    </div>
+    <div class="type-row">
+      <span class="label">Body<em>body</em></span>
+      <span style="font-family:'Cormorant Garamond',serif;font-size:16px;line-height:1.6">Each Verity title is anchored to the issuer of record. Holders may transfer, revoke, or reissue under one chain of authority.</span>
+      <span class="meta">16 / 26<br>weight 400</span>
+    </div>
+    <div class="type-row">
+      <span class="label">Body sm<em>body-sm</em></span>
+      <span style="font-family:'Cormorant Garamond',serif;font-size:14px;line-height:1.55">Each Verity title is anchored to the issuer of record. Holders may transfer, revoke, or reissue.</span>
+      <span class="meta">14 / 22<br>weight 400</span>
+    </div>
+    <div class="type-row">
+      <span class="label">Caption<em>caption</em></span>
+      <span style="font-family:'Cormorant Garamond',serif;font-size:13px;line-height:1.5;color:var(--slate)">Issued under the seal of the Registrar — Cambridge, 2026.</span>
+      <span class="meta">13 / 20<br>color slate</span>
+    </div>
+    <div class="type-row">
+      <span class="label">Tagline<em>tagline</em></span>
+      <span style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:500;font-size:20px;color:var(--gold-deep);line-height:1.3">— the truth behind every title.</span>
+      <span class="meta">20 / 26<br>italic only</span>
+    </div>
+
+    <div class="divider-rule">— Mono · numerals, meta, code —</div>
+
+    <div class="type-row">
+      <span class="label">Mono lg<em>mono-lg</em></span>
+      <span style="font-family:'DM Mono',monospace;font-size:14px;letter-spacing:.04em">FOLIO · 04417 · FILED 2026 · APR · 19</span>
+      <span class="meta">14 / 22<br>+0.04 LS</span>
+    </div>
+    <div class="type-row">
+      <span class="label">Eyebrow<em>eyebrow</em></span>
+      <span style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold-deep)">— ISSUED CREDENTIALS</span>
+      <span class="meta">10 / 14<br>+0.22 LS · upper</span>
+    </div>
+    <div class="type-row">
+      <span class="label">Mono sm<em>mono-sm</em></span>
+      <span style="font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.04em;color:var(--slate)">2026·APR·19 · 09:42 GMT · ED25519:0xA9F2…</span>
+      <span class="meta">11 / 16<br>color slate</span>
+    </div>
+
+    <div class="divider-rule">— Wordmark — reserved —</div>
+    <div class="type-row">
+      <span class="label">Wordmark<em>tenor</em></span>
+      <span style="font-family:'Tenor Sans',sans-serif;font-size:36px;letter-spacing:0.06em">VERI<span style="color:var(--gold)">T</span>Y</span>
+      <span class="meta">Tenor 400<br>+60 tracking · brand only</span>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     3. LOGO SYSTEM
+============================================================ -->
+<div class="section" id="logo">
+  <div class="section-head">
+    <span class="section-num">iii.</span>
+    <span class="section-title">Logo system · marks, lockups, clear-space</span>
+    <span class="section-meta">Shield · gold-tick · wordmark</span>
+  </div>
+
+  <div class="section-body">
+    <div class="subhead">Mark variants</div>
+
+    <div class="logo-grid">
+      <div class="logo-cell">
+        <span class="lc-name">Shield · navy</span>
+        <svg width="68" height="78" viewBox="0 0 44 50">
+          <path d="M 4 0 L 40 0 Q 44 0 44 4 L 44 34 Q 44 37 41.5 38.5 L 24.5 48.3 Q 22 49.7 19.5 48.3 L 2.5 38.5 Q 0 37 0 34 L 0 4 Q 0 0 4 0 Z" fill="#1E2260"/>
+          <path d="M 30 7 L 37 7 L 37 14" stroke="#C9A961" stroke-width="2" fill="none" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="logo-cell">
+        <span class="lc-name">Shield · outline</span>
+        <svg width="68" height="78" viewBox="0 0 44 50">
+          <path d="M 4 0 L 40 0 Q 44 0 44 4 L 44 34 Q 44 37 41.5 38.5 L 24.5 48.3 Q 22 49.7 19.5 48.3 L 2.5 38.5 Q 0 37 0 34 L 0 4 Q 0 0 4 0 Z" fill="none" stroke="#1E2260" stroke-width="1.5"/>
+          <path d="M 30 7 L 37 7 L 37 14" stroke="#C9A961" stroke-width="2" fill="none" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="logo-cell dark">
+        <span class="lc-name">Shield · cream on navy</span>
+        <svg width="68" height="78" viewBox="0 0 44 50">
+          <path d="M 4 0 L 40 0 Q 44 0 44 4 L 44 34 Q 44 37 41.5 38.5 L 24.5 48.3 Q 22 49.7 19.5 48.3 L 2.5 38.5 Q 0 37 0 34 L 0 4 Q 0 0 4 0 Z" fill="#F5F2ED"/>
+          <path d="M 30 7 L 37 7 L 37 14" stroke="#C9A961" stroke-width="2" fill="none" stroke-linecap="round"/>
+        </svg>
+      </div>
+
+      <div class="logo-cell" style="grid-column:span 1">
+        <span class="lc-name">Wordmark</span>
+        <span style="font-family:'Tenor Sans',sans-serif;font-size:34px;letter-spacing:0.06em;color:var(--navy)">VERI<span style="color:var(--gold)">T</span>Y</span>
+      </div>
+      <div class="logo-cell" style="grid-column:span 2">
+        <span class="lc-name">Lockup · horizontal</span>
+        <div style="display:flex;align-items:center;gap:14px">
+          <svg width="44" height="50" viewBox="0 0 44 50">
+            <path d="M 4 0 L 40 0 Q 44 0 44 4 L 44 34 Q 44 37 41.5 38.5 L 24.5 48.3 Q 22 49.7 19.5 48.3 L 2.5 38.5 Q 0 37 0 34 L 0 4 Q 0 0 4 0 Z" fill="#1E2260"/>
+            <path d="M 30 7 L 37 7 L 37 14" stroke="#C9A961" stroke-width="2" fill="none" stroke-linecap="round"/>
+          </svg>
+          <div style="display:flex;flex-direction:column;gap:2px">
+            <span style="font-family:'Tenor Sans',sans-serif;font-size:30px;letter-spacing:0.06em;color:var(--navy);line-height:1">VERI<span style="color:var(--gold)">T</span>Y</span>
+            <span style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:var(--gold-deep);letter-spacing:0.02em">— the truth behind every title</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider-rule">— Clear-space &amp; minimum size —</div>
+
+    <div class="row r2" style="border:1px solid var(--line)">
+      <div class="cell">
+        <p style="font-family:'Cormorant Garamond',serif;font-size:14px;line-height:1.6;color:var(--slate);margin-bottom:18px;font-style:italic">Reserve at least the height of the gold corner-tick on every side. Below 16px on screen, the tick disappears — use the wordmark or full lockup instead.</p>
+        <div style="display:inline-flex;padding:18px;background:repeating-linear-gradient(45deg,transparent 0 6px,rgba(201,169,97,0.18) 6px 7px);border:1px solid var(--gold)">
+          <div style="padding:14px;background:var(--cream)">
+            <svg width="60" height="68" viewBox="0 0 44 50">
+              <path d="M 4 0 L 40 0 Q 44 0 44 4 L 44 34 Q 44 37 41.5 38.5 L 24.5 48.3 Q 22 49.7 19.5 48.3 L 2.5 38.5 Q 0 37 0 34 L 0 4 Q 0 0 4 0 Z" fill="#1E2260"/>
+              <path d="M 30 7 L 37 7 L 37 14" stroke="#C9A961" stroke-width="2" fill="none" stroke-linecap="round"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div class="cell shade">
+        <div class="subhead">Minimum sizes</div>
+        <div style="display:flex;align-items:flex-end;gap:32px;margin-top:8px">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:8px">
+            <svg width="56" height="64" viewBox="0 0 44 50"><path d="M 4 0 L 40 0 Q 44 0 44 4 L 44 34 Q 44 37 41.5 38.5 L 24.5 48.3 Q 22 49.7 19.5 48.3 L 2.5 38.5 Q 0 37 0 34 L 0 4 Q 0 0 4 0 Z" fill="#1E2260"/><path d="M 30 7 L 37 7 L 37 14" stroke="#C9A961" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+            <span style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.16em;color:var(--slate)">PRINT MIN · 5MM</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:8px">
+            <svg width="32" height="36" viewBox="0 0 44 50"><path d="M 4 0 L 40 0 Q 44 0 44 4 L 44 34 Q 44 37 41.5 38.5 L 24.5 48.3 Q 22 49.7 19.5 48.3 L 2.5 38.5 Q 0 37 0 34 L 0 4 Q 0 0 4 0 Z" fill="#1E2260"/><path d="M 30 7 L 37 7 L 37 14" stroke="#C9A961" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+            <span style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.16em;color:var(--slate)">SCREEN MIN · 16PX</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:8px">
+            <svg width="16" height="18" viewBox="0 0 44 50"><path d="M 4 0 L 40 0 Q 44 0 44 4 L 44 34 Q 44 37 41.5 38.5 L 24.5 48.3 Q 22 49.7 19.5 48.3 L 2.5 38.5 Q 0 37 0 34 L 0 4 Q 0 0 4 0 Z" fill="#1E2260"/></svg>
+            <span style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.16em;color:var(--danger)">TOO SMALL · TICK LOST</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider-rule">— Don't —</div>
+
+    <div class="dont-grid">
+      <div class="dont-cell">
+        <div class="dc-mark">
+          <svg width="50" height="56" viewBox="0 0 44 50" style="transform:scaleX(1.6)">
+            <path d="M 4 0 L 40 0 Q 44 0 44 4 L 44 34 Q 44 37 41.5 38.5 L 24.5 48.3 Q 22 49.7 19.5 48.3 L 2.5 38.5 Q 0 37 0 34 L 0 4 Q 0 0 4 0 Z" fill="#1E2260"/>
+            <path d="M 30 7 L 37 7 L 37 14" stroke="#C9A961" stroke-width="2" fill="none" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <span class="dc-x">Don't stretch</span>
+        <p>The shield's proportion is locked.</p>
+      </div>
+      <div class="dont-cell">
+        <div class="dc-mark">
+          <svg width="50" height="56" viewBox="0 0 44 50">
+            <path d="M 4 0 L 40 0 Q 44 0 44 4 L 44 34 Q 44 37 41.5 38.5 L 24.5 48.3 Q 22 49.7 19.5 48.3 L 2.5 38.5 Q 0 37 0 34 L 0 4 Q 0 0 4 0 Z" fill="#A8302A"/>
+            <path d="M 30 7 L 37 7 L 37 14" stroke="#3A7A5C" stroke-width="2" fill="none" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <span class="dc-x">Don't recolor</span>
+        <p>Navy &amp; gold only — never semantic.</p>
+      </div>
+      <div class="dont-cell">
+        <div class="dc-mark">
+          <svg width="50" height="56" viewBox="0 0 44 50">
+            <path d="M 4 0 L 40 0 Q 44 0 44 4 L 44 34 Q 44 37 41.5 38.5 L 24.5 48.3 Q 22 49.7 19.5 48.3 L 2.5 38.5 Q 0 37 0 34 L 0 4 Q 0 0 4 0 Z" fill="#1E2260"/>
+            <path d="M 30 7 L 37 7 L 37 14" stroke="#C9A961" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <path d="M 7 30 L 37 30" stroke="#C9A961" stroke-width="1" fill="none"/>
+            <text x="22" y="42" font-family="Tenor Sans" font-size="6" fill="#C9A961" text-anchor="middle">VERITY</text>
+          </svg>
+        </div>
+        <span class="dc-x">Don't add to the shield</span>
+        <p>The wordmark sits beside it, never inside.</p>
+      </div>
+      <div class="dont-cell">
+        <div class="dc-mark">
+          <svg width="50" height="56" viewBox="0 0 44 50" style="transform:rotate(-15deg)">
+            <path d="M 4 0 L 40 0 Q 44 0 44 4 L 44 34 Q 44 37 41.5 38.5 L 24.5 48.3 Q 22 49.7 19.5 48.3 L 2.5 38.5 Q 0 37 0 34 L 0 4 Q 0 0 4 0 Z" fill="#1E2260"/>
+            <path d="M 30 7 L 37 7 L 37 14" stroke="#C9A961" stroke-width="2" fill="none" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <span class="dc-x">Don't rotate</span>
+        <p>The shield always sits upright — like a seal.</p>
+      </div>
+      <div class="dont-cell">
+        <div class="dc-mark" style="background:repeating-linear-gradient(45deg,#C9A961 0 8px,#1E2260 8px 16px);width:60px;height:60px;border-radius:6px;display:flex;align-items:center;justify-content:center">
+          <svg width="40" height="46" viewBox="0 0 44 50"><path d="M 4 0 L 40 0 Q 44 0 44 4 L 44 34 Q 44 37 41.5 38.5 L 24.5 48.3 Q 22 49.7 19.5 48.3 L 2.5 38.5 Q 0 37 0 34 L 0 4 Q 0 0 4 0 Z" fill="#F5F2ED"/><path d="M 30 7 L 37 7 L 37 14" stroke="#C9A961" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+        </div>
+        <span class="dc-x">Don't sit on busy ground</span>
+        <p>Place on cream, navy, or pure white only.</p>
+      </div>
+      <div class="dont-cell">
+        <div class="dc-mark">
+          <svg width="50" height="56" viewBox="0 0 44 50" style="filter:drop-shadow(2px 4px 0 #C9A961)">
+            <path d="M 4 0 L 40 0 Q 44 0 44 4 L 44 34 Q 44 37 41.5 38.5 L 24.5 48.3 Q 22 49.7 19.5 48.3 L 2.5 38.5 Q 0 37 0 34 L 0 4 Q 0 0 4 0 Z" fill="#1E2260"/>
+            <path d="M 30 7 L 37 7 L 37 14" stroke="#C9A961" stroke-width="2" fill="none" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <span class="dc-x">Don't add effects</span>
+        <p>No drop shadow, gradient, or bevel.</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ============================================================
+     4. LAYOUT &amp; GRID
+============================================================ -->
+<div class="section" id="layout">
+  <div class="section-head">
+    <span class="section-num">iv.</span>
+    <span class="section-title">Layout &amp; grid · breakpoints, columns</span>
+    <span class="section-meta">12-col · 24px gutter · 1320 max</span>
+  </div>
+
+  <div class="section-body">
+    <div class="subhead">Breakpoints</div>
+
+    <div class="bp-row">
+      <span class="bp-name">--bp-sm<em>mobile</em></span>
+      <span class="bp-bar" style="width:18%"></span>
+      <span class="bp-meta">≥ 360px · 4 col · 16 gutter</span>
+    </div>
+    <div class="bp-row">
+      <span class="bp-name">--bp-md<em>tablet</em></span>
+      <span class="bp-bar" style="width:42%"></span>
+      <span class="bp-meta">≥ 768px · 8 col · 20 gutter</span>
+    </div>
+    <div class="bp-row">
+      <span class="bp-name">--bp-lg<em>desktop</em></span>
+      <span class="bp-bar" style="width:72%"></span>
+      <span class="bp-meta">≥ 1100px · 12 col · 24 gutter</span>
+    </div>
+    <div class="bp-row">
+      <span class="bp-name">--bp-xl<em>wide</em></span>
+      <span class="bp-bar" style="width:96%"></span>
+      <span class="bp-meta">≥ 1440px · 12 col · 32 gutter</span>
+    </div>
+
+    <div class="divider-rule">— 12-column grid · desktop —</div>
+
+    <div class="grid-preview">
+      <span class="label">— 12 / 24 / 1320</span>
+      <div class="col"></div><div class="col"></div><div class="col"></div><div class="col"></div>
+      <div class="col"></div><div class="col"></div><div class="col"></div><div class="col"></div>
+      <div class="col"></div><div class="col"></div><div class="col"></div><div class="col"></div>
+    </div>
+
+    <p style="margin-top:18px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:14px;color:var(--slate);line-height:1.6">— Common compositions: detail page = <code>3 / 9</code> (sidebar / record). Marketing hero = <code>7 / 5</code> (copy / object). Dashboard = <code>3 / 6 / 3</code> (filters / list / context). Body text never exceeds <code>8 columns</code> (≈ 65ch).</p>
+
+    <div class="divider-rule">— Compositions —</div>
+
+    <div style="display:flex;flex-direction:column;gap:18px">
+      <div style="display:grid;grid-template-columns:repeat(12,1fr);gap:8px;height:64px">
+        <div style="grid-column:span 3;background:rgba(30,34,96,0.10);border:1px dashed rgba(30,34,96,0.35);border-radius:2px;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:10px;color:var(--navy);letter-spacing:.14em">SIDEBAR · 3</div>
+        <div style="grid-column:span 9;background:rgba(201,169,97,0.18);border:1px dashed rgba(201,169,97,0.55);border-radius:2px;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:10px;color:var(--gold-deep);letter-spacing:.14em">RECORD DETAIL · 9</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(12,1fr);gap:8px;height:64px">
+        <div style="grid-column:span 7;background:rgba(30,34,96,0.10);border:1px dashed rgba(30,34,96,0.35);border-radius:2px;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:10px;color:var(--navy);letter-spacing:.14em">HEADLINE + COPY · 7</div>
+        <div style="grid-column:span 5;background:rgba(201,169,97,0.18);border:1px dashed rgba(201,169,97,0.55);border-radius:2px;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:10px;color:var(--gold-deep);letter-spacing:.14em">OBJECT · 5</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(12,1fr);gap:8px;height:64px">
+        <div style="grid-column:span 3;background:rgba(30,34,96,0.10);border:1px dashed rgba(30,34,96,0.35);border-radius:2px;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:10px;color:var(--navy);letter-spacing:.14em">FILTERS · 3</div>
+        <div style="grid-column:span 6;background:rgba(201,169,97,0.18);border:1px dashed rgba(201,169,97,0.55);border-radius:2px;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:10px;color:var(--gold-deep);letter-spacing:.14em">LIST · 6</div>
+        <div style="grid-column:span 3;background:rgba(30,34,96,0.10);border:1px dashed rgba(30,34,96,0.35);border-radius:2px;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:10px;color:var(--navy);letter-spacing:.14em">CONTEXT · 3</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     5. ELEVATION & DEPTH
+============================================================ -->
+<div class="section" id="elevation">
+  <div class="section-head">
+    <span class="section-num">v.</span>
+    <span class="section-title">Elevation &amp; depth · shadows, z-index</span>
+    <span class="section-meta">Five steps · low chroma · navy-tinted</span>
+  </div>
+
+  <div class="section-body">
+    <div class="subhead">Shadow tokens</div>
+
+    <div class="row r4" style="border:1px solid var(--line);background:var(--cream-shade)">
+      <div class="cell shade" style="display:flex;flex-direction:column;align-items:center;gap:18px;padding:48px 20px 28px">
+        <div style="width:120px;height:80px;background:#fff;border:1px solid var(--line-strong)"></div>
+        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.16em;color:var(--slate);text-align:center"><strong style="display:block;color:var(--navy);font-weight:500;margin-bottom:4px">--shadow-0</strong>FLAT · BORDER ONLY</div>
+      </div>
+      <div class="cell shade" style="display:flex;flex-direction:column;align-items:center;gap:18px;padding:48px 20px 28px">
+        <div style="width:120px;height:80px;background:#fff;border:1px solid var(--line);box-shadow:0 6px 16px -4px rgba(30,34,96,0.22)"></div>
+        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.16em;color:var(--slate);text-align:center"><strong style="display:block;color:var(--navy);font-weight:500;margin-bottom:4px">--shadow-1</strong>RAISED · CARDS &amp; LISTS</div>
+      </div>
+      <div class="cell shade" style="display:flex;flex-direction:column;align-items:center;gap:18px;padding:48px 20px 28px">
+        <div style="width:120px;height:80px;background:#fff;border:1px solid var(--line);box-shadow:0 18px 36px -10px rgba(30,34,96,0.30)"></div>
+        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.16em;color:var(--slate);text-align:center"><strong style="display:block;color:var(--navy);font-weight:500;margin-bottom:4px">--shadow-2</strong>FLOATING · POPOVERS</div>
+      </div>
+      <div class="cell shade" style="display:flex;flex-direction:column;align-items:center;gap:18px;padding:48px 20px 28px">
+        <div style="width:120px;height:80px;background:#fff;border:1px solid var(--line);box-shadow:0 36px 60px -18px rgba(30,34,96,0.42)"></div>
+        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.16em;color:var(--slate);text-align:center"><strong style="display:block;color:var(--navy);font-weight:500;margin-bottom:4px">--shadow-3</strong>MODAL · DRAWERS</div>
+      </div>
+    </div>
+
+    <div class="divider-rule">— Z-index scale —</div>
+
+    <table class="tbl">
+      <thead>
+        <tr><th>Token</th><th>Value</th><th>Use</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>--z-base</code></td><td>0</td><td>Page content</td></tr>
+        <tr><td><code>--z-raised</code></td><td>10</td><td>Sticky headers, cards on hover</td></tr>
+        <tr><td><code>--z-dropdown</code></td><td>100</td><td>Selects, menus, autocomplete</td></tr>
+        <tr><td><code>--z-overlay</code></td><td>500</td><td>Tooltip, popover, scrim</td></tr>
+        <tr><td><code>--z-modal</code></td><td>1000</td><td>Dialog, drawer, sheet</td></tr>
+        <tr><td><code>--z-toast</code></td><td>2000</td><td>Notifications · always on top</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     6. ICONOGRAPHY
+============================================================ -->
+<div class="section" id="iconography">
+  <div class="section-head">
+    <span class="section-num">vi.</span>
+    <span class="section-title">Iconography · line system</span>
+    <span class="section-meta">1.5px stroke · 24px box · gold-tick option</span>
+  </div>
+
+  <div class="section-body">
+    <div class="subhead">Specification</div>
+    <div class="icon-spec">
+      <div class="spec-item">
+        <svg width="72" height="72" viewBox="0 0 24 24"><rect x="0.5" y="0.5" width="23" height="23" fill="none" stroke="rgba(201,169,97,0.55)" stroke-dasharray="2 2"/><rect x="2.5" y="2.5" width="19" height="19" fill="none" stroke="rgba(30,34,96,0.30)" stroke-dasharray="1 2"/><path d="M5 12 L11 17 L19 7" stroke="#1E2260" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>24×24 BOX · 19PX OPTICAL</span>
+      </div>
+      <div class="spec-item">
+        <svg width="72" height="72" viewBox="0 0 24 24"><path d="M5 12 L11 17 L19 7" stroke="#1E2260" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>1.5PX STROKE · ROUND CAPS</span>
+      </div>
+      <div class="spec-item">
+        <svg width="72" height="72" viewBox="0 0 24 24"><path d="M4 13 L10 18 L19 6" stroke="#1E2260" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M17 3 L21 3 L21 7" stroke="#C9A961" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>GOLD-TICK · TOP-RIGHT CORNER</span>
+      </div>
+    </div>
+
+    <div class="divider-rule">— Core icon set —</div>
+
+    <div class="icon-grid">
+      <div class="icon-cell">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M4 7 L20 7 L20 19 L4 19 Z" stroke="#1E2260" stroke-width="1.5" stroke-linejoin="round"/><path d="M4 7 L12 13 L20 7" stroke="#1E2260" stroke-width="1.5" stroke-linejoin="round"/></svg>
+        <span class="ic-name">DEED</span>
+      </div>
+      <div class="icon-cell">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M4 4 L20 4 L20 20 L12 17 L4 20 Z" stroke="#1E2260" stroke-width="1.5" stroke-linejoin="round"/><path d="M9 11 L11 13 L15 9" stroke="#C9A961" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span class="ic-name">VERIFIED</span>
+      </div>
+      <div class="icon-cell">
+        <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" stroke="#1E2260" stroke-width="1.5"/><path d="M12 8 V12 L15 14" stroke="#1E2260" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <span class="ic-name">PENDING</span>
+      </div>
+      <div class="icon-cell">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M4 13 L10 18 L19 6" stroke="#1E2260" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M17 3 L21 3 L21 7" stroke="#C9A961" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span class="ic-name">CHECK · GOLD</span>
+      </div>
+      <div class="icon-cell">
+        <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="9" r="3.5" stroke="#1E2260" stroke-width="1.5"/><path d="M5 20 C5 16 8 14 12 14 C16 14 19 16 19 20" stroke="#1E2260" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <span class="ic-name">HOLDER</span>
+      </div>
+      <div class="icon-cell">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M6 4 L18 4 L18 12 L12 19 L6 12 Z" stroke="#1E2260" stroke-width="1.5" stroke-linejoin="round"/><path d="M16 6 L18.5 6 L18.5 8.5" stroke="#C9A961" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <span class="ic-name">ISSUER</span>
+      </div>
+      <div class="icon-cell">
+        <svg viewBox="0 0 24 24" fill="none"><circle cx="8" cy="8" r="2.5" stroke="#1E2260" stroke-width="1.5"/><circle cx="16" cy="8" r="2.5" stroke="#1E2260" stroke-width="1.5"/><circle cx="12" cy="16" r="2.5" stroke="#1E2260" stroke-width="1.5"/><path d="M9.5 9.5 L11 14.5 M14.5 9.5 L13 14.5" stroke="#1E2260" stroke-width="1.5"/></svg>
+        <span class="ic-name">WITNESS</span>
+      </div>
+      <div class="icon-cell">
+        <svg viewBox="0 0 24 24" fill="none"><circle cx="8" cy="8" r="3" stroke="#1E2260" stroke-width="1.5"/><circle cx="16" cy="16" r="3" stroke="#1E2260" stroke-width="1.5"/><path d="M11 8 L18 8 L18 13 M13 16 L6 16 L6 11" stroke="#1E2260" stroke-width="1.5"/></svg>
+        <span class="ic-name">CHAIN</span>
+      </div>
+      <div class="icon-cell">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M6 12 H18 M14 8 L18 12 L14 16" stroke="#1E2260" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span class="ic-name">TRANSFER</span>
+      </div>
+      <div class="icon-cell">
+        <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" stroke="#1E2260" stroke-width="1.5"/><path d="M8 12 L11 15 L16 9" stroke="#C9A961" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span class="ic-name">SEAL</span>
+      </div>
+      <div class="icon-cell">
+        <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" stroke="#1E2260" stroke-width="1.5"/><path d="M8 8 L16 16 M16 8 L8 16" stroke="#A8302A" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <span class="ic-name">REVOKE</span>
+      </div>
+      <div class="icon-cell">
+        <svg viewBox="0 0 24 24" fill="none"><rect x="4" y="4" width="16" height="16" rx="1" stroke="#1E2260" stroke-width="1.5"/><path d="M8 9 H16 M8 12 H16 M8 15 H13" stroke="#1E2260" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <span class="ic-name">LEDGER</span>
+      </div>
+      <div class="icon-cell">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M4 19 L20 19 M5 19 V10 L12 5 L19 10 V19" stroke="#1E2260" stroke-width="1.5" stroke-linejoin="round"/><path d="M10 19 V13 H14 V19" stroke="#1E2260" stroke-width="1.5" stroke-linejoin="round"/></svg>
+        <span class="ic-name">PROPERTY</span>
+      </div>
+      <div class="icon-cell">
+        <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="10" r="3" stroke="#1E2260" stroke-width="1.5"/><path d="M12 4 C16 4 19 7 19 11 C19 15 12 21 12 21 C12 21 5 15 5 11 C5 7 8 4 12 4 Z" stroke="#1E2260" stroke-width="1.5" stroke-linejoin="round"/></svg>
+        <span class="ic-name">LOCATION</span>
+      </div>
+      <div class="icon-cell">
+        <svg viewBox="0 0 24 24" fill="none"><rect x="4" y="6" width="16" height="14" rx="1" stroke="#1E2260" stroke-width="1.5"/><path d="M4 10 H20 M9 4 V8 M15 4 V8" stroke="#1E2260" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <span class="ic-name">DATE FILED</span>
+      </div>
+      <div class="icon-cell">
+        <svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="6" stroke="#1E2260" stroke-width="1.5"/><path d="M16 16 L20 20" stroke="#1E2260" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <span class="ic-name">SEARCH</span>
+      </div>
+      <div class="icon-cell">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 4 V16 M7 11 L12 16 L17 11" stroke="#1E2260" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 20 H19" stroke="#1E2260" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <span class="ic-name">DOWNLOAD</span>
+      </div>
+      <div class="icon-cell">
+        <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" stroke="#1E2260" stroke-width="1.5"/><path d="M12 8 V12 M12 15 V15.5" stroke="#1E2260" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <span class="ic-name">INFO</span>
+      </div>
+    </div>
+
+    <p style="margin-top:18px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:14px;color:var(--slate);line-height:1.6">— Icons render in <code>--navy</code>. Add the gold corner-tick only on <em>moments of trust</em> — verified, witnessed, sealed. Never on neutral nouns (folder, search, date).</p>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     7. CONFIDENCE BAND — signature pattern
+============================================================ -->
+<div class="section" id="confidence">
+  <div class="section-head">
+    <span class="section-num">vii.</span>
+    <span class="section-title">Confidence band · the signature pattern</span>
+    <span class="section-meta">Five tiers · gauge + score + factors</span>
+  </div>
+
+  <div class="section-body cb-tiers">
+    <p style="font-family:'Cormorant Garamond',serif;font-size:17px;line-height:1.6;max-width:780px;margin-bottom:24px">The <em style="font-style:italic;color:var(--gold-deep)">confidence band</em> is Verity's signature. Every credential displays one. It encodes how complete a record's chain of authority is — from <strong>witnessed</strong> (anchored, signed, third-party affirmed) down to <strong>unverified</strong> (a claim with no backing). Five tiers, never more, each a step deeper into gold.</p>
+
+    <div class="subhead">The five tiers</div>
+
+    <div class="row r5" style="grid-template-columns:repeat(5,1fr);border:1px solid var(--line)">
+      <div class="cell" style="padding:0">
+        <div class="swatch" style="background:#A88A45;color:var(--cream);min-height:140px">
+          <div class="role">Tier 5 · highest</div>
+          <div class="name">Witnessed</div>
+          <div class="hex">100 — 90</div>
+          <div class="var">issuer + ledger + ≥3 witnesses</div>
+        </div>
+      </div>
+      <div class="cell" style="padding:0">
+        <div class="swatch" style="background:#C9A961;color:var(--navy);min-height:140px">
+          <div class="role">Tier 4</div>
+          <div class="name">Verified</div>
+          <div class="hex">89 — 70</div>
+          <div class="var">issuer signed · ledger anchored</div>
+        </div>
+      </div>
+      <div class="cell" style="padding:0">
+        <div class="swatch" style="background:#D9C99B;color:var(--navy);min-height:140px">
+          <div class="role">Tier 3</div>
+          <div class="name">Pending</div>
+          <div class="hex">69 — 45</div>
+          <div class="var">issuance in flight</div>
+        </div>
+      </div>
+      <div class="cell" style="padding:0">
+        <div class="swatch" style="background:#E5DCC3;color:var(--navy);min-height:140px">
+          <div class="role">Tier 2</div>
+          <div class="name">Claimed</div>
+          <div class="hex">44 — 20</div>
+          <div class="var">self-attested · no third party</div>
+        </div>
+      </div>
+      <div class="cell" style="padding:0">
+        <div class="swatch" style="background:#D8D2C5;color:var(--slate);min-height:140px">
+          <div class="role">Tier 1 · lowest</div>
+          <div class="name">Unverified</div>
+          <div class="hex">19 — 0</div>
+          <div class="var">no anchor on file</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider-rule">— Hero band · used on records, certificates, detail pages —</div>
+
+    <div class="cb-hero">
+      <div class="cb-headline">
+        <div>
+          <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold-deep);margin-bottom:8px">— CONFIDENCE</div>
+          <div class="cb-big">94 <span style="font-family:'DM Mono',monospace;font-size:14px;letter-spacing:.06em;color:var(--slate);font-weight:400">/ 100</span></div>
+          <div class="cb-tier">— witnessed.</div>
+        </div>
+        <div class="cb-meta">
+          <div>FOLIO · 0xA9F2</div>
+          <div>EVAL · 2026·APR·19</div>
+          <div>ANCHORED · ED25519</div>
+        </div>
+      </div>
+
+      <div class="cb-gauge">
+        <div class="seg unverified"></div>
+        <div class="seg claimed"></div>
+        <div class="seg pending"></div>
+        <div class="seg verified"></div>
+        <div class="seg witnessed"></div>
+        <div class="marker" style="left:94%"></div>
+      </div>
+      <div class="cb-ticks">
+        <span>Unverified</span>
+        <span>Claimed</span>
+        <span>Pending</span>
+        <span>Verified</span>
+        <span class="is-current">Witnessed →</span>
+      </div>
+
+      <div class="cb-factors">
+        <div class="cb-factor">Issuer of record signed<span class="ok">✓ +30</span></div>
+        <div class="cb-factor">Anchored on chain · ED25519<span class="ok">✓ +25</span></div>
+        <div class="cb-factor">Third-party witnesses · 3 of 3<span class="ok">✓ +25</span></div>
+        <div class="cb-factor">Holder identity verified<span class="ok">✓ +14</span></div>
+        <div class="cb-factor miss">Notarial deed scan attached<span class="ok">— pending</span></div>
+        <div class="cb-factor">Continuous chain · no gaps<span class="ok">✓ +0</span></div>
+      </div>
+    </div>
+
+    <div class="divider-rule">— Compact, inline forms —</div>
+
+    <div class="row r2" style="border:1px solid var(--line)">
+      <div class="cell">
+        <div class="subhead">Card form · fits in a 320px card</div>
+        <div class="cband" style="margin-top:8px">
+          <div class="cband-head">
+            <span class="cband-label">— Confidence</span>
+            <span class="cband-score">76<span class="denom">/100</span></span>
+          </div>
+          <div class="cb-gauge">
+            <div class="seg unverified"></div>
+            <div class="seg claimed"></div>
+            <div class="seg pending"></div>
+            <div class="seg verified"></div>
+            <div class="seg witnessed"></div>
+            <div class="marker" style="left:76%"></div>
+          </div>
+          <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:14px;color:var(--gold-deep)">— verified.</div>
+        </div>
+
+        <div style="margin-top:24px" class="cband">
+          <div class="cband-head">
+            <span class="cband-label">— Confidence</span>
+            <span class="cband-score"><em>52</em><span class="denom">/100</span></span>
+          </div>
+          <div class="cb-gauge">
+            <div class="seg unverified"></div>
+            <div class="seg claimed"></div>
+            <div class="seg pending"></div>
+            <div class="seg verified"></div>
+            <div class="seg witnessed"></div>
+            <div class="marker" style="left:52%"></div>
+          </div>
+          <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:14px;color:var(--gold-deep)">— pending.</div>
+        </div>
+
+        <div style="margin-top:24px" class="cband">
+          <div class="cband-head">
+            <span class="cband-label">— Confidence</span>
+            <span class="cband-score"><em>28</em><span class="denom">/100</span></span>
+          </div>
+          <div class="cb-gauge">
+            <div class="seg unverified"></div>
+            <div class="seg claimed"></div>
+            <div class="seg pending"></div>
+            <div class="seg verified"></div>
+            <div class="seg witnessed"></div>
+            <div class="marker" style="left:28%"></div>
+          </div>
+          <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:14px;color:var(--gold-deep)">— claimed.</div>
+        </div>
+      </div>
+
+      <div class="cell shade">
+        <div class="subhead">Pill form · in tables &amp; rows</div>
+        <div style="display:flex;flex-direction:column;gap:14px;margin-top:8px">
+          <div style="display:flex;align-items:center;gap:18px;justify-content:space-between"><span style="font-family:'Cormorant Garamond',serif;font-size:15px">Brookline Deed</span><div class="cb-pill"><span class="cb-mini"><i style="background:#A88A45;width:94%"></i></span>94 · WITNESSED</div></div>
+          <div style="display:flex;align-items:center;gap:18px;justify-content:space-between"><span style="font-family:'Cormorant Garamond',serif;font-size:15px">CFA Charter</span><div class="cb-pill"><span class="cb-mini"><i style="background:#C9A961;width:78%"></i></span>78 · VERIFIED</div></div>
+          <div style="display:flex;align-items:center;gap:18px;justify-content:space-between"><span style="font-family:'Cormorant Garamond',serif;font-size:15px">Vehicle K·8821</span><div class="cb-pill"><span class="cb-mini"><i style="background:#D9C99B;width:54%"></i></span>54 · PENDING</div></div>
+          <div style="display:flex;align-items:center;gap:18px;justify-content:space-between"><span style="font-family:'Cormorant Garamond',serif;font-size:15px">Lekki Phase 1 plot</span><div class="cb-pill"><span class="cb-mini"><i style="background:#E5DCC3;width:32%"></i></span>32 · CLAIMED</div></div>
+          <div style="display:flex;align-items:center;gap:18px;justify-content:space-between"><span style="font-family:'Cormorant Garamond',serif;font-size:15px">Marylebone lease</span><div class="cb-pill"><span class="cb-mini"><i style="background:#D8D2C5;width:8%"></i></span>08 · UNVERIFIED</div></div>
+        </div>
+
+        <div class="divider-rule">— Rules —</div>
+        <ul style="font-family:'Cormorant Garamond',serif;font-size:14px;line-height:1.7;color:var(--navy);padding-left:20px">
+          <li>Always show the score and tier name together. The number alone is illegible.</li>
+          <li>Marker is <code>--navy</code> with a cream halo so it reads on any tier.</li>
+          <li>Italic tier name in <code>--gold-deep</code> — the only italic permitted on this component.</li>
+          <li>Never invent a sixth tier or rename one. The five are the brand.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="section" id="buttons">
+  <div class="section-head">
+    <span class="section-num">viii.</span>
+    <span class="section-title">Buttons · actions &amp; calls to action</span>
+    <span class="section-meta">Five styles · three sizes · light + dark</span>
+  </div>
+
+  <div class="section-body">
+    <div class="subhead">Hierarchy</div>
+    <div class="btn-stack">
+      <button class="btn btn-primary">Verify a title</button>
+      <button class="btn btn-secondary">Issuer login</button>
+      <button class="btn btn-tertiary">Learn more</button>
+      <button class="btn btn-gold">Get verified</button>
+      <button class="btn btn-danger">Revoke</button>
+      <button class="btn btn-disabled" disabled>Pending</button>
+    </div>
+    <p style="margin-top:18px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:14px;color:var(--slate)">— Use one primary per view. Gold is reserved for the single most-important moment per surface (sign-up, verify, witness). Never two gold CTAs in the same frame.</p>
+
+    <div class="divider-rule">— Sizes —</div>
+    <div class="btn-stack" style="align-items:center">
+      <button class="btn btn-primary btn-sm">Small</button>
+      <button class="btn btn-primary">Default</button>
+      <button class="btn btn-primary btn-lg">Large</button>
+      <button class="btn btn-primary btn-icon" aria-label="Verify">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7l3 3 5-6" stroke="#C9A961" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <button class="btn btn-primary"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7l3 3 5-6" stroke="#C9A961" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> With icon</button>
+    </div>
+
+    <div class="divider-rule">— States —</div>
+    <div class="btn-stack">
+      <button class="btn btn-primary">Default</button>
+      <button class="btn btn-primary" style="background:var(--navy-deep);border-color:var(--navy-deep)">Hover</button>
+      <button class="btn btn-primary" style="background:#0E1030;border-color:#0E1030">Active</button>
+      <button class="btn btn-primary" style="outline:2px solid var(--gold);outline-offset:2px">Focus</button>
+      <button class="btn btn-primary" disabled>Disabled</button>
+    </div>
+  </div>
+
+  <div class="section-body" style="background:var(--navy);border-top:1px solid var(--line-dark);color:var(--cream)">
+    <div class="subhead" style="color:var(--gold)">— On dark surfaces</div>
+    <div class="btn-stack">
+      <button class="btn btn-primary dark-bg">Verify a title</button>
+      <button class="btn dark-bg">Issuer login</button>
+      <button class="btn btn-gold">Get verified</button>
+      <button class="btn dark-bg btn-tertiary" style="color:var(--cream);text-decoration-color:var(--gold)">Learn more</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     4. FORMS
+============================================================ -->
+<div class="section" id="forms">
+  <div class="section-head">
+    <span class="section-num">ix.</span>
+    <span class="section-title">Form controls · inputs, selects, toggles</span>
+    <span class="section-meta">Cormorant labels · gold focus</span>
+  </div>
+
+  <div class="row r2">
+    <div class="cell">
+      <div class="subhead">Text inputs</div>
+      <div style="display:flex;flex-direction:column;gap:18px;max-width:380px">
+        <div class="field">
+          <label class="field-label">Title number<span class="req">REQUIRED</span></label>
+          <input class="input" placeholder="0xA9F2…" />
+          <span class="field-help">— enter the 8-character folio of record.</span>
+        </div>
+        <div class="field">
+          <label class="field-label">Holder name</label>
+          <input class="input" value="Margot Chen" />
+        </div>
+        <div class="field error">
+          <label class="field-label">Email</label>
+          <input class="input" value="margot@verity" />
+          <span class="field-error">INVALID · expecting full address</span>
+        </div>
+        <div class="field">
+          <label class="field-label">Notes</label>
+          <textarea class="textarea" placeholder="— add a note to the chain of custody…"></textarea>
+        </div>
+        <div class="field">
+          <label class="field-label">Issuer</label>
+          <select class="select">
+            <option>Bank of England — Registry</option>
+            <option>Land Registry · England &amp; Wales</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="cell shade">
+      <div class="subhead">Toggles &amp; choices</div>
+      <div style="display:flex;flex-direction:column;gap:20px;max-width:380px">
+
+        <div>
+          <label class="field-label" style="margin-bottom:10px">Notification preference</label>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <label class="check-row"><span class="radio checked"></span><span>Email · default<br><span style="color:var(--slate);font-size:12px;font-style:italic">Receipts and chain events</span></span></label>
+            <label class="check-row"><span class="radio"></span><span>SMS · for high-value titles</span></label>
+            <label class="check-row"><span class="radio"></span><span>None</span></label>
+          </div>
+        </div>
+
+        <div>
+          <label class="field-label" style="margin-bottom:10px">Visibility</label>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <label class="check-row"><span class="check checked"></span><span>Public chain · anyone can verify</span></label>
+            <label class="check-row"><span class="check"></span><span>Private · access by signature</span></label>
+            <label class="check-row"><span class="check checked"></span><span>Allow reissue</span></label>
+          </div>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+          <span style="font-family:'Cormorant Garamond',serif;font-size:14px">Witness mode</span>
+          <span class="toggle on"></span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)">
+          <span style="font-family:'Cormorant Garamond',serif;font-size:14px">Two-factor auth</span>
+          <span class="toggle"></span>
+        </div>
+
+        <div>
+          <label class="field-label" style="margin-bottom:10px">View</label>
+          <div class="segmented">
+            <span class="seg active">Records</span>
+            <span class="seg">Issuers</span>
+            <span class="seg">Holders</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     5. STATUS & FEEDBACK
+============================================================ -->
+<div class="section" id="feedback">
+  <div class="section-head">
+    <span class="section-num">x.</span>
+    <span class="section-title">Status &amp; feedback</span>
+    <span class="section-meta">Badges · alerts · progress · tags</span>
+  </div>
+
+  <div class="row r2">
+    <div class="cell">
+      <div class="subhead">Badges &amp; tags</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center">
+        <span class="badge badge-verified">Verified</span>
+        <span class="badge badge-pending">Pending</span>
+        <span class="badge badge-revoked">Revoked</span>
+        <span class="badge badge-info">In transfer</span>
+        <span class="badge badge-gold">Witnessed</span>
+        <span class="badge badge-neutral">Draft</span>
+        <span class="badge badge-solid">Of record</span>
+      </div>
+
+      <div style="margin-top:24px">
+        <div class="subhead">Tags · removable</div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px">
+          <span class="tag">Real estate</span>
+          <span class="tag">2026</span>
+          <span class="tag tag-removable">Brookline</span>
+          <span class="tag tag-removable">High-value</span>
+          <span class="tag tag-removable">— filed</span>
+        </div>
+      </div>
+
+      <div style="margin-top:32px">
+        <div class="subhead">Progress</div>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-family:'Cormorant Garamond',serif;font-size:13px"><span>Issuance</span><span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--slate)">3 / 4 STEPS</span></div>
+            <div class="progress"><div class="progress-bar" style="width:75%"></div></div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-family:'Cormorant Garamond',serif;font-size:13px"><span>Reissue</span><span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--slate)">42%</span></div>
+            <div class="progress"><div class="progress-bar gold" style="width:42%"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cell shade">
+      <div class="subhead">Alerts &amp; banners</div>
+      <div style="display:flex;flex-direction:column;gap:14px">
+
+        <div class="alert alert-info">
+          <span class="alert-icon">i</span>
+          <div><strong>Chain extended.</strong> Title 0xA9F2 has a new ledger entry from issuer of record — <em>Cambridge Land Registry</em>.</div>
+        </div>
+
+        <div class="alert alert-success">
+          <span class="alert-icon">✓</span>
+          <div><strong>Verified.</strong> The credential is anchored, signed, and unbroken from issuance to today.</div>
+        </div>
+
+        <div class="alert alert-warning">
+          <span class="alert-icon">!</span>
+          <div><strong>Re-issuance pending.</strong> Two witnesses required before this title returns to verified state.</div>
+        </div>
+
+        <div class="alert alert-danger">
+          <span class="alert-icon">×</span>
+          <div><strong>Revoked.</strong> This title was withdrawn by its issuer on <em>19 April 2026</em>. Verification will fail.</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     6. NAVIGATION
+============================================================ -->
+<div class="section" id="nav">
+  <div class="section-head">
+    <span class="section-num">xi.</span>
+    <span class="section-title">Navigation</span>
+    <span class="section-meta">Tabs · breadcrumbs · pagination · top bar</span>
+  </div>
+
+  <div class="section-body">
+
+    <div class="subhead">Top bar · light + dark</div>
+
+    <div style="background:#fff;border:1px solid var(--line);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;border-radius:6px;margin-bottom:16px">
+      <div style="display:flex;align-items:center;gap:32px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <svg width="22" height="25" viewBox="0 0 44 50">
+            <path d="M 4 0 L 40 0 Q 44 0 44 4 L 44 34 Q 44 37 41.5 38.5 L 24.5 48.3 Q 22 49.7 19.5 48.3 L 2.5 38.5 Q 0 37 0 34 L 0 4 Q 0 0 4 0 Z" fill="#1E2260"/>
+            <path d="M 30 7 L 37 7 L 37 14" stroke="#C9A961" stroke-width="2" fill="none" stroke-linecap="round"/>
+          </svg>
+          <span style="font-family:'Tenor Sans',sans-serif;font-size:16px;letter-spacing:0.06em;color:var(--navy)">VERI<span style="color:var(--gold)">T</span>Y</span>
+        </div>
+        <div style="display:flex;gap:24px;font-family:'Cormorant Garamond',serif;font-size:14px">
+          <a href="#" style="text-decoration:none;color:var(--navy);border-bottom:1px solid var(--gold);padding-bottom:2px">Records</a>
+          <a href="#" style="text-decoration:none;color:var(--slate)">Issuers</a>
+          <a href="#" style="text-decoration:none;color:var(--slate)">Holders</a>
+          <a href="#" style="text-decoration:none;color:var(--slate)">Pricing</a>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center">
+        <button class="btn btn-tertiary btn-sm">Sign in</button>
+        <button class="btn btn-primary btn-sm">Verify</button>
+      </div>
+    </div>
+
+    <div style="background:var(--navy);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;border-radius:6px;color:var(--cream)">
+      <div style="display:flex;align-items:center;gap:32px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <svg width="22" height="25" viewBox="0 0 44 50">
+            <path d="M 4 0 L 40 0 Q 44 0 44 4 L 44 34 Q 44 37 41.5 38.5 L 24.5 48.3 Q 22 49.7 19.5 48.3 L 2.5 38.5 Q 0 37 0 34 L 0 4 Q 0 0 4 0 Z" fill="#F5F2ED"/>
+            <path d="M 30 7 L 37 7 L 37 14" stroke="#C9A961" stroke-width="2" fill="none" stroke-linecap="round"/>
+          </svg>
+          <span style="font-family:'Tenor Sans',sans-serif;font-size:16px;letter-spacing:0.06em">VERI<span style="color:var(--gold)">T</span>Y</span>
+        </div>
+        <div style="display:flex;gap:24px;font-family:'Cormorant Garamond',serif;font-size:14px">
+          <a href="#" style="text-decoration:none;color:var(--cream);border-bottom:1px solid var(--gold);padding-bottom:2px">Dashboard</a>
+          <a href="#" style="text-decoration:none;color:rgba(245,242,237,0.65)">Titles</a>
+          <a href="#" style="text-decoration:none;color:rgba(245,242,237,0.65)">Witnesses</a>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center">
+        <span class="avatar gold sm">MC</span>
+        <span style="font-family:'Cormorant Garamond',serif;font-size:13px">Margot Chen</span>
+      </div>
+    </div>
+
+    <div class="divider-rule">— Tabs —</div>
+    <div class="tabs">
+      <span class="tab active">Records</span>
+      <span class="tab">Witnesses</span>
+      <span class="tab">Reissues</span>
+      <span class="tab">Audit log</span>
+    </div>
+
+    <div class="divider-rule">— Breadcrumbs —</div>
+    <div class="breadcrumbs">
+      <a>Registry</a><span class="sep">/</span>
+      <a>Real estate</a><span class="sep">/</span>
+      <a>Brookline</a><span class="sep">/</span>
+      <span class="here">Deed · 0xA9F2</span>
+    </div>
+
+    <div class="divider-rule">— Pagination —</div>
+    <div class="pagination">
+      <span class="pg disabled">‹</span>
+      <span class="pg">1</span>
+      <span class="pg active">2</span>
+      <span class="pg">3</span>
+      <span class="pg">4</span>
+      <span class="pg">…</span>
+      <span class="pg">12</span>
+      <span class="pg">›</span>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ============================================================
+     7. DATA DISPLAY
+============================================================ -->
+<div class="section" id="data">
+  <div class="section-head">
+    <span class="section-num">xii.</span>
+    <span class="section-title">Data display</span>
+    <span class="section-meta">Cards · tables · avatars</span>
+  </div>
+
+  <div class="section-body shade">
+    <div class="subhead">Cards</div>
+    <div class="row r3" style="background:transparent;border:none">
+      <div class="card">
+        <div class="card-eyebrow">— Title of record</div>
+        <div class="card-title">Brookline Deed</div>
+        <div class="card-sub">verified seven minutes ago</div>
+        <div class="card-body">A residential title, anchored to the <em style="font-style:italic;color:var(--gold-deep)">Cambridge Land Registry</em>, with one reissue in 2024.</div>
+        <div class="card-meta"><span>FOLIO 0xA9F2</span><span>2026·APR·19</span></div>
+      </div>
+
+      <div class="card dark">
+        <div class="card-eyebrow" style="color:var(--gold)">— Active witness</div>
+        <div class="card-title" style="color:var(--cream)">CFA Charter</div>
+        <div class="card-sub">witnessed today.</div>
+        <div class="card-body">Three issuers signed this credential at the morning ledger close. <em>Witnessed</em> by the chain.</div>
+        <div class="card-meta"><span>2024 / 0xCFA9</span><span>VERIFIED</span></div>
+      </div>
+
+      <div class="card card-cert">
+        <div class="seal-strip">
+          <svg width="22" height="25" viewBox="0 0 44 50">
+            <path d="M 4 0 L 40 0 Q 44 0 44 4 L 44 34 Q 44 37 41.5 38.5 L 24.5 48.3 Q 22 49.7 19.5 48.3 L 2.5 38.5 Q 0 37 0 34 L 0 4 Q 0 0 4 0 Z" fill="#F5F2ED"/>
+            <path d="M 30 7 L 37 7 L 37 14" stroke="#C9A961" stroke-width="2" fill="none" stroke-linecap="round"/>
+          </svg>
+          VERI<span style="color:var(--gold)">T</span>Y · CERTIFICATE
+        </div>
+        <div class="card-cert-body">
+          <div class="card-eyebrow">— Vehicle title</div>
+          <div class="card-title">K · 8821</div>
+          <div class="card-sub">— the truth behind every title</div>
+          <div class="card-body" style="font-size:14px">2018 series · transferred 2023, reissued 2026.</div>
+          <div class="card-meta"><span>K8821</span><span>FILED</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-body" style="border-top:1px solid var(--line)">
+    <div class="subhead">Tables</div>
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th style="width:40%">Title of record</th>
+          <th>Holder</th>
+          <th>Status</th>
+          <th>Last event</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><div style="display:flex;align-items:center;gap:12px"><span class="avatar gold sm">B</span><div><div style="font-weight:600">Brookline Deed</div><div class="meta">0xA9F2 · Real estate</div></div></div></td>
+          <td>M. Chen</td>
+          <td><span class="badge badge-verified">Verified</span></td>
+          <td><span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--slate)">2026·APR·19</span></td>
+          <td><a href="#">View</a></td>
+        </tr>
+        <tr>
+          <td><div style="display:flex;align-items:center;gap:12px"><span class="avatar sm">C</span><div><div style="font-weight:600">CFA Charter</div><div class="meta">0xCFA9 · Credential</div></div></div></td>
+          <td>M. Chen</td>
+          <td><span class="badge badge-gold">Witnessed</span></td>
+          <td><span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--slate)">2026·APR·18</span></td>
+          <td><a href="#">View</a></td>
+        </tr>
+        <tr>
+          <td><div style="display:flex;align-items:center;gap:12px"><span class="avatar cream sm">K</span><div><div style="font-weight:600">Vehicle K·8821</div><div class="meta">2018 series · auto</div></div></div></td>
+          <td>R. Adeyemi</td>
+          <td><span class="badge badge-pending">Pending</span></td>
+          <td><span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--slate)">2026·APR·17</span></td>
+          <td><a href="#">View</a></td>
+        </tr>
+        <tr>
+          <td><div style="display:flex;align-items:center;gap:12px"><span class="avatar sm">M</span><div><div style="font-weight:600">Marylebone lease</div><div class="meta">0xMR12 · Real estate</div></div></div></td>
+          <td>S. Park</td>
+          <td><span class="badge badge-revoked">Revoked</span></td>
+          <td><span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--slate)">2026·APR·11</span></td>
+          <td><a href="#">View</a></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="divider-rule">— Avatars —</div>
+    <div style="display:flex;align-items:center;gap:24px;flex-wrap:wrap">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span class="avatar lg">SB</span>
+        <span class="avatar">MC</span>
+        <span class="avatar gold">OA</span>
+        <span class="avatar cream">RP</span>
+        <span class="avatar sm">NJ</span>
+      </div>
+      <div class="avatar-stack">
+        <span class="avatar">SB</span>
+        <span class="avatar gold">MC</span>
+        <span class="avatar cream">OA</span>
+        <span class="avatar" style="background:var(--cream-shade);color:var(--navy)">+9</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     13. DATA VIZ &amp; CHAINS
+============================================================ -->
+<div class="section" id="dataviz">
+  <div class="section-head">
+    <span class="section-num">xiii.</span>
+    <span class="section-title">Data viz · chains, ledgers, timelines</span>
+    <span class="section-meta">Verification &amp; provenance</span>
+  </div>
+
+  <div class="row r2">
+    <div class="cell">
+      <div class="subhead">Chain of authority · vertical timeline</div>
+      <div class="chain" style="margin-top:14px">
+        <div class="chain-event current">
+          <div>
+            <h5>Witnessed by Cambridge Land Registry</h5>
+            <p>Three signatures captured at ledger close.</p>
+          </div>
+          <span class="ce-date"><strong>2026·APR·19</strong>09:42 GMT</span>
+        </div>
+        <div class="chain-event">
+          <div>
+            <h5>Reissued — corrected boundary</h5>
+            <p>By holder, with notarial affirmation.</p>
+          </div>
+          <span class="ce-date"><strong>2024·NOV·02</strong>14:18 GMT</span>
+        </div>
+        <div class="chain-event">
+          <div>
+            <h5>Transferred to M. Chen</h5>
+            <p>Holder of record updated · prior holder S. Park.</p>
+          </div>
+          <span class="ce-date"><strong>2024·OCT·31</strong>11:00 GMT</span>
+        </div>
+        <div class="chain-event">
+          <div>
+            <h5>Issued — Cambridge Land Registry</h5>
+            <p>Sealed at issuance · ED25519 anchor written.</p>
+          </div>
+          <span class="ce-date"><strong>2019·MAR·14</strong>—</span>
+        </div>
+      </div>
+    </div>
+    <div class="cell shade">
+      <div class="subhead">Ledger entry · raw form</div>
+      <div class="ledger" style="margin-top:14px">{
+  <span class="lg-key">"folio"</span>:    "0xA9F2",
+  <span class="lg-key">"issuer"</span>:   "cambridge.land.gov.uk",
+  <span class="lg-key">"holder"</span>:   "did:verity:m.chen",
+  <span class="lg-key">"witnesses"</span>:[
+    "did:verity:notary.cb",
+    "did:verity:registrar",
+    "did:verity:ombudsman"
+  ],
+  <span class="lg-key">"anchor"</span>:   <span class="lg-hash">"ed25519:0xA9F2…E12C"</span>,
+  <span class="lg-key">"event"</span>:    "WITNESSED",
+  <span class="lg-key">"filed"</span>:    "2026-04-19T09:42Z"
+}</div>
+
+      <div class="divider-rule">— Stat tiles —</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="stat">
+          <span class="stat-eyebrow">— TITLES OF RECORD</span>
+          <span class="stat-num">12,418</span>
+          <span class="stat-sub">across four registries</span>
+        </div>
+        <div class="stat">
+          <span class="stat-eyebrow">— WITNESSED THIS WEEK</span>
+          <span class="stat-num"><em>+ 87</em></span>
+          <span class="stat-sub">all under chain of authority</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     14. MOTION
+============================================================ -->
+<div class="section" id="motion">
+  <div class="section-head">
+    <span class="section-num">xiv.</span>
+    <span class="section-title">Motion · easing, duration, restraint</span>
+    <span class="section-meta">Registrar tempo · ≤ 280ms</span>
+  </div>
+
+  <div class="section-body">
+    <p style="font-family:'Cormorant Garamond',serif;font-size:16px;line-height:1.55;max-width:680px;margin-bottom:24px;color:var(--navy)">Verity moves like a registrar — measured, deliberate, never showy. Transitions exist to acknowledge action, not perform it. <em style="font-style:italic;color:var(--gold-deep)">If a movement competes with the content, it is wrong.</em></p>
+
+    <div class="subhead">Duration tokens</div>
+    <div class="motion-row">
+      <span class="m-name">--dur-instant<em>state · hover</em></span>
+      <span class="motion-demo quick"><span class="dot"></span></span>
+      <span class="m-meta">120 MS</span>
+    </div>
+    <div class="motion-row">
+      <span class="m-name">--dur-quick<em>buttons · toggles</em></span>
+      <span class="motion-demo standard"><span class="dot"></span></span>
+      <span class="m-meta">180 MS</span>
+    </div>
+    <div class="motion-row">
+      <span class="m-name">--dur-base<em>panels · drawers</em></span>
+      <span class="motion-demo entrance"><span class="dot"></span></span>
+      <span class="m-meta">240 MS</span>
+    </div>
+    <div class="motion-row">
+      <span class="m-name">--dur-slow<em>page transitions</em></span>
+      <span class="motion-demo exit"><span class="dot"></span></span>
+      <span class="m-meta">280 MS</span>
+    </div>
+
+    <div class="divider-rule">— Easing curves —</div>
+
+    <table class="tbl">
+      <thead><tr><th>Token</th><th>Curve</th><th>Use</th></tr></thead>
+      <tbody>
+        <tr><td><code>--ease-standard</code></td><td><code>cubic-bezier(0.2, 0.7, 0.2, 1)</code></td><td>Default · most movement</td></tr>
+        <tr><td><code>--ease-entrance</code></td><td><code>cubic-bezier(0, 0, 0.2, 1)</code></td><td>Things appearing · drawers in</td></tr>
+        <tr><td><code>--ease-exit</code></td><td><code>cubic-bezier(0.4, 0, 1, 1)</code></td><td>Things leaving · drawers out</td></tr>
+        <tr><td><code>--ease-emphasis</code></td><td><code>cubic-bezier(0.2, 0, 0, 1)</code></td><td>Confidence band fill · score reveal</td></tr>
+      </tbody>
+    </table>
+
+    <div class="divider-rule">— Principles —</div>
+    <div class="row r3" style="border:1px solid var(--line)">
+      <div class="cell"><div class="subhead">— RESTRAINED</div><p style="font-family:'Cormorant Garamond',serif;font-size:14px;line-height:1.6">No bounce. No spring overshoot. The brand does not gesture for attention.</p></div>
+      <div class="cell shade"><div class="subhead">— PURPOSEFUL</div><p style="font-family:'Cormorant Garamond',serif;font-size:14px;line-height:1.6">Every transition acknowledges a state change. Decoration is forbidden.</p></div>
+      <div class="cell"><div class="subhead">— OPT-OUT</div><p style="font-family:'Cormorant Garamond',serif;font-size:14px;line-height:1.6">Always honor <code>prefers-reduced-motion</code>. Replace movement with crossfade ≤ 80ms.</p></div>
+    </div>
+  </div>
+</div>
+<div class="section" id="voice">
+  <div class="section-head">
+    <span class="section-num">xv.</span>
+    <span class="section-title">Voice &amp; copy</span>
+    <span class="section-meta">How Verity speaks</span>
+  </div>
+
+  <div class="row r2">
+    <div class="cell">
+      <div class="subhead">Tone</div>
+      <p style="font-family:'Cormorant Garamond',serif;font-size:18px;line-height:1.6;margin-bottom:18px">Verity speaks with the weight of a registrar — measured, factual, never breathless. Sentences are short. Adjectives are earned. <em style="font-style:italic;color:var(--gold-deep)">The italic is the spice; the roman is the meal.</em></p>
+      <div class="voice">
+        <h4>Three pillars</h4>
+        <p><strong>Witnessed.</strong> We don't claim — we record what others can verify.</p>
+        <p><strong>Restrained.</strong> One sentence is better than three. One CTA per surface.</p>
+        <p><strong>Architectural.</strong> Vocabulary borrowed from law, registry, archival practice — folio, chain, witness, ledger, holder, of-record.</p>
+      </div>
+    </div>
+    <div class="cell shade">
+      <div class="subhead">Yes / No examples</div>
+      <div class="voice">
+        <h4>Headlines</h4>
+        <p class="yes">Every title, witnessed.</p>
+        <p class="no">Unlock the future of trust with Verity!</p>
+        <p class="yes">A registry of credentials of record.</p>
+        <p class="no">The world's most innovative blockchain-powered platform.</p>
+      </div>
+      <div class="voice" style="margin-top:14px">
+        <h4>Microcopy</h4>
+        <p class="yes">Verify · Witness · Reissue · Revoke</p>
+        <p class="no">Click here · Get started · Learn more</p>
+        <p class="yes">— filed 19 April, 2026</p>
+        <p class="no">📅 4/19/26 ⚡</p>
+      </div>
+      <div class="voice" style="margin-top:14px">
+        <h4>Empty &amp; error states</h4>
+        <p class="yes">No titles yet — when one is issued, it appears here.</p>
+        <p class="no">Oops! Looks like there's nothing here yet 😅</p>
+        <p class="yes">The chain is unbroken.</p>
+        <p class="no">All systems go!</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-body" style="border-top:1px solid var(--line)">
+    <div class="subhead">Domain glossary · vocabulary of record</div>
+    <p style="font-family:'Cormorant Garamond',serif;font-size:14px;font-style:italic;color:var(--slate);line-height:1.6;margin-bottom:18px">— These are the canonical terms. Use them in product, marketing, and legal copy. Never substitute startup synonyms ("user" for "holder", "post" for "issue", "trust score" for "confidence band").</p>
+    <dl class="glossary">
+      <dt>folio</dt><dd>The hex identifier of a credential of record. Always shown with the <code>0x</code> prefix.</dd>
+      <dt>holder</dt><dd>The party recognized as in lawful possession of a credential. Never "user", never "owner".</dd>
+      <dt>issuer</dt><dd>The authority who sealed and signed a credential at issuance — a registry, bank, university, ministry.</dd>
+      <dt>witness</dt><dd>A third party who countersigns a credential. Three witnesses unlock the highest tier.</dd>
+      <dt>chain of authority</dt><dd>The unbroken sequence of issuance, transfer, reissue and witness events for one credential.</dd>
+      <dt>anchor</dt><dd>The cryptographic fingerprint (ED25519) written to the public ledger at issuance.</dd>
+      <dt>seal</dt><dd>The act of finalizing a credential at issuance. A sealed credential cannot be silently amended.</dd>
+      <dt>reissue</dt><dd>The replacement of a sealed credential, recorded as its own ledger event.</dd>
+      <dt>revoke</dt><dd>Withdrawal by the issuer. Verification fails after a revocation; the prior chain remains visible.</dd>
+      <dt>of record</dt><dd>The phrase used in headlines and certificates. <em>"The holder of record"</em>, <em>"the issuer of record"</em>.</dd>
+      <dt>witnessed</dt><dd>The highest confidence tier — issuer signed, ledger anchored, three witnesses.</dd>
+      <dt>confidence band</dt><dd>The five-tier visual gauge that appears on every credential. The brand's signature pattern.</dd>
+    </dl>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     9. APPLIED
+============================================================ -->
+<div class="section" id="applied">
+  <div class="section-head">
+    <span class="section-num">xvi.</span>
+    <span class="section-title">Applied · UI in-context + component inventory</span>
+    <span class="section-meta">Marketing hero · dashboard · certificate</span>
+  </div>
+
+  <div class="row r2">
+    <div class="cell" style="padding:36px 28px">
+      <div class="subhead">Marketing hero</div>
+      <div style="background:var(--cream-shade);padding:48px 36px;border:1px solid var(--line);border-radius:6px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px">
+          <svg width="22" height="25" viewBox="0 0 44 50">
+            <path d="M 4 0 L 40 0 Q 44 0 44 4 L 44 34 Q 44 37 41.5 38.5 L 24.5 48.3 Q 22 49.7 19.5 48.3 L 2.5 38.5 Q 0 37 0 34 L 0 4 Q 0 0 4 0 Z" fill="#1E2260"/>
+            <path d="M 30 7 L 37 7 L 37 14" stroke="#C9A961" stroke-width="2" fill="none" stroke-linecap="round"/>
+          </svg>
+          <span style="font-family:'Tenor Sans',sans-serif;font-size:14px;letter-spacing:0.06em">VERI<span style="color:var(--gold)">T</span>Y</span>
+        </div>
+        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold-deep);margin-bottom:14px">— A REGISTRY OF RECORD</div>
+        <h2 style="font-family:'Cormorant Garamond',serif;font-weight:500;font-size:42px;line-height:1.1;letter-spacing:-0.015em;margin-bottom:14px">Every title, <em style="font-style:italic;color:var(--gold-deep)">witnessed.</em></h2>
+        <p style="font-family:'Cormorant Garamond',serif;font-size:17px;line-height:1.55;color:var(--slate);max-width:480px;margin-bottom:24px">Verity is a registry of credentials of record — sealed at issuance, signed by the issuer, traceable forever after.</p>
+        <div style="display:flex;gap:10px;align-items:center">
+          <button class="btn btn-primary">Verify a title</button>
+          <button class="btn btn-tertiary">— for issuers</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="cell deep" style="padding:36px 28px">
+      <div class="subhead" style="color:var(--gold)">— Mobile dashboard</div>
+      <div class="app-preview">
+        <div class="ap-top">
+          <div class="ap-mark"><svg width="20" height="23" viewBox="0 0 44 50"><path d="M 4 0 L 40 0 Q 44 0 44 4 L 44 34 Q 44 37 41.5 38.5 L 24.5 48.3 Q 22 49.7 19.5 48.3 L 2.5 38.5 Q 0 37 0 34 L 0 4 Q 0 0 4 0 Z" fill="#F5F2ED"/><path d="M 30 7 L 37 7 L 37 14" stroke="#C9A961" stroke-width="2" fill="none" stroke-linecap="round"/></svg>VERI<span class="t">T</span>Y</div>
+          <span class="avatar gold sm">MC</span>
+        </div>
+        <div>
+          <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold)">— YOUR RECORDS</div>
+          <div class="ap-h">Three titles, <em>all current.</em></div>
+        </div>
+        <div class="ap-card">
+          <h5>Brookline Deed</h5>
+          <div class="ap-meta"><span>VERIFIED</span><span>7m AGO</span></div>
+        </div>
+        <div class="ap-card">
+          <h5>CFA Charter · 2024</h5>
+          <div class="ap-meta"><span>WITNESSED</span><span>1d AGO</span></div>
+        </div>
+        <div class="ap-card">
+          <h5>Vehicle K·8821</h5>
+          <div class="ap-meta"><span>PENDING</span><span>3d AGO</span></div>
+        </div>
+        <button class="btn btn-gold" style="margin-top:auto">Verify a new title</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-body" style="border-top:1px solid var(--line)">
+    <div class="subhead">Certificate · printed instrument</div>
+    <div style="background:#fff;border:1px solid var(--line);padding:48px 56px;max-width:720px;margin:0 auto;box-shadow:0 30px 60px -24px rgba(30,34,96,0.18)">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:18px;border-bottom:1px solid var(--gold);margin-bottom:24px">
+        <div style="display:flex;align-items:center;gap:12px">
+          <svg width="36" height="41" viewBox="0 0 44 50">
+            <path d="M 4 0 L 40 0 Q 44 0 44 4 L 44 34 Q 44 37 41.5 38.5 L 24.5 48.3 Q 22 49.7 19.5 48.3 L 2.5 38.5 Q 0 37 0 34 L 0 4 Q 0 0 4 0 Z" fill="#1E2260"/>
+            <path d="M 30 7 L 37 7 L 37 14" stroke="#C9A961" stroke-width="2" fill="none" stroke-linecap="round"/>
+          </svg>
+          <span style="font-family:'Tenor Sans',sans-serif;font-size:22px;letter-spacing:0.06em;color:var(--navy)">VERI<span style="color:var(--gold)">T</span>Y</span>
+        </div>
+        <div style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--slate);line-height:1.7">
+          <div>Verity Registry, Ltd.</div>
+          <div>FOLIO · 0xA9F2</div>
+          <div>FILED 2026·APR·19</div>
+        </div>
+      </div>
+      <h2 style="font-family:'Cormorant Garamond',serif;font-weight:500;font-size:32px;letter-spacing:-0.005em;margin-bottom:6px">Certificate of Title</h2>
+      <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:16px;color:var(--gold-deep);margin-bottom:24px">— the truth behind every title</div>
+      <p style="font-family:'Cormorant Garamond',serif;font-size:15px;line-height:1.7;margin-bottom:14px">This instrument certifies that the credential identified herein has been issued, witnessed, and recorded in the chain of authority maintained by Verity. The holder named below is recognized as the lawful party of record.</p>
+      <p style="font-family:'Cormorant Garamond',serif;font-size:15px;line-height:1.7">Issued under the seal of the Registrar this nineteenth day of April, in the year two thousand and twenty-six.</p>
+      <div style="margin-top:32px;padding-top:18px;border-top:1px solid var(--line);display:flex;justify-content:space-between;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--slate)">
+        <span class="badge badge-verified">Verified</span>
+        <span>Witnesses · 3</span>
+        <span>ED25519 · 0xA9F2…</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-body shade" style="border-top:1px solid var(--line)">
+    <div class="subhead">Property record · with confidence band in context</div>
+    <div style="background:#fff;border:1px solid var(--line);padding:32px 36px;border-radius:6px;display:flex;flex-direction:column;gap:22px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:24px">
+        <div>
+          <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold-deep);margin-bottom:6px">— TITLE OF RECORD · LAGOS</div>
+          <h2 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:30px;letter-spacing:-0.005em;line-height:1.15">Plot 14, Block C — Lekki Phase 1</h2>
+          <p style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:var(--gold-deep);margin-top:4px">— issued under the seal of the Lagos State Land Registry.</p>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-secondary btn-sm">Download</button>
+          <button class="btn btn-primary btn-sm">Verify</button>
+        </div>
+      </div>
+
+      <div class="cb-tiers cb-hero" style="border-color:var(--gold)">
+        <div class="cb-headline">
+          <div>
+            <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold-deep);margin-bottom:8px">— CONFIDENCE</div>
+            <div class="cb-big">82 <span style="font-family:'DM Mono',monospace;font-size:14px;letter-spacing:.06em;color:var(--slate);font-weight:400">/ 100</span></div>
+            <div class="cb-tier">— verified.</div>
+          </div>
+          <div class="cb-meta">
+            <div>FOLIO · 0xLG14C</div>
+            <div>EVAL · 2026·MAY·06</div>
+            <div>ANCHORED · ED25519</div>
+          </div>
+        </div>
+        <div class="cb-gauge">
+          <div class="seg unverified"></div>
+          <div class="seg claimed"></div>
+          <div class="seg pending"></div>
+          <div class="seg verified"></div>
+          <div class="seg witnessed"></div>
+          <div class="marker" style="left:82%"></div>
+        </div>
+        <div class="cb-ticks">
+          <span>Unverified</span><span>Claimed</span><span>Pending</span><span class="is-current">Verified →</span><span>Witnessed</span>
+        </div>
+      </div>
+
+      <div class="row r2" style="border:1px solid var(--line);background:var(--cream-shade);gap:1px">
+        <div class="cell">
+          <div class="subhead">Chain of authority</div>
+          <div class="chain" style="margin-top:10px">
+            <div class="chain-event current">
+              <div><h5>Verified — Lagos State Land Registry</h5><p>Signed by Registrar at ledger close.</p></div>
+              <span class="ce-date"><strong>2026·MAY·06</strong>11:14 WAT</span>
+            </div>
+            <div class="chain-event">
+              <div><h5>Issued — original allocation</h5><p>Sealed at first issuance.</p></div>
+              <span class="ce-date"><strong>2003·SEP·22</strong>—</span>
+            </div>
+          </div>
+        </div>
+        <div class="cell shade">
+          <div class="subhead">Holder &amp; issuer</div>
+          <div style="display:flex;flex-direction:column;gap:14px;margin-top:10px;font-family:'Cormorant Garamond',serif;font-size:14px">
+            <div style="display:flex;align-items:center;gap:12px"><span class="avatar gold">OA</span><div><div style="font-weight:600">Olumide Adeyemi</div><div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--slate);letter-spacing:.04em">HOLDER · DID:VERITY:O.ADEYEMI</div></div></div>
+            <div style="display:flex;align-items:center;gap:12px"><span class="avatar">LR</span><div><div style="font-weight:600">Lagos State Land Registry</div><div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--slate);letter-spacing:.04em">ISSUER OF RECORD</div></div></div>
+            <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:var(--gold-deep);padding-top:6px;border-top:1px solid var(--line)">— two further witnesses required to reach <strong style="font-style:normal;font-weight:600">witnessed.</strong></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-body" style="border-top:1px solid var(--line)">
+    <div class="subhead">Component inventory · the system at a glance</div>
+    <p style="font-family:'Cormorant Garamond',serif;font-size:14px;font-style:italic;color:var(--slate);line-height:1.6;margin-bottom:18px">— Every component in the system, with its current state. <span style="color:var(--success);font-style:normal;font-weight:600">●&nbsp;ready</span> = locked &amp; in production. <span style="color:var(--warning);font-style:normal;font-weight:600">●&nbsp;draft</span> = present, needs review. <span style="color:var(--slate-soft);font-style:normal;font-weight:600">●&nbsp;planned</span> = scoped, not yet built.</p>
+
+    <div class="inventory">
+      <a class="inv-cell" href="#foundations"><span class="inv-num">— 01</span><span class="inv-name">Color tokens</span><span class="inv-sub">— navy · cream · gold + semantics</span><span class="inv-tag">READY</span></a>
+      <a class="inv-cell" href="#foundations"><span class="inv-num">— 02</span><span class="inv-name">Spacing scale</span><span class="inv-sub">— 4px base · 9 steps</span><span class="inv-tag">READY</span></a>
+      <a class="inv-cell" href="#foundations"><span class="inv-num">— 03</span><span class="inv-name">Radius scale</span><span class="inv-sub">— 0 / 3 / 6 / 10 / full</span><span class="inv-tag">READY</span></a>
+      <a class="inv-cell" href="#typography"><span class="inv-num">— 04</span><span class="inv-name">Typography</span><span class="inv-sub">— display · body · mono · wordmark</span><span class="inv-tag">READY</span></a>
+      <a class="inv-cell" href="#logo"><span class="inv-num">— 05</span><span class="inv-name">Logo system</span><span class="inv-sub">— shield · wordmark · lockups</span><span class="inv-tag">READY</span></a>
+      <a class="inv-cell" href="#layout"><span class="inv-num">— 06</span><span class="inv-name">Layout &amp; grid</span><span class="inv-sub">— 12-col · 4 breakpoints</span><span class="inv-tag">READY</span></a>
+      <a class="inv-cell" href="#elevation"><span class="inv-num">— 07</span><span class="inv-name">Elevation</span><span class="inv-sub">— 4 shadow steps · z-index</span><span class="inv-tag">READY</span></a>
+      <a class="inv-cell" href="#iconography"><span class="inv-num">— 08</span><span class="inv-name">Iconography</span><span class="inv-sub">— 18 line icons · gold-tick</span><span class="inv-tag">READY</span></a>
+      <a class="inv-cell" href="#confidence"><span class="inv-num">— 09</span><span class="inv-name">Confidence band</span><span class="inv-sub">— hero · card · pill forms</span><span class="inv-tag">READY</span></a>
+      <a class="inv-cell" href="#buttons"><span class="inv-num">— 10</span><span class="inv-name">Buttons</span><span class="inv-sub">— 5 styles · 3 sizes · light/dark</span><span class="inv-tag">READY</span></a>
+      <a class="inv-cell" href="#forms"><span class="inv-num">— 11</span><span class="inv-name">Inputs</span><span class="inv-sub">— text · textarea · select · error</span><span class="inv-tag">READY</span></a>
+      <a class="inv-cell" href="#forms"><span class="inv-num">— 12</span><span class="inv-name">Toggle &amp; choice</span><span class="inv-sub">— check · radio · toggle · segmented</span><span class="inv-tag">READY</span></a>
+      <a class="inv-cell" href="#feedback"><span class="inv-num">— 13</span><span class="inv-name">Badges &amp; tags</span><span class="inv-sub">— 7 badge styles · removable tags</span><span class="inv-tag">READY</span></a>
+      <a class="inv-cell" href="#feedback"><span class="inv-num">— 14</span><span class="inv-name">Alerts</span><span class="inv-sub">— info · success · warning · danger</span><span class="inv-tag">READY</span></a>
+      <a class="inv-cell" href="#feedback"><span class="inv-num">— 15</span><span class="inv-name">Progress</span><span class="inv-sub">— linear · gold variant</span><span class="inv-tag">READY</span></a>
+      <a class="inv-cell" href="#nav"><span class="inv-num">— 16</span><span class="inv-name">Top bar</span><span class="inv-sub">— light + dark surfaces</span><span class="inv-tag">READY</span></a>
+      <a class="inv-cell" href="#nav"><span class="inv-num">— 17</span><span class="inv-name">Tabs</span><span class="inv-sub">— underline gold-tick</span><span class="inv-tag">READY</span></a>
+      <a class="inv-cell" href="#nav"><span class="inv-num">— 18</span><span class="inv-name">Breadcrumbs</span><span class="inv-sub">— italic separators</span><span class="inv-tag">READY</span></a>
+      <a class="inv-cell" href="#nav"><span class="inv-num">— 19</span><span class="inv-name">Pagination</span><span class="inv-sub">— bordered · navy active</span><span class="inv-tag">READY</span></a>
+      <a class="inv-cell" href="#data"><span class="inv-num">— 20</span><span class="inv-name">Cards</span><span class="inv-sub">— light · dark · certificate</span><span class="inv-tag">READY</span></a>
+      <a class="inv-cell" href="#data"><span class="inv-num">— 21</span><span class="inv-name">Tables</span><span class="inv-sub">— record list · status integrated</span><span class="inv-tag">READY</span></a>
+      <a class="inv-cell" href="#data"><span class="inv-num">— 22</span><span class="inv-name">Avatars</span><span class="inv-sub">— navy · gold · cream · stacked</span><span class="inv-tag">READY</span></a>
+      <a class="inv-cell" href="#dataviz"><span class="inv-num">— 23</span><span class="inv-name">Chain timeline</span><span class="inv-sub">— vertical · pulsing current node</span><span class="inv-tag">READY</span></a>
+      <a class="inv-cell" href="#dataviz"><span class="inv-num">— 24</span><span class="inv-name">Ledger entry</span><span class="inv-sub">— mono · navy-deep code</span><span class="inv-tag">READY</span></a>
+      <a class="inv-cell" href="#dataviz"><span class="inv-num">— 25</span><span class="inv-name">Stat tile</span><span class="inv-sub">— eyebrow · big number · sub</span><span class="inv-tag">READY</span></a>
+      <a class="inv-cell" href="#motion"><span class="inv-num">— 26</span><span class="inv-name">Motion tokens</span><span class="inv-sub">— 4 durations · 4 easings</span><span class="inv-tag">READY</span></a>
+      <a class="inv-cell" href="#voice"><span class="inv-num">— 27</span><span class="inv-name">Voice &amp; glossary</span><span class="inv-sub">— 12 canonical terms</span><span class="inv-tag">READY</span></a>
+      <a class="inv-cell draft" href="#applied"><span class="inv-num">— 28</span><span class="inv-name">Certificate</span><span class="inv-sub">— printable instrument</span><span class="inv-tag">DRAFT</span></a>
+      <a class="inv-cell draft" href="#applied"><span class="inv-num">— 29</span><span class="inv-name">Mobile shell</span><span class="inv-sub">— navy app · gold CTA</span><span class="inv-tag">DRAFT</span></a>
+      <a class="inv-cell planned"><span class="inv-num">— 30</span><span class="inv-name">Email templates</span><span class="inv-sub">— issuance · receipt · revoke</span><span class="inv-tag">PLANNED</span></a>
+      <a class="inv-cell planned"><span class="inv-num">— 31</span><span class="inv-name">Map view</span><span class="inv-sub">— Lagos parcels · clustered</span><span class="inv-tag">PLANNED</span></a>
+      <a class="inv-cell planned"><span class="inv-num">— 32</span><span class="inv-name">Document viewer</span><span class="inv-sub">— scan · annotate · seal overlay</span><span class="inv-tag">PLANNED</span></a>
+    </div>
+  </div>
+</div>
+
+
+<div class="closing">
+  <div class="closing-eyebrow">— The brand system, locked</div>
+  <p>Sixteen sections, thirty-two components, one logic. Five colors, three type families, a 4-pt spacing scale, 3-pt radius default, four shadow steps, four motion durations, eighteen line icons, and one signature pattern — the <em>confidence band</em>. Everything new you build for Verity should compose from this surface, not extend it.</p>
+  <p>Next: say <em>"package the assets"</em> for downloadable SVG/CSS tokens, <em>"build the issuer dashboard"</em> for a working prototype on these primitives, or <em>"add the email kit"</em> to fill out the planned tier.</p>
+</div>
+
+</div>
+</body>
+</html>
