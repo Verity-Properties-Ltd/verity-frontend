@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 130" width="200" height="130">
+  <defs>
+    
+  </defs>
+  <g transform="translate(78,0)">
+    <path d="M 4 0 L 40 0 Q 44 0 44 4 L 44 34 Q 44 37 41.5 38.5 L 24.5 48.3 Q 22 49.7 19.5 48.3 L 2.5 38.5 Q 0 37 0 34 L 0 4 Q 0 0 4 0 Z" fill="#1E2260"></path>
+    <path d="M 30 7 L 37 7 L 37 14" stroke="#C9A961" stroke-width="2" fill="none" stroke-linecap="round"></path>
+  </g>
+  <text x="48" y="92" class="w" fill="#1E2260">VERI</text>
+  <text x="113" y="92" class="w" fill="#C9A961">T</text>
+  <text x="129" y="92" class="w" fill="#1E2260">Y</text>
+</svg>
