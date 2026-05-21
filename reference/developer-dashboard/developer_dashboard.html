@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>VERITY — Developer dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tenor+Sans&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="buyer-flow/styles.css">
+<link rel="stylesheet" href="developer-dashboard/dev.css">
+<link rel="stylesheet" href="developer-dashboard/dev-auth.css">
+<link rel="stylesheet" href="developer-dashboard/dev-mobile.css">
+<style>
+  body { margin: 0; background: #DDD9D1; font-family: var(--f-body); }
+  .dv-hero {
+    padding: 80px 56px 40px;
+    border-bottom: 1px solid var(--line);
+  }
+  .dv-hero .crumb {
+    font-family: 'DM Mono', monospace; font-size: 10px;
+    letter-spacing: 0.24em; color: var(--gold-deep);
+    text-transform: uppercase; margin-bottom: 20px;
+  }
+  .dv-hero h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 64px; line-height: 1.05; font-weight: 400;
+    color: var(--navy); margin: 0 0 24px;
+    letter-spacing: -0.01em; max-width: 22ch;
+  }
+  .dv-hero h1 em { font-style: italic; color: var(--gold-deep); }
+  .dv-hero .lede {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic; font-size: 22px;
+    color: var(--slate); max-width: 64ch;
+    line-height: 1.5;
+  }
+  .dv-hero .meta {
+    margin-top: 28px; padding-top: 18px;
+    border-top: 1px solid var(--line);
+    display: flex; gap: 32px;
+    font-family: 'DM Mono', monospace; font-size: 10px;
+    color: var(--slate); letter-spacing: 0.18em; text-transform: uppercase;
+  }
+  .dv-hero .meta .v { color: var(--navy); }
+  /* Each artboard wraps a 1440×900 ChromeWindow */
+  .frame-host {
+    width: 1440px;
+    height: 900px;
+    background: var(--cream-shade);
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+  .dv-canvas-wrap {
+    height: calc(100vh - 60px);
+    min-height: 720px;
+    background: #DDD9D1;
+    border-top: 1px solid var(--line);
+  }
+  /* Hide hero when scrolled — keep canvas as primary surface */
+  .dv-hero { padding: 40px 56px 32px; }
+  .dv-hero h1 { font-size: 44px; margin-bottom: 14px; }
+  .dv-hero .lede { font-size: 18px; }
+  .dv-hero .meta { margin-top: 18px; padding-top: 14px; }
+</style>
+</head>
+<body>
+
+<header class="dv-hero">
+  <div class="crumb">Verity · Phase 1 · §4 Developer Dashboard</div>
+  <h1>The developer's <em>workspace.</em></h1>
+  <p class="lede">
+    Eight desktop screens covering the Founding 50 partner end-to-end — from welcome through
+    portfolio management to certificate distribution. Built for Lagos developers managing
+    10–500 properties, primarily on desktop in an office.
+    <br/><br/>
+    <em style="font-style: italic; color: var(--gold-deep);">Updated · May 2026.</em>
+    Adds an invite-linked developer signup (§4.2) — basic registration with email verification —
+    followed by a pre-KYC onboarding state on the dashboard, where the two-stage Mono KYC flow
+    (Lookup company check, then Prove Tier 2 identity capture) gates property submission.
+  </p>
+  <div class="meta">
+    <div><span>Spec · </span><span class="v">VERITY_Phase1_UIUX_Architecture · §4 (May 2026)</span></div>
+    <div><span>Audience · </span><span class="v">Founding 50 cohort · Lagos</span></div>
+    <div><span>Surface · </span><span class="v">Desktop-primary · 1440 × 900</span></div>
+    <div><span>Persona · </span><span class="v">Lekki Heights Properties Ltd.</span></div>
+  </div>
+</header>
+
+<main id="root" class="dv-canvas-wrap"></main>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="developer-dashboard/design-canvas.jsx"></script>
+<script type="text/babel" src="developer-dashboard/browser-window.jsx"></script>
+<script type="text/babel" src="developer-dashboard/dev-shell.jsx"></script>
+<script type="text/babel" src="developer-dashboard/dev-signup.jsx"></script>
+<script type="text/babel" src="developer-dashboard/dev-dashboard.jsx"></script>
+<script type="text/babel" src="developer-dashboard/dev-onboarding.jsx"></script>
+<script type="text/babel" src="developer-dashboard/dev-portfolio.jsx"></script>
+<script type="text/babel" src="developer-dashboard/dev-add.jsx"></script>
+<script type="text/babel" src="developer-dashboard/dev-property.jsx"></script>
+<script type="text/babel" src="developer-dashboard/dev-distribute.jsx"></script>
+<script type="text/babel" src="developer-dashboard/dev-account.jsx"></script>
+
+<!-- Mobile / tablet builds -->
+<script type="text/babel" src="developer-dashboard/ios-frame.jsx"></script>
+<script type="text/babel" src="developer-dashboard/dev-mobile-shells.jsx"></script>
+<script type="text/babel" src="developer-dashboard/dev-mobile-signup.jsx"></script>
+<script type="text/babel" src="developer-dashboard/dev-mobile-onboarding.jsx"></script>
+<script type="text/babel" src="developer-dashboard/dev-mobile-dashboard.jsx"></script>
+<script type="text/babel" src="developer-dashboard/dev-mobile-portfolio.jsx"></script>
+<script type="text/babel" src="developer-dashboard/dev-mobile-add.jsx"></script>
+<script type="text/babel" src="developer-dashboard/dev-mobile-property.jsx"></script>
+<script type="text/babel" src="developer-dashboard/dev-mobile-distribute.jsx"></script>
+<script type="text/babel" src="developer-dashboard/dev-mobile-account.jsx"></script>
+
+<script type="text/babel">
+  // Frame helper — wraps each screen in a Chrome browser window at native 1440×900.
+  function Frame({ url, title, children }) {
+    return (
+      <div className="frame-host">
+        <ChromeWindow
+          width={1440}
+          height={900}
+          url={url}
+          tabs={[{ title }]}
+          activeIndex={0}
+        >
+          {children}
+        </ChromeWindow>
+      </div>
+    );
+  }
+
+  // Each screen is a 1440×900 artboard inside the DesignCanvas — pan with drag,
+  // zoom with cmd/ctrl+scroll or pinch, double-click to focus an artboard fullscreen.
+  // Tablet bezel sizes (match buyer-flow conventions).
+  const TP_W = 834,  TP_H = 1100;
+  const TL_W = 1194, TL_H = 820;
+  const PH_W = 402,  PH_H = 874;
+
+  function Page() {
+    const W = 1440, H = 900;
+    return (
+      <DesignCanvas>
+        <DCSection id="signup" title="04.2 · Signup & registration" subtitle="Reached via the Founding 50 invite link — basic registration only; KYC is post-signup (§4.2).">
+          <DCArtboard id="sig-default" label="01a · Signup · empty · desktop" width={W} height={H}>
+            <Frame url="verity.properties/signup?type=developer&invite=INV-LH-7QH3M9" title="Verity · Create account"><DevSignup signupState="default"/></Frame>
+          </DCArtboard>
+          <DCArtboard id="sig-default-ph" label="01a · Signup · empty · phone" width={PH_W} height={PH_H}>
+            <PhoneFrame><DvmSignup vp="phone" signupState="default"/></PhoneFrame>
+          </DCArtboard>
+          <DCArtboard id="sig-default-tp" label="01a · Signup · empty · tablet portrait" width={TP_W} height={TP_H}>
+            <TabletFrame width={TP_W} height={TP_H}><DvmSignup vp="tp" signupState="default"/></TabletFrame>
+          </DCArtboard>
+          <DCArtboard id="sig-default-tl" label="01a · Signup · empty · tablet landscape" width={TL_W} height={TL_H}>
+            <TabletFrame width={TL_W} height={TL_H}><DvmSignup vp="tl" signupState="default"/></TabletFrame>
+          </DCArtboard>
+          <DCArtboard id="sig-filled" label="01b · Signup · filled · desktop" width={W} height={H}>
+            <Frame url="verity.properties/signup?type=developer&invite=INV-LH-7QH3M9" title="Verity · Create account"><DevSignup signupState="filled"/></Frame>
+          </DCArtboard>
+          <DCArtboard id="sig-filled-ph" label="01b · Signup · filled · phone" width={PH_W} height={PH_H}>
+            <PhoneFrame><DvmSignup vp="phone" signupState="filled"/></PhoneFrame>
+          </DCArtboard>
+          <DCArtboard id="sig-filled-tp" label="01b · Signup · filled · tablet portrait" width={TP_W} height={TP_H}>
+            <TabletFrame width={TP_W} height={TP_H}><DvmSignup vp="tp" signupState="filled"/></TabletFrame>
+          </DCArtboard>
+          <DCArtboard id="sig-filled-tl" label="01b · Signup · filled · tablet landscape" width={TL_W} height={TL_H}>
+            <TabletFrame width={TL_W} height={TL_H}><DvmSignup vp="tl" signupState="filled"/></TabletFrame>
+          </DCArtboard>
+          <DCArtboard id="sig-submitting" label="01c · Signup · submitting · desktop" width={W} height={H}>
+            <Frame url="verity.properties/signup?type=developer&invite=INV-LH-7QH3M9" title="Verity · Creating account"><DevSignup signupState="submitting"/></Frame>
+          </DCArtboard>
+          <DCArtboard id="sig-submitting-ph" label="01c · Signup · submitting · phone" width={PH_W} height={PH_H}>
+            <PhoneFrame><DvmSignup vp="phone" signupState="submitting"/></PhoneFrame>
+          </DCArtboard>
+          <DCArtboard id="sig-submitting-tp" label="01c · Signup · submitting · tablet portrait" width={TP_W} height={TP_H}>
+            <TabletFrame width={TP_W} height={TP_H}><DvmSignup vp="tp" signupState="submitting"/></TabletFrame>
+          </DCArtboard>
+          <DCArtboard id="sig-submitting-tl" label="01c · Signup · submitting · tablet landscape" width={TL_W} height={TL_H}>
+            <TabletFrame width={TL_W} height={TL_H}><DvmSignup vp="tl" signupState="submitting"/></TabletFrame>
+          </DCArtboard>
+          <DCArtboard id="sig-exists" label="01d · Email exists · desktop" width={W} height={H}>
+            <Frame url="verity.properties/signup?type=developer&invite=INV-LH-7QH3M9" title="Verity · Create account"><DevSignup signupState="email_exists"/></Frame>
+          </DCArtboard>
+          <DCArtboard id="sig-exists-ph" label="01d · Email exists · phone" width={PH_W} height={PH_H}>
+            <PhoneFrame><DvmSignup vp="phone" signupState="email_exists"/></PhoneFrame>
+          </DCArtboard>
+          <DCArtboard id="sig-exists-tp" label="01d · Email exists · tablet portrait" width={TP_W} height={TP_H}>
+            <TabletFrame width={TP_W} height={TP_H}><DvmSignup vp="tp" signupState="email_exists"/></TabletFrame>
+          </DCArtboard>
+          <DCArtboard id="sig-exists-tl" label="01d · Email exists · tablet landscape" width={TL_W} height={TL_H}>
+            <TabletFrame width={TL_W} height={TL_H}><DvmSignup vp="tl" signupState="email_exists"/></TabletFrame>
+          </DCArtboard>
+          <DCArtboard id="sig-verify-sent" label="01e · Verification sent · desktop" width={W} height={H}>
+            <Frame url="verity.properties/signup/verify" title="Verity · Verify email"><DevSignup signupState="verification_sent"/></Frame>
+          </DCArtboard>
+          <DCArtboard id="sig-verify-sent-ph" label="01e · Verification sent · phone" width={PH_W} height={PH_H}>
+            <PhoneFrame><DvmSignup vp="phone" signupState="verification_sent"/></PhoneFrame>
+          </DCArtboard>
+          <DCArtboard id="sig-verify-sent-tp" label="01e · Verification sent · tablet portrait" width={TP_W} height={TP_H}>
+            <TabletFrame width={TP_W} height={TP_H}><DvmSignup vp="tp" signupState="verification_sent"/></TabletFrame>
+          </DCArtboard>
+          <DCArtboard id="sig-verify-sent-tl" label="01e · Verification sent · tablet landscape" width={TL_W} height={TL_H}>
+            <TabletFrame width={TL_W} height={TL_H}><DvmSignup vp="tl" signupState="verification_sent"/></TabletFrame>
+          </DCArtboard>
+          <DCArtboard id="sig-invalid" label="01f · Invalid invite · desktop" width={W} height={H}>
+            <Frame url="verity.properties/signup?invite=INV-LH-EXPIRED-0428" title="Verity · Invite invalid"><DevSignup signupState="invalid_invite"/></Frame>
+          </DCArtboard>
+          <DCArtboard id="sig-invalid-ph" label="01f · Invalid invite · phone" width={PH_W} height={PH_H}>
+            <PhoneFrame><DvmSignup vp="phone" signupState="invalid_invite"/></PhoneFrame>
+          </DCArtboard>
+          <DCArtboard id="sig-invalid-tp" label="01f · Invalid invite · tablet portrait" width={TP_W} height={TP_H}>
+            <TabletFrame width={TP_W} height={TP_H}><DvmSignup vp="tp" signupState="invalid_invite"/></TabletFrame>
+          </DCArtboard>
+          <DCArtboard id="sig-invalid-tl" label="01f · Invalid invite · tablet landscape" width={TL_W} height={TL_H}>
+            <TabletFrame width={TL_W} height={TL_H}><DvmSignup vp="tl" signupState="invalid_invite"/></TabletFrame>
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection id="onboarding" title="04.3 · Onboarding · pre-KYC" subtitle="New dashboard surface for Founding 50 partners — gated until Mono KYC clears (§4.2 · §4.3).">
+          <DCArtboard id="onb-pending" label="01a · pending_kyc · desktop" width={W} height={H}>
+            <Frame url="app.verity.properties/developer" title="Verity · Welcome"><DevDashboardOnboarding kycState="pending_kyc"/></Frame>
+          </DCArtboard>
+          <DCArtboard id="onb-pending-ph" label="01a · pending_kyc · phone" width={PH_W} height={PH_H}>
+            <PhoneFrame><DvmOnboarding vp="phone" kycState="pending_kyc"/></PhoneFrame>
+          </DCArtboard>
+          <DCArtboard id="onb-pending-tp" label="01a · pending_kyc · tablet portrait" width={TP_W} height={TP_H}>
+            <TabletFrame width={TP_W} height={TP_H}><DvmOnboarding vp="tp" kycState="pending_kyc"/></TabletFrame>
+          </DCArtboard>
+          <DCArtboard id="onb-pending-tl" label="01a · pending_kyc · tablet landscape" width={TL_W} height={TL_H}>
+            <TabletFrame width={TL_W} height={TL_H}><DvmOnboarding vp="tl" kycState="pending_kyc"/></TabletFrame>
+          </DCArtboard>
+          <DCArtboard id="onb-stage1" label="01b · kyc_in_progress · desktop" width={W} height={H}>
+            <Frame url="app.verity.properties/developer" title="Verity · Verifying"><DevDashboardOnboarding kycState="kyc_in_progress"/></Frame>
+          </DCArtboard>
+          <DCArtboard id="onb-stage1-ph" label="01b · kyc_in_progress · phone" width={PH_W} height={PH_H}>
+            <PhoneFrame><DvmOnboarding vp="phone" kycState="kyc_in_progress"/></PhoneFrame>
+          </DCArtboard>
+          <DCArtboard id="onb-stage1-tp" label="01b · kyc_in_progress · tablet portrait" width={TP_W} height={TP_H}>
+            <TabletFrame width={TP_W} height={TP_H}><DvmOnboarding vp="tp" kycState="kyc_in_progress"/></TabletFrame>
+          </DCArtboard>
+          <DCArtboard id="onb-stage1-tl" label="01b · kyc_in_progress · tablet landscape" width={TL_W} height={TL_H}>
+            <TabletFrame width={TL_W} height={TL_H}><DvmOnboarding vp="tl" kycState="kyc_in_progress"/></TabletFrame>
+          </DCArtboard>
+          <DCArtboard id="onb-stage2" label="01c · prove_session_pending · desktop" width={W} height={H}>
+            <Frame url="app.verity.properties/developer" title="Verity · Verify identity"><DevDashboardOnboarding kycState="prove_session_pending"/></Frame>
+          </DCArtboard>
+          <DCArtboard id="onb-stage2-ph" label="01c · prove_session_pending · phone (sheet)" width={PH_W} height={PH_H}>
+            <PhoneFrame><DvmOnboarding vp="phone" kycState="prove_session_pending"/></PhoneFrame>
+          </DCArtboard>
+          <DCArtboard id="onb-stage2-tp" label="01c · prove_session_pending · tablet portrait" width={TP_W} height={TP_H}>
+            <TabletFrame width={TP_W} height={TP_H}><DvmOnboarding vp="tp" kycState="prove_session_pending"/></TabletFrame>
+          </DCArtboard>
+          <DCArtboard id="onb-stage2-tl" label="01c · prove_session_pending · tablet landscape" width={TL_W} height={TL_H}>
+            <TabletFrame width={TL_W} height={TL_H}><DvmOnboarding vp="tl" kycState="prove_session_pending"/></TabletFrame>
+          </DCArtboard>
+          <DCArtboard id="onb-review" label="01d · kyc_manual_review · desktop" width={W} height={H}>
+            <Frame url="app.verity.properties/developer" title="Verity · Under review"><DevDashboardOnboarding kycState="kyc_manual_review"/></Frame>
+          </DCArtboard>
+          <DCArtboard id="onb-review-ph" label="01d · kyc_manual_review · phone" width={PH_W} height={PH_H}>
+            <PhoneFrame><DvmOnboarding vp="phone" kycState="kyc_manual_review"/></PhoneFrame>
+          </DCArtboard>
+          <DCArtboard id="onb-review-tp" label="01d · kyc_manual_review · tablet portrait" width={TP_W} height={TP_H}>
+            <TabletFrame width={TP_W} height={TP_H}><DvmOnboarding vp="tp" kycState="kyc_manual_review"/></TabletFrame>
+          </DCArtboard>
+          <DCArtboard id="onb-review-tl" label="01d · kyc_manual_review · tablet landscape" width={TL_W} height={TL_H}>
+            <TabletFrame width={TL_W} height={TL_H}><DvmOnboarding vp="tl" kycState="kyc_manual_review"/></TabletFrame>
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection id="dashboard" title="04.4 · Dashboard · post-KYC" subtitle="Standard landing surface after company verification clears — portfolio gate lifted.">
+          <DCArtboard id="dash-landing" label="02 · Dashboard · desktop" width={W} height={H}>
+            <Frame url="app.verity.properties/developer" title="Verity · Dashboard"><DevDashboard/></Frame>
+          </DCArtboard>
+          <DCArtboard id="dash-landing-ph" label="02 · Dashboard · phone" width={PH_W} height={PH_H}>
+            <PhoneFrame><DvmDashboard vp="phone"/></PhoneFrame>
+          </DCArtboard>
+          <DCArtboard id="dash-landing-tp" label="02 · Dashboard · tablet portrait" width={TP_W} height={TP_H}>
+            <TabletFrame width={TP_W} height={TP_H}><DvmDashboard vp="tp"/></TabletFrame>
+          </DCArtboard>
+          <DCArtboard id="dash-landing-tl" label="02 · Dashboard · tablet landscape" width={TL_W} height={TL_H}>
+            <TabletFrame width={TL_W} height={TL_H}><DvmDashboard vp="tl"/></TabletFrame>
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection id="portfolio" title="04.5 · Portfolio" subtitle="Dense data table — the developer's primary work surface.">
+          <DCArtboard id="port-table" label="02 · Portfolio · desktop (table)" width={W} height={H}>
+            <Frame url="app.verity.properties/developer/portfolio" title="Verity · Portfolio"><DevPortfolio/></Frame>
+          </DCArtboard>
+          <DCArtboard id="port-table-ph" label="02 · Portfolio · phone (cards)" width={PH_W} height={PH_H}>
+            <PhoneFrame><DvmPortfolio vp="phone"/></PhoneFrame>
+          </DCArtboard>
+          <DCArtboard id="port-table-tp" label="02 · Portfolio · tablet portrait (cards)" width={TP_W} height={TP_H}>
+            <TabletFrame width={TP_W} height={TP_H}><DvmPortfolio vp="tp"/></TabletFrame>
+          </DCArtboard>
+          <DCArtboard id="port-table-tl" label="02 · Portfolio · tablet landscape (table)" width={TL_W} height={TL_H}>
+            <TabletFrame width={TL_W} height={TL_H}><DvmPortfolio vp="tl"/></TabletFrame>
+          </DCArtboard>
+          <DCArtboard id="port-empty" label="03 · Portfolio empty · desktop" width={W} height={H}>
+            <Frame url="app.verity.properties/developer/portfolio" title="Verity · Welcome"><DevPortfolioEmpty/></Frame>
+          </DCArtboard>
+          <DCArtboard id="port-empty-ph" label="03 · Portfolio empty · phone" width={PH_W} height={PH_H}>
+            <PhoneFrame><DvmPortfolioEmpty vp="phone"/></PhoneFrame>
+          </DCArtboard>
+          <DCArtboard id="port-empty-tp" label="03 · Portfolio empty · tablet portrait" width={TP_W} height={TP_H}>
+            <TabletFrame width={TP_W} height={TP_H}><DvmPortfolioEmpty vp="tp"/></TabletFrame>
+          </DCArtboard>
+          <DCArtboard id="port-empty-tl" label="03 · Portfolio empty · tablet landscape" width={TL_W} height={TL_H}>
+            <TabletFrame width={TL_W} height={TL_H}><DvmPortfolioEmpty vp="tl"/></TabletFrame>
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection id="add" title="04.6 · Add property" subtitle="Single, batch, and CSV import modes.">
+          <DCArtboard id="add-single" label="04 · Add · step 2/5 · desktop" width={W} height={H}>
+            <Frame url="app.verity.properties/developer/portfolio/add" title="Verity · Add property"><DevAddProperty/></Frame>
+          </DCArtboard>
+          <DCArtboard id="add-single-ph" label="04 · Add · step 2/5 · phone" width={PH_W} height={PH_H}>
+            <PhoneFrame><DvmAddProperty vp="phone"/></PhoneFrame>
+          </DCArtboard>
+          <DCArtboard id="add-single-tp" label="04 · Add · step 2/5 · tablet portrait" width={TP_W} height={TP_H}>
+            <TabletFrame width={TP_W} height={TP_H}><DvmAddProperty vp="tp"/></TabletFrame>
+          </DCArtboard>
+          <DCArtboard id="add-single-tl" label="04 · Add · step 2/5 · tablet landscape" width={TL_W} height={TL_H}>
+            <TabletFrame width={TL_W} height={TL_H}><DvmAddProperty vp="tl"/></TabletFrame>
+          </DCArtboard>
+          <DCArtboard id="add-csv" label="05 · CSV import · desktop" width={W} height={H}>
+            <Frame url="app.verity.properties/developer/portfolio/add?mode=csv" title="Verity · CSV import"><DevBulkCsv/></Frame>
+          </DCArtboard>
+          <DCArtboard id="add-csv-ph" label="05 · CSV import · phone" width={PH_W} height={PH_H}>
+            <PhoneFrame><DvmBulkCsv vp="phone"/></PhoneFrame>
+          </DCArtboard>
+          <DCArtboard id="add-csv-tp" label="05 · CSV import · tablet portrait" width={TP_W} height={TP_H}>
+            <TabletFrame width={TP_W} height={TP_H}><DvmBulkCsv vp="tp"/></TabletFrame>
+          </DCArtboard>
+          <DCArtboard id="add-csv-tl" label="05 · CSV import · tablet landscape" width={TL_W} height={TL_H}>
+            <TabletFrame width={TL_W} height={TL_H}><DvmBulkCsv vp="tl"/></TabletFrame>
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection id="property" title="04.7 · Property detail" subtitle="Verification history, distribution log, and editable metadata.">
+          <DCArtboard id="prop-detail" label="06 · VRT-LA-2025-0184 · desktop" width={W} height={H}>
+            <Frame url="app.verity.properties/developer/property/VRT-LA-2025-0184" title="Verity · Lekki Block A"><DevPropertyDetail/></Frame>
+          </DCArtboard>
+          <DCArtboard id="prop-detail-ph" label="06 · VRT-LA-2025-0184 · phone" width={PH_W} height={PH_H}>
+            <PhoneFrame><DvmPropertyDetail vp="phone"/></PhoneFrame>
+          </DCArtboard>
+          <DCArtboard id="prop-detail-tp" label="06 · VRT-LA-2025-0184 · tablet portrait" width={TP_W} height={TP_H}>
+            <TabletFrame width={TP_W} height={TP_H}><DvmPropertyDetail vp="tp"/></TabletFrame>
+          </DCArtboard>
+          <DCArtboard id="prop-detail-tl" label="06 · VRT-LA-2025-0184 · tablet landscape" width={TL_W} height={TL_H}>
+            <TabletFrame width={TL_W} height={TL_H}><DvmPropertyDetail vp="tl"/></TabletFrame>
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection id="distribute" title="04.8 · Distribute" subtitle="Five formats — URL, PDF, embed, QR, partner badge.">
+          <DCArtboard id="dist" label="07 · Distribute · desktop" width={W} height={H}>
+            <Frame url="app.verity.properties/developer/distribute" title="Verity · Distribute"><DevDistribute/></Frame>
+          </DCArtboard>
+          <DCArtboard id="dist-ph" label="07 · Distribute · phone (+ native share)" width={PH_W} height={PH_H}>
+            <PhoneFrame><DvmDistribute vp="phone"/></PhoneFrame>
+          </DCArtboard>
+          <DCArtboard id="dist-tp" label="07 · Distribute · tablet portrait" width={TP_W} height={TP_H}>
+            <TabletFrame width={TP_W} height={TP_H}><DvmDistribute vp="tp"/></TabletFrame>
+          </DCArtboard>
+          <DCArtboard id="dist-tl" label="07 · Distribute · tablet landscape" width={TL_W} height={TL_H}>
+            <TabletFrame width={TL_W} height={TL_H}><DvmDistribute vp="tl"/></TabletFrame>
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection id="account" title="04.9 · Account & billing" subtitle="Company profile, team, subscription, Founding 50 status.">
+          <DCArtboard id="acct" label="08 · Account · desktop" width={W} height={H}>
+            <Frame url="app.verity.properties/developer/account" title="Verity · Account"><DevAccount/></Frame>
+          </DCArtboard>
+          <DCArtboard id="acct-ph" label="08 · Account · phone" width={PH_W} height={PH_H}>
+            <PhoneFrame><DvmAccount vp="phone"/></PhoneFrame>
+          </DCArtboard>
+          <DCArtboard id="acct-tp" label="08 · Account · tablet portrait" width={TP_W} height={TP_H}>
+            <TabletFrame width={TP_W} height={TP_H}><DvmAccount vp="tp"/></TabletFrame>
+          </DCArtboard>
+          <DCArtboard id="acct-tl" label="08 · Account · tablet landscape" width={TL_W} height={TL_H}>
+            <TabletFrame width={TL_W} height={TL_H}><DvmAccount vp="tl"/></TabletFrame>
+          </DCArtboard>
+        </DCSection>
+      </DesignCanvas>
+    );
+  }
+
+  ReactDOM.createRoot(document.getElementById('root')).render(<Page/>);
+</script>
+
+</body>
+</html>

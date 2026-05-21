@@ -1,0 +1,97 @@
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: var(--f-body, 'Cormorant Garamond', serif);
+  color: var(--ink, #1E2260);
+  background: var(--cream, #F5F2ED);
+  min-height: 100vh;
+}
+* { box-sizing: border-box; }
+
+/* ─── Shared atoms (ported from reference/buyer-flow/styles.css) ─── */
+
+.bf-brand {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--line);
+}
+.bf-brand .mark { display: inline-flex; align-items: center; gap: 10px; }
+.bf-brand .word {
+  font-family: var(--f-mark); font-size: 15px; letter-spacing: 0.18em;
+  color: var(--navy);
+}
+.bf-brand .meta {
+  font-family: var(--f-meta); font-size: 9px; letter-spacing: 0.22em;
+  color: var(--slate); text-transform: uppercase;
+}
+
+.bf-eyebrow {
+  font-family: var(--f-meta); font-size: 10px; letter-spacing: 0.22em;
+  text-transform: uppercase; color: var(--gold-deep);
+}
+.bf-eyebrow.slate { color: var(--slate); }
+
+.bf-h1 {
+  font-family: var(--f-display); font-weight: 500; font-size: 30px;
+  line-height: 1.1; letter-spacing: -0.012em; text-wrap: pretty; margin: 0;
+}
+.bf-h2 {
+  font-family: var(--f-display); font-weight: 500; font-size: 22px;
+  line-height: 1.18; text-wrap: pretty; margin: 0;
+}
+.bf-h3 {
+  font-family: var(--f-display); font-weight: 600; font-size: 18px;
+  line-height: 1.25; margin: 0;
+}
+.bf-italic { font-style: italic; color: var(--gold-deep); }
+.bf-body {
+  font-family: var(--f-body); font-size: 15px; line-height: 1.55;
+  color: var(--navy); text-wrap: pretty; margin: 0;
+}
+.bf-small {
+  font-family: var(--f-body); font-size: 13px; line-height: 1.5; color: var(--slate);
+}
+.bf-mono {
+  font-family: var(--f-meta); font-size: 11px; letter-spacing: 0.08em; color: var(--navy);
+}
+
+.bf-stack { display: flex; flex-direction: column; }
+.bf-row { display: flex; align-items: center; }
+.bf-divider { height: 1px; background: var(--line); border: 0; }
+.bf-divider.gold { height: 1px; background: var(--gold); width: 28px; }
+
+.bf-field { display: flex; flex-direction: column; gap: 6px; }
+.bf-label {
+  font-family: var(--f-meta); font-size: 10px; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--slate);
+}
+.bf-input {
+  width: 100%; height: 48px; padding: 0 14px;
+  font-family: var(--f-body); font-size: 16px; color: var(--navy);
+  background: #fff; border: 1px solid var(--line-strong);
+  border-radius: var(--r-input); outline: none;
+}
+.bf-input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,169,97,0.14); }
+.bf-input.mono { font-family: var(--f-meta); font-size: 14px; letter-spacing: 0.1em; }
+.bf-help { font-family: var(--f-body); font-size: 12px; color: var(--slate); }
+.bf-help.error { color: var(--danger); }
+.bf-required { color: var(--gold-deep); }
+
+.bf-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  height: 50px; padding: 0 22px;
+  font-family: var(--f-meta); font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
+  border-radius: var(--r-input); border: 1px solid transparent; cursor: pointer;
+  width: 100%; text-align: center;
+}
+.bf-btn.primary { background: var(--navy); color: var(--cream); }
+.bf-btn.gold { background: var(--gold); color: var(--navy); }
+.bf-btn.outline { background: transparent; color: var(--navy); border-color: var(--line-strong); }
+.bf-btn.ghost { background: transparent; color: var(--navy); }
+.bf-btn[disabled], .bf-btn.disabled { opacity: 0.45; cursor: not-allowed; }
+.bf-btn .arrow { font-size: 14px; letter-spacing: 0; }
+
+.bf-link {
+  font-family: var(--f-body); font-size: 14px; color: var(--navy);
+  text-decoration: none; border-bottom: 1px solid var(--gold); padding-bottom: 1px;
+  cursor: pointer;
+}
