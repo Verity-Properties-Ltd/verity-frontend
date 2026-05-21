@@ -24,9 +24,9 @@ export function CompleteView({
             <Link href={`/requests/${request.vpid}/certificate`} className="bf-btn primary" style={{ width: 'auto', minWidth: 200, textDecoration: 'none' }}>
               View certificate <span className="arrow">→</span>
             </Link>
-            <button type="button" className="bf-btn outline" style={{ width: 'auto', minWidth: 140 }}>
-              Download PDF
-            </button>
+            <Link href={`/requests/${request.vpid}/share`} className="bf-btn gold" style={{ width: 'auto', minWidth: 160, textDecoration: 'none' }}>
+              Share
+            </Link>
           </div>
 
           {band && (

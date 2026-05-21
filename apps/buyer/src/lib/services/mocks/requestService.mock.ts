@@ -1,6 +1,7 @@
 import { EMPTY_DRAFT, type RequestDetail, type RequestDraft, type RequestStatus, type RequestSummary, type Tier } from '@/lib/types/request';
 import type { BandTier, VerificationTrack } from '@/lib/types/verification';
 import { skippedStagesForTier } from '@/lib/types/verification';
+import type { Certificate } from '@/lib/types/certificate';
 
 const REQUESTS_KEY = 'verity:requests';
 
@@ -217,5 +218,68 @@ export const verificationService = {
   async getFlag(vpid: string): Promise<NonNullable<Seed['flag']> | null> {
     const seed = SEEDS.find((s) => s.vpid === vpid);
     return seed?.flag ?? null;
+  },
+};
+
+function fmtVerifiedDate(iso?: string) {
+  if (!iso) return '—';
+  return new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }).toUpperCase();
+}
+
+function propertyTypeLabel(t: RequestDraft['property']['type'], sizeSqm?: number) {
+  const type = t ? t.charAt(0).toUpperCase() + t.slice(1) : 'Property';
+  return sizeSqm ? `${type} · ${sizeSqm} sqm` : type;
+}
+
+export const certificateService = {
+  async get(vpid: string): Promise<Certificate | null> {
+    await new Promise((r) => setTimeout(r, 120));
+    const seed = SEEDS.find((s) => s.vpid === vpid);
+    if (!seed || seed.status !== 'complete' || !seed.band) return null;
+    const [addr1, ...rest] = seed.property.address.split(',');
+    const verifiedIso = seed.track.completedDates[7]
+      ? seed.expectedAt || seed.createdAt
+      : seed.expectedAt || seed.createdAt;
+    return {
+      vpid,
+      publicUrl: `verity.properties/v/${vpid.toUpperCase()}`,
+      property: {
+        addressLine1: addr1.trim(),
+        addressLine2: rest.join(',').trim() || seed.city,
+        plotNo: seed.property.plotNo,
+        type: propertyTypeLabel(seed.property.type, seed.property.sizeSqm),
+        sizeSqm: seed.property.sizeSqm,
+      },
+      verifiedAt: fmtVerifiedDate(verifiedIso),
+      band: seed.band,
+      specialist: {
+        name: seed.tier === 'standard' ? 'Verity Document Desk' : 'Ifeoma Okafor',
+        title: seed.tier === 'standard' ? 'Document & Registry Specialist' : 'Licensed Estate Surveyor & Valuer',
+        regNo: seed.tier === 'standard' ? 'VERITY DESK · 0042' : 'NIESV REG. NO. 4892',
+        signedAt: fmtVerifiedDate(verifiedIso),
+      },
+      tier: seed.tier,
+    };
+  },
+};
+
+export const shareService = {
+  async copyLink(vpid: string): Promise<{ url: string }> {
+    const url = `https://verity.properties/v/${vpid.toUpperCase()}`;
+    if (typeof navigator !== 'undefined' && navigator.clipboard) {
+      try { await navigator.clipboard.writeText(url); } catch { /* ignore */ }
+    }
+    return { url };
+  },
+
+  async email(vpid: string, recipient: string): Promise<void> {
+    await new Promise((r) => setTimeout(r, 500));
+    console.info('[mock] shareService.email', { vpid, recipient });
+  },
+
+  whatsappUrl(vpid: string): string {
+    const link = `https://verity.properties/v/${vpid.toUpperCase()}`;
+    const msg = `Verity property verification: ${link}`;
+    return `https://wa.me/?text=${encodeURIComponent(msg)}`;
   },
 };
