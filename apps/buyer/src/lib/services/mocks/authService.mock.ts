@@ -22,6 +22,20 @@ export const authService = {
     return { userId };
   },
 
+  async signIn(email: string, _password: string): Promise<{ userId: string }> {
+    await new Promise((r) => setTimeout(r, 400));
+    const userId = `usr_${Math.random().toString(36).slice(2, 10)}`;
+    const inferredName = email.split('@')[0].replace(/[._-]+/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()) || 'Buyer';
+    const session: Session = {
+      userId,
+      fullName: inferredName,
+      email,
+      createdAt: new Date().toISOString(),
+    };
+    persistSession(session);
+    return { userId };
+  },
+
   async requestEmailLink(_email: string): Promise<void> {
     await new Promise((r) => setTimeout(r, 200));
   },

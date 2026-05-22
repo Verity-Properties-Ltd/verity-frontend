@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { authService } from '@/lib/services';
 
@@ -102,7 +103,7 @@ export function SignupForm() {
       </button>
 
       <p className="bf-small" style={{ marginTop: 14, textAlign: 'center', fontSize: 12 }}>
-        Already verified with us? <a className="bf-link">Sign in.</a>
+        Already verified with us? <Link href="/signin" className="bf-link">Sign in.</Link>
       </p>
     </form>
   );
