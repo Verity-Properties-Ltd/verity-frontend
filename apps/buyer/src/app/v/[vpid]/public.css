@@ -1,0 +1,31 @@
+.public-cert-shell {
+  min-height: 100vh;
+  background: var(--cream);
+}
+
+.public-cert-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--line);
+  background: var(--cream);
+}
+
+.public-cert-cta {
+  text-decoration: none;
+  color: var(--navy);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  border: 1px solid var(--gold);
+  padding: 8px 12px;
+  border-radius: 4px;
+  background: transparent;
+  transition: background 120ms, color 120ms;
+}
+
+.public-cert-cta:hover {
+  background: var(--gold);
+  color: var(--navy);
+}
