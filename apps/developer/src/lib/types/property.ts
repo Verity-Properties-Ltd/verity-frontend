@@ -49,3 +49,37 @@ export type DashboardSnapshot = {
   /** 30 daily values for the distribution sparkline. */
   sparkline: number[];
 };
+
+export type VerificationEvent = {
+  id: string;
+  when: string;
+  kind: 'refresh' | 'band-upgrade' | 'issued' | 'submission';
+  title: React.ReactNode;
+  detail: string;
+  change?: string;
+};
+
+export type DistributionEvent = {
+  id: string;
+  when: string;
+  what: string;
+  source: string;
+  channel: 'web' | 'email' | 'embed' | 'qr' | 'direct';
+};
+
+export type SalesMetadata = {
+  reference: string;
+  status: string;
+  listPrice?: string;
+  buyer?: string;
+  notes?: string;
+};
+
+export type PropertyDetail = PropertySummary & {
+  sizeSqm: number;
+  type: string;
+  cityLong: string;
+  sales: SalesMetadata;
+  history: VerificationEvent[];
+  distribution: DistributionEvent[];
+};

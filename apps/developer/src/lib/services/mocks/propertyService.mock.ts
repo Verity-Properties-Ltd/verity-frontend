@@ -1,4 +1,14 @@
-import type { ActivityEvent, AttentionItem, BandTotals, DashboardSnapshot, KpiSnapshot, PropertySummary } from '@/lib/types/property';
+import type {
+  ActivityEvent,
+  AttentionItem,
+  BandTotals,
+  DashboardSnapshot,
+  DistributionEvent,
+  KpiSnapshot,
+  PropertyDetail,
+  PropertySummary,
+  VerificationEvent,
+} from '@/lib/types/property';
 
 const KPIS: KpiSnapshot = {
   total: 87,
@@ -58,10 +68,68 @@ function isEmptyMode(): boolean {
   return window.localStorage.getItem(EMPTY_KEY) === 'true';
 }
 
+const HISTORY_FALLBACK: VerificationEvent[] = [
+  {
+    id: 'v1', when: '12 MAY 2026 · 08:42 WAT', kind: 'refresh',
+    title: 'Verification refreshed — band held at Gold',
+    detail: 'All title evidence reverified. Court-cleared. No new liens detected. Certificate URL unchanged.',
+    change: '⟲ REFRESH · 2,847 NGN · paid via cohort credit',
+  },
+  {
+    id: 'v2', when: '14 NOV 2025 · 11:08 WAT', kind: 'band-upgrade',
+    title: 'Band upgraded — Silver → Gold',
+    detail: "Governor's consent received and verified. Boundary confirmed via Lagos State Lands Bureau.",
+    change: '↑ BAND CHANGE · Silver → Gold',
+  },
+  {
+    id: 'v3', when: '22 MAY 2025 · 16:24 WAT', kind: 'issued',
+    title: 'First verification issued — Silver',
+    detail: 'CofO authenticated. Survey plan matched LasG records. Field visit confirmed presence and demarcation.',
+    change: '⊕ ISSUED · Silver band',
+  },
+  {
+    id: 'v4', when: '02 MAY 2025 · 09:15 WAT', kind: 'submission',
+    title: 'Submission received',
+    detail: 'Submitted by Adeola Ogundipe. CofO + survey plan + deed of assignment uploaded.',
+  },
+];
+
+const DISTRIBUTION_FALLBACK: DistributionEvent[] = [
+  { id: 'd1', when: '11 May · 14:08', what: 'Public certificate viewed via', source: 'lekkiheights.com/lekki-block-a', channel: 'web' },
+  { id: 'd2', when: '11 May · 11:42', what: 'PDF certificate downloaded by', source: 'sales@lekkiheights.com', channel: 'email' },
+  { id: 'd3', when: '10 May · 16:55', what: 'Embed snippet rendered on', source: 'lekkiheights.com/inventory', channel: 'embed' },
+  { id: 'd4', when: '09 May · 09:31', what: 'QR code scanned at', source: 'On-site signage · Plot 12', channel: 'qr' },
+  { id: 'd5', when: '07 May · 14:02', what: 'Public certificate viewed via', source: 'verity.properties/v/VRT-LA-2025-0184', channel: 'direct' },
+];
+
+function detailFor(p: PropertySummary): PropertyDetail {
+  return {
+    ...p,
+    sizeSqm: 1_250,
+    type: 'Land',
+    cityLong: `${p.city}, Lagos State`,
+    sales: {
+      reference: p.ref || 'LKI-A-12',
+      status: p.status === 'verified' ? 'Active · listed' : 'Active · pending verification',
+      listPrice: '₦ 165,000,000',
+      buyer: '—',
+      notes: 'Premium plot · waterfront access',
+    },
+    history: HISTORY_FALLBACK,
+    distribution: DISTRIBUTION_FALLBACK,
+  };
+}
+
 export const propertyService = {
   async list(): Promise<PropertySummary[]> {
     await new Promise((r) => setTimeout(r, 120));
     return isEmptyMode() ? [] : PROPERTIES;
+  },
+
+  async get(vpid: string): Promise<PropertyDetail | null> {
+    await new Promise((r) => setTimeout(r, 120));
+    const summary = PROPERTIES.find((p) => p.vpid === vpid);
+    return summary ? detailFor(summary) : null;
   },
 
   async getDashboardSnapshot(): Promise<DashboardSnapshot> {
