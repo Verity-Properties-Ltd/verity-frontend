@@ -12,6 +12,8 @@ export type PropertySummary = {
   expiresAt?: string;
   views30d?: number;
   tier?: 'standard' | 'premium';
+  /** Internal developer reference (e.g. LKI-A-12). */
+  ref?: string;
 };
 
 export type BandTotals = Record<Band, number>;
