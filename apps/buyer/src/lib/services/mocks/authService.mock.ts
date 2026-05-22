@@ -16,6 +16,7 @@ export const authService = {
       userId,
       fullName: input.fullName,
       email: input.email,
+      role: 'buyer',
       createdAt: new Date().toISOString(),
     };
     persistSession(session);
@@ -30,6 +31,7 @@ export const authService = {
       userId,
       fullName: inferredName,
       email,
+      role: 'buyer',
       createdAt: new Date().toISOString(),
     };
     persistSession(session);
@@ -45,7 +47,10 @@ export const authService = {
     const raw = window.localStorage.getItem(SESSION_KEY);
     if (!raw) return null;
     try {
-      return JSON.parse(raw) as Session;
+      const parsed = JSON.parse(raw) as Session;
+      // Back-compat: existing sessions written before the role field shipped
+      // default to 'buyer'.
+      return { ...parsed, role: parsed.role ?? 'buyer' };
     } catch {
       return null;
     }

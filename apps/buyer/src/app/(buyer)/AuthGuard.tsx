@@ -12,9 +12,15 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
     const session = authService.getSession();
     if (!session) {
       router.replace('/signup');
-    } else {
-      setState('ok');
+      return;
     }
+    if (session.role !== 'buyer') {
+      // Developer hit a buyer route — bounce to the dev app's dashboard.
+      // The dev app runs separately; this just sends them to the right entry URL.
+      window.location.href = '/developer/dashboard';
+      return;
+    }
+    setState('ok');
   }, [router]);
 
   if (state === 'checking') {

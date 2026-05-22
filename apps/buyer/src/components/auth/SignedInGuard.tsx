@@ -9,7 +9,12 @@ export function SignedInGuard({ children, redirectTo = '/dashboard' }: { childre
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    if (authService.getSession()) {
+    const session = authService.getSession();
+    if (session?.role === 'developer') {
+      window.location.href = '/developer/dashboard';
+      return;
+    }
+    if (session) {
       router.replace(redirectTo);
     } else {
       setReady(true);
