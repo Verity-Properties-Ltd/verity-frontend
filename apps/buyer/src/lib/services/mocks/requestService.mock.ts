@@ -2,6 +2,7 @@ import { EMPTY_DRAFT, type RequestDetail, type RequestDraft, type RequestStatus,
 import type { BandTier, VerificationTrack } from '@/lib/types/verification';
 import { skippedStagesForTier } from '@/lib/types/verification';
 import type { Certificate } from '@/lib/types/certificate';
+import { VERIFICATION_SEEDS, type VerificationSeed } from '@verity/fixtures';
 
 const REQUESTS_KEY = 'verity:requests';
 
@@ -13,131 +14,31 @@ type StoredRecord = {
   status: RequestStatus;
 };
 
-type Finding = { name: string; ref?: string; miss?: boolean };
-type Note = { from: string; at: string; body: string };
-type Warning = { title: string; body: string };
+type Finding = NonNullable<VerificationSeed['findings']>[number];
+type Note = NonNullable<VerificationSeed['note']>;
+type Warning = NonNullable<VerificationSeed['warning']>;
 
-type Seed = RequestSummary & {
-  property: RequestDraft['property'];
-  documents: RequestDraft['documents'];
-  track: VerificationTrack;
-  band?: { tier: BandTier; score: number; clarify?: string };
-  flag?: {
-    title: string;
-    body: string;
-    actionLabel?: string;
+const SEEDS = VERIFICATION_SEEDS;
+
+function seedToSummary(s: VerificationSeed): RequestSummary {
+  return {
+    vpid: s.vpid,
+    address: s.address,
+    city: s.city,
+    tier: s.tier,
+    status: s.status,
+    createdAt: s.createdAt,
+    expectedAt: s.expectedAt,
   };
-  note?: Note;
-  findings?: Finding[];
-  warning?: Warning;
-};
+}
 
-const SEEDS: Seed[] = [
-  {
-    vpid: 'vpr-in-progress',
-    address: 'Plot 27B, Admiralty Way',
-    city: 'Lekki Phase 1',
-    tier: 'premium',
-    status: 'in-progress',
-    createdAt: '2026-05-08T14:12:00.000Z',
-    expectedAt: '2026-05-12T17:00:00.000Z',
-    property: { type: 'residential', state: 'Lagos State', lga: 'Eti-Osa', address: 'Plot 27B, Admiralty Way, Lekki Phase 1, Lagos.', plotNo: 'LEK/PH1/27B', sizeSqm: 640 },
-    documents: [
-      { name: 'CofO_Lekki_Plot27B.pdf', size: 2_457_600, type: 'application/pdf', ext: 'PDF' },
-      { name: 'survey_plan_signed.jpg', size: 1_153_434, type: 'image/jpeg', ext: 'JPG' },
-      { name: 'deed_of_assignment.pdf', size: 3_879_731, type: 'application/pdf', ext: 'PDF' },
-    ],
-    track: {
-      currentStage: 3,
-      completedDates: { 0: '8 May · 14:12', 1: '8 May · 22:40', 2: '9 May · 10:30' },
-      skipped: [],
-    },
-    band: { tier: 'prov', score: 0 },
-    note: {
-      from: 'IFEOMA O.',
-      at: '9 MAY · 10:32',
-      body: "Field visit scheduled for tomorrow morning, 10 May. We've already confirmed the CofO filing date against the Lagos State Land Registry.",
-    },
-  },
-  {
-    vpid: 'vpr-awaiting',
-    address: '14 Bourdillon Rd',
-    city: 'Ikoyi',
-    tier: 'premium',
-    status: 'awaiting-action',
-    createdAt: '2026-05-08T11:00:00.000Z',
-    property: { type: 'residential', state: 'Lagos State', lga: 'Ikoyi', address: '14 Bourdillon Rd, Ikoyi, Lagos.', plotNo: 'IK/BRD/14', sizeSqm: 920 },
-    documents: [
-      { name: 'CofO_Bourdillon.pdf', size: 2_104_320, type: 'application/pdf', ext: 'PDF' },
-      { name: 'survey_plan_p2_unclear.jpg', size: 980_103, type: 'image/jpeg', ext: 'JPG' },
-    ],
-    track: {
-      currentStage: 1,
-      completedDates: { 0: '8 May · 14:12' },
-      skipped: [],
-    },
-    flag: {
-      title: 'WE NEED ONE THING',
-      body: "The Survey Plan you uploaded is missing the surveyor's seal on page 2. Could you upload a clearer scan?",
-      actionLabel: 'Upload replacement document',
-    },
-  },
-  {
-    vpid: 'vpr-complete',
-    address: '14 Bourdillon Rd',
-    city: 'Ikoyi',
-    tier: 'premium',
-    status: 'complete',
-    createdAt: '2026-03-08T10:00:00.000Z',
-    expectedAt: '2026-03-12T17:00:00.000Z',
-    property: { type: 'residential', state: 'Lagos State', lga: 'Ikoyi', address: '14 Bourdillon Rd, Ikoyi, Lagos.', plotNo: 'IK/BRD/14', sizeSqm: 920 },
-    documents: [
-      { name: 'CofO_Bourdillon.pdf', size: 2_104_320, type: 'application/pdf', ext: 'PDF' },
-      { name: 'survey_plan_signed.pdf', size: 1_823_400, type: 'application/pdf', ext: 'PDF' },
-    ],
-    track: {
-      currentStage: 8,
-      completedDates: { 0: '8 Mar · 14:12', 1: '8 Mar · 22:40', 2: '10 Mar · 09:15', 3: '10 Mar · 14:30', 4: '11 Mar · 08:45', 5: '11 Mar · 12:20', 6: '12 Mar · 09:00', 7: '12 Mar · 11:42' },
-      skipped: [],
-    },
-    band: { tier: 'gold', score: 84, clarify: 'High confidence on documents and registry; one minor flag on plot boundary.' },
-    findings: [
-      { name: 'Document authenticity', ref: 'CofO ref · LS/2019/047/A · cross-checked' },
-      { name: 'Plot exists at the stated coordinates', ref: 'Field visit · 10 Mar · I. Okafor (NIESV 4892)' },
-      { name: 'Registry filing matches submitted documents', ref: 'LS Land Registry · filing 11 Aug 2019' },
-      { name: 'No competing claims found', ref: 'VPID graph · scanned 11 Mar' },
-      { name: 'Survey plan boundary — minor discrepancy', ref: '~1.4m variance on east boundary · see flag below', miss: true },
-    ],
-    warning: {
-      title: 'Boundary variance — east edge.',
-      body: 'The registered survey plan and the on-site measurement differ by ~1.4m on the east boundary. Worth raising with the seller before signing.',
-    },
-  },
-  {
-    vpid: 'vpr-std-complete',
-    address: 'Plot 9, Banana Island',
-    city: 'Foreshore Estate',
-    tier: 'standard',
-    status: 'complete',
-    createdAt: '2026-02-01T10:00:00.000Z',
-    expectedAt: '2026-02-08T17:00:00.000Z',
-    property: { type: 'residential', state: 'Lagos State', lga: 'Eti-Osa', address: 'Plot 9, Banana Island, Foreshore Estate, Lagos.', sizeSqm: 1_240 },
-    documents: [
-      { name: 'CofO_BananaIsland.pdf', size: 3_021_900, type: 'application/pdf', ext: 'PDF' },
-    ],
-    track: {
-      currentStage: 8,
-      completedDates: { 0: '1 Feb · 09:12', 1: '2 Feb · 17:40', 3: '4 Feb · 10:30', 4: '6 Feb · 14:30', 7: '8 Feb · 11:42' },
-      skipped: skippedStagesForTier('standard'),
-    },
-    band: { tier: 'bronze', score: 58, clarify: 'Standard tier — no site visit or survey crosscheck. Confidence capped at Silver.' },
-    findings: [
-      { name: 'Document authenticity', ref: 'CofO ref · LS/2014/0212/B · cross-checked' },
-      { name: 'Registry filing matches submitted documents', ref: 'LS Land Registry · filing 22 Apr 2014' },
-      { name: 'No competing claims found', ref: 'VPID graph · scanned 7 Feb' },
-    ],
-  },
-];
+function seedToDetail(s: VerificationSeed): RequestDetail {
+  return {
+    ...seedToSummary(s),
+    property: s.property,
+    documents: s.documents,
+  };
+}
 
 function readStored(): Record<string, StoredRecord> {
   if (typeof window === 'undefined') return {};
@@ -207,7 +108,7 @@ export const requestService = {
 
   async list(): Promise<RequestSummary[]> {
     await new Promise((r) => setTimeout(r, 120));
-    const seeds: RequestSummary[] = SEEDS.map(({ property: _p, documents: _d, track: _t, band: _b, flag: _f, ...rest }) => rest);
+    const seeds = SEEDS.map(seedToSummary);
     const stored = Object.values(readStored()).map(storedToSummary);
     return [...stored, ...seeds].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
   },
@@ -215,10 +116,7 @@ export const requestService = {
   async get(vpid: string): Promise<RequestDetail | null> {
     await new Promise((r) => setTimeout(r, 120));
     const seed = SEEDS.find((s) => s.vpid === vpid);
-    if (seed) {
-      const { track: _t, band: _b, flag: _f, ...rest } = seed;
-      return rest;
-    }
+    if (seed) return seedToDetail(seed);
     const stored = readStored()[vpid];
     return stored ? storedToDetail(stored) : null;
   },
@@ -240,10 +138,10 @@ export const verificationService = {
 
   async getBand(vpid: string): Promise<{ tier: BandTier; score: number; clarify?: string } | null> {
     const seed = SEEDS.find((s) => s.vpid === vpid);
-    return seed?.band || null;
+    return seed?.band ?? null;
   },
 
-  async getFlag(vpid: string): Promise<NonNullable<Seed['flag']> | null> {
+  async getFlag(vpid: string): Promise<NonNullable<VerificationSeed['flag']> | null> {
     const seed = SEEDS.find((s) => s.vpid === vpid);
     return seed?.flag ?? null;
   },
@@ -284,9 +182,7 @@ export const certificateService = {
     const seed = SEEDS.find((s) => s.vpid === vpid);
     if (!seed || seed.status !== 'complete' || !seed.band) return null;
     const [addr1, ...rest] = seed.property.address.split(',');
-    const verifiedIso = seed.track.completedDates[7]
-      ? seed.expectedAt || seed.createdAt
-      : seed.expectedAt || seed.createdAt;
+    const verifiedIso = seed.expectedAt || seed.createdAt;
     return {
       vpid,
       publicUrl: `verity.properties/v/${vpid.toUpperCase()}`,

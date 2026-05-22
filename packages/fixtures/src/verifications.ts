@@ -1,0 +1,111 @@
+import type { VerificationSeed } from './types';
+
+/** Stages Standard tier skips: plot existence (2), survey accuracy (5), specialist review (6). */
+const STANDARD_SKIPPED = [2, 5, 6] as const;
+
+export const VERIFICATION_SEEDS: VerificationSeed[] = [
+  {
+    vpid: 'vpr-in-progress',
+    address: 'Plot 27B, Admiralty Way',
+    city: 'Lekki Phase 1',
+    tier: 'premium',
+    status: 'in-progress',
+    createdAt: '2026-05-08T14:12:00.000Z',
+    expectedAt: '2026-05-12T17:00:00.000Z',
+    property: { type: 'residential', state: 'Lagos State', lga: 'Eti-Osa', address: 'Plot 27B, Admiralty Way, Lekki Phase 1, Lagos.', plotNo: 'LEK/PH1/27B', sizeSqm: 640 },
+    documents: [
+      { name: 'CofO_Lekki_Plot27B.pdf', size: 2_457_600, type: 'application/pdf', ext: 'PDF' },
+      { name: 'survey_plan_signed.jpg', size: 1_153_434, type: 'image/jpeg', ext: 'JPG' },
+      { name: 'deed_of_assignment.pdf', size: 3_879_731, type: 'application/pdf', ext: 'PDF' },
+    ],
+    track: {
+      currentStage: 3,
+      completedDates: { 0: '8 May · 14:12', 1: '8 May · 22:40', 2: '9 May · 10:30' },
+      skipped: [],
+    },
+    band: { tier: 'prov', score: 0 },
+    note: {
+      from: 'IFEOMA O.',
+      at: '9 MAY · 10:32',
+      body: "Field visit scheduled for tomorrow morning, 10 May. We've already confirmed the CofO filing date against the Lagos State Land Registry.",
+    },
+  },
+  {
+    vpid: 'vpr-awaiting',
+    address: '14 Bourdillon Rd',
+    city: 'Ikoyi',
+    tier: 'premium',
+    status: 'awaiting-action',
+    createdAt: '2026-05-08T11:00:00.000Z',
+    property: { type: 'residential', state: 'Lagos State', lga: 'Ikoyi', address: '14 Bourdillon Rd, Ikoyi, Lagos.', plotNo: 'IK/BRD/14', sizeSqm: 920 },
+    documents: [
+      { name: 'CofO_Bourdillon.pdf', size: 2_104_320, type: 'application/pdf', ext: 'PDF' },
+      { name: 'survey_plan_p2_unclear.jpg', size: 980_103, type: 'image/jpeg', ext: 'JPG' },
+    ],
+    track: {
+      currentStage: 1,
+      completedDates: { 0: '8 May · 14:12' },
+      skipped: [],
+    },
+    flag: {
+      title: 'WE NEED ONE THING',
+      body: "The Survey Plan you uploaded is missing the surveyor's seal on page 2. Could you upload a clearer scan?",
+      actionLabel: 'Upload replacement document',
+    },
+  },
+  {
+    vpid: 'vpr-complete',
+    address: '14 Bourdillon Rd',
+    city: 'Ikoyi',
+    tier: 'premium',
+    status: 'complete',
+    createdAt: '2026-03-08T10:00:00.000Z',
+    expectedAt: '2026-03-12T17:00:00.000Z',
+    property: { type: 'residential', state: 'Lagos State', lga: 'Ikoyi', address: '14 Bourdillon Rd, Ikoyi, Lagos.', plotNo: 'IK/BRD/14', sizeSqm: 920 },
+    documents: [
+      { name: 'CofO_Bourdillon.pdf', size: 2_104_320, type: 'application/pdf', ext: 'PDF' },
+      { name: 'survey_plan_signed.pdf', size: 1_823_400, type: 'application/pdf', ext: 'PDF' },
+    ],
+    track: {
+      currentStage: 8,
+      completedDates: { 0: '8 Mar · 14:12', 1: '8 Mar · 22:40', 2: '10 Mar · 09:15', 3: '10 Mar · 14:30', 4: '11 Mar · 08:45', 5: '11 Mar · 12:20', 6: '12 Mar · 09:00', 7: '12 Mar · 11:42' },
+      skipped: [],
+    },
+    band: { tier: 'gold', score: 84, clarify: 'High confidence on documents and registry; one minor flag on plot boundary.' },
+    findings: [
+      { name: 'Document authenticity', ref: 'CofO ref · LS/2019/047/A · cross-checked' },
+      { name: 'Plot exists at the stated coordinates', ref: 'Field visit · 10 Mar · I. Okafor (NIESV 4892)' },
+      { name: 'Registry filing matches submitted documents', ref: 'LS Land Registry · filing 11 Aug 2019' },
+      { name: 'No competing claims found', ref: 'VPID graph · scanned 11 Mar' },
+      { name: 'Survey plan boundary — minor discrepancy', ref: '~1.4m variance on east boundary · see flag below', miss: true },
+    ],
+    warning: {
+      title: 'Boundary variance — east edge.',
+      body: 'The registered survey plan and the on-site measurement differ by ~1.4m on the east boundary. Worth raising with the seller before signing.',
+    },
+  },
+  {
+    vpid: 'vpr-std-complete',
+    address: 'Plot 9, Banana Island',
+    city: 'Foreshore Estate',
+    tier: 'standard',
+    status: 'complete',
+    createdAt: '2026-02-01T10:00:00.000Z',
+    expectedAt: '2026-02-08T17:00:00.000Z',
+    property: { type: 'residential', state: 'Lagos State', lga: 'Eti-Osa', address: 'Plot 9, Banana Island, Foreshore Estate, Lagos.', sizeSqm: 1_240 },
+    documents: [
+      { name: 'CofO_BananaIsland.pdf', size: 3_021_900, type: 'application/pdf', ext: 'PDF' },
+    ],
+    track: {
+      currentStage: 8,
+      completedDates: { 0: '1 Feb · 09:12', 1: '2 Feb · 17:40', 3: '4 Feb · 10:30', 4: '6 Feb · 14:30', 7: '8 Feb · 11:42' },
+      skipped: [...STANDARD_SKIPPED],
+    },
+    band: { tier: 'bronze', score: 58, clarify: 'Standard tier — no site visit or survey crosscheck. Confidence capped at Silver.' },
+    findings: [
+      { name: 'Document authenticity', ref: 'CofO ref · LS/2014/0212/B · cross-checked' },
+      { name: 'Registry filing matches submitted documents', ref: 'LS Land Registry · filing 22 Apr 2014' },
+      { name: 'No competing claims found', ref: 'VPID graph · scanned 7 Feb' },
+    ],
+  },
+];
