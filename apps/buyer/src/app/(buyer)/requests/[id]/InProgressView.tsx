@@ -1,5 +1,6 @@
 import type { RequestDetail } from '@/lib/types/request';
 import type { VerificationTrack } from '@/lib/types/verification';
+import type { VerificationNote } from '@/lib/services/mocks/requestService.mock';
 import { StatusTrack } from '@/components/verification/StatusTrack';
 import { StatusHead } from './StatusHead';
 
@@ -18,7 +19,7 @@ function dayOf(createdAt: string, expectedAt?: string) {
   return { day, total };
 }
 
-export function InProgressView({ request, track }: { request: RequestDetail; track: VerificationTrack }) {
+export function InProgressView({ request, track, note }: { request: RequestDetail; track: VerificationTrack; note: VerificationNote | null }) {
   const { day, total } = dayOf(request.createdAt, request.expectedAt);
   const filled = Math.min(total, Math.max(0, Math.round((day / total) * 5)));
 
@@ -50,6 +51,19 @@ export function InProgressView({ request, track }: { request: RequestDetail; tra
             completedDates={track.completedDates}
             skipped={track.skipped}
           />
+
+          {note && (
+            <>
+              <div className="bf-eyebrow slate" style={{ marginTop: 32, marginBottom: 10 }}>— From the team</div>
+              <div className="bf-card" style={{ padding: 14, maxWidth: 640 }}>
+                <div className="bf-row" style={{ justifyContent: 'space-between' }}>
+                  <span className="bf-mono" style={{ fontSize: 10, color: 'var(--gold-deep)', letterSpacing: '0.18em' }}>SPECIALIST · {note.from}</span>
+                  <span className="bf-mono" style={{ fontSize: 10, color: 'var(--slate)' }}>{note.at}</span>
+                </div>
+                <p className="bf-body" style={{ fontSize: 14, marginTop: 8, lineHeight: 1.55 }}>{note.body}</p>
+              </div>
+            </>
+          )}
         </div>
       </main>
     </div>

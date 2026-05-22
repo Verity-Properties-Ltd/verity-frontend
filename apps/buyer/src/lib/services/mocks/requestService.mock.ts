@@ -13,6 +13,10 @@ type StoredRecord = {
   status: RequestStatus;
 };
 
+type Finding = { name: string; ref?: string; miss?: boolean };
+type Note = { from: string; at: string; body: string };
+type Warning = { title: string; body: string };
+
 type Seed = RequestSummary & {
   property: RequestDraft['property'];
   documents: RequestDraft['documents'];
@@ -23,6 +27,9 @@ type Seed = RequestSummary & {
     body: string;
     actionLabel?: string;
   };
+  note?: Note;
+  findings?: Finding[];
+  warning?: Warning;
 };
 
 const SEEDS: Seed[] = [
@@ -46,6 +53,11 @@ const SEEDS: Seed[] = [
       skipped: [],
     },
     band: { tier: 'prov', score: 0 },
+    note: {
+      from: 'IFEOMA O.',
+      at: '9 MAY · 10:32',
+      body: "Field visit scheduled for tomorrow morning, 10 May. We've already confirmed the CofO filing date against the Lagos State Land Registry.",
+    },
   },
   {
     vpid: 'vpr-awaiting',
@@ -89,6 +101,17 @@ const SEEDS: Seed[] = [
       skipped: [],
     },
     band: { tier: 'gold', score: 84, clarify: 'High confidence on documents and registry; one minor flag on plot boundary.' },
+    findings: [
+      { name: 'Document authenticity', ref: 'CofO ref · LS/2019/047/A · cross-checked' },
+      { name: 'Plot exists at the stated coordinates', ref: 'Field visit · 10 Mar · I. Okafor (NIESV 4892)' },
+      { name: 'Registry filing matches submitted documents', ref: 'LS Land Registry · filing 11 Aug 2019' },
+      { name: 'No competing claims found', ref: 'VPID graph · scanned 11 Mar' },
+      { name: 'Survey plan boundary — minor discrepancy', ref: '~1.4m variance on east boundary · see flag below', miss: true },
+    ],
+    warning: {
+      title: 'Boundary variance — east edge.',
+      body: 'The registered survey plan and the on-site measurement differ by ~1.4m on the east boundary. Worth raising with the seller before signing.',
+    },
   },
   {
     vpid: 'vpr-std-complete',
@@ -108,6 +131,11 @@ const SEEDS: Seed[] = [
       skipped: skippedStagesForTier('standard'),
     },
     band: { tier: 'bronze', score: 58, clarify: 'Standard tier — no site visit or survey crosscheck. Confidence capped at Silver.' },
+    findings: [
+      { name: 'Document authenticity', ref: 'CofO ref · LS/2014/0212/B · cross-checked' },
+      { name: 'Registry filing matches submitted documents', ref: 'LS Land Registry · filing 22 Apr 2014' },
+      { name: 'No competing claims found', ref: 'VPID graph · scanned 7 Feb' },
+    ],
   },
 ];
 
@@ -219,7 +247,26 @@ export const verificationService = {
     const seed = SEEDS.find((s) => s.vpid === vpid);
     return seed?.flag ?? null;
   },
+
+  async getNote(vpid: string): Promise<Note | null> {
+    const seed = SEEDS.find((s) => s.vpid === vpid);
+    return seed?.note ?? null;
+  },
+
+  async getFindings(vpid: string): Promise<Finding[]> {
+    const seed = SEEDS.find((s) => s.vpid === vpid);
+    return seed?.findings ?? [];
+  },
+
+  async getWarning(vpid: string): Promise<Warning | null> {
+    const seed = SEEDS.find((s) => s.vpid === vpid);
+    return seed?.warning ?? null;
+  },
 };
+
+export type VerificationNote = Note;
+export type VerificationFinding = Finding;
+export type VerificationWarning = Warning;
 
 function fmtVerifiedDate(iso?: string) {
   if (!iso) return '—';

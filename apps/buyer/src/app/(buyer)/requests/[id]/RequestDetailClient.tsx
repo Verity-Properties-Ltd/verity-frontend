@@ -6,6 +6,7 @@ import { requestService, verificationService } from '@/lib/services';
 import { AppBar } from '@/components/chrome/AppBar';
 import type { RequestDetail } from '@/lib/types/request';
 import type { BandTier, VerificationTrack } from '@/lib/types/verification';
+import type { VerificationFinding, VerificationNote, VerificationWarning } from '@/lib/services/mocks/requestService.mock';
 import { InProgressView } from './InProgressView';
 import { AwaitingView } from './AwaitingView';
 import { CompleteView } from './CompleteView';
@@ -22,24 +23,30 @@ export function RequestDetailClient({ vpid }: { vpid: string }) {
         track: VerificationTrack;
         band: { tier: BandTier; score: number; clarify?: string } | null;
         flag: Flag | null;
+        note: VerificationNote | null;
+        findings: VerificationFinding[];
+        warning: VerificationWarning | null;
       }
   >({ kind: 'loading' });
 
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      const [request, track, band, flag] = await Promise.all([
+      const [request, track, band, flag, note, findings, warning] = await Promise.all([
         requestService.get(vpid),
         verificationService.getTrack(vpid),
         verificationService.getBand(vpid),
         verificationService.getFlag(vpid),
+        verificationService.getNote(vpid),
+        verificationService.getFindings(vpid),
+        verificationService.getWarning(vpid),
       ]);
       if (cancelled) return;
       if (!request || !track) {
         setState({ kind: 'not-found' });
         return;
       }
-      setState({ kind: 'ready', request, track, band, flag });
+      setState({ kind: 'ready', request, track, band, flag, note, findings, warning });
     })();
     return () => { cancelled = true; };
   }, [vpid]);
@@ -59,7 +66,7 @@ export function RequestDetailClient({ vpid }: { vpid: string }) {
     );
   }
 
-  const { request, track, band, flag } = state;
+  const { request, track, band, flag, note, findings, warning } = state;
   const titleRight = (
     <span className="bf-mono" style={{ fontSize: 10, color: 'var(--gold-deep)', letterSpacing: '0.18em' }}>{vpid.toUpperCase()}</span>
   );
@@ -71,13 +78,13 @@ export function RequestDetailClient({ vpid }: { vpid: string }) {
       </div>
 
       {request.status === 'in-progress' && (
-        <InProgressView request={request} track={track} />
+        <InProgressView request={request} track={track} note={note} />
       )}
       {request.status === 'awaiting-action' && (
         <AwaitingView request={request} track={track} flag={flag} />
       )}
       {request.status === 'complete' && (
-        <CompleteView request={request} track={track} band={band} />
+        <CompleteView request={request} track={track} band={band} findings={findings} warning={warning} />
       )}
     </>
   );
