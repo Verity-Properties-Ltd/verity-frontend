@@ -120,6 +120,11 @@ function detailFor(p: PropertySummary): PropertyDetail {
   };
 }
 
+function fakeVpid(): string {
+  const n = String(Math.floor(1_000 + Math.random() * 9_000));
+  return `VRT-LA-2026-0${n}`;
+}
+
 export const propertyService = {
   async list(): Promise<PropertySummary[]> {
     await new Promise((r) => setTimeout(r, 120));
@@ -130,6 +135,13 @@ export const propertyService = {
     await new Promise((r) => setTimeout(r, 120));
     const summary = PROPERTIES.find((p) => p.vpid === vpid);
     return summary ? detailFor(summary) : null;
+  },
+
+  async submit(_draft: unknown): Promise<{ vpid: string }> {
+    await new Promise((r) => setTimeout(r, 600));
+    const vpid = fakeVpid();
+    console.info('[mock] propertyService.submit', { vpid });
+    return { vpid };
   },
 
   async getDashboardSnapshot(): Promise<DashboardSnapshot> {
