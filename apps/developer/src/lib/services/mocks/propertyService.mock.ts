@@ -2,6 +2,8 @@ import type {
   ActivityEvent,
   AttentionItem,
   BandTotals,
+  CsvParsedRow,
+  CsvParseResult,
   DashboardSnapshot,
   DistributionEvent,
   KpiSnapshot,
@@ -142,6 +144,24 @@ export const propertyService = {
     const vpid = fakeVpid();
     console.info('[mock] propertyService.submit', { vpid });
     return { vpid };
+  },
+
+  async parseCsv(file: File): Promise<CsvParseResult> {
+    await new Promise((r) => setTimeout(r, 600));
+    const text = await file.text();
+    const lines = text.split(/\r?\n/).filter((l) => l.trim().length > 0);
+    const rows: CsvParsedRow[] = lines.slice(1).map((line, i) => {
+      const [addr, type, state, ref] = line.split(',').map((s) => s.trim());
+      const validation: CsvParsedRow['validation'] =
+        ref === 'SUR-C-04' ? { kind: 'dup', message: 'Duplicate of VRT-LA-2024-0089' } :
+        addr?.toLowerCase().includes('banana') ? { kind: 'warn', message: 'Address ambiguous' } :
+        { kind: 'ok' };
+      return { index: i + 1, address: addr || '', type: type || '', state: state || 'Lagos', ref: ref || '', validation };
+    });
+    const ok = rows.filter((r) => r.validation.kind === 'ok').length;
+    const warn = rows.filter((r) => r.validation.kind === 'warn').length;
+    const dup = rows.filter((r) => r.validation.kind === 'dup').length;
+    return { fileName: file.name, total: rows.length, ok, warn, dup, rows };
   },
 
   async getDashboardSnapshot(): Promise<DashboardSnapshot> {

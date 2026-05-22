@@ -83,3 +83,21 @@ export type PropertyDetail = PropertySummary & {
   history: VerificationEvent[];
   distribution: DistributionEvent[];
 };
+
+export type CsvParsedRow = {
+  index: number;
+  address: string;
+  type: string;
+  state: string;
+  ref: string;
+  validation: { kind: 'ok' } | { kind: 'warn'; message: string } | { kind: 'dup'; message: string };
+};
+
+export type CsvParseResult = {
+  fileName: string;
+  total: number;
+  ok: number;
+  warn: number;
+  dup: number;
+  rows: CsvParsedRow[];
+};
