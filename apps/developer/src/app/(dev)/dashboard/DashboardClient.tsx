@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { PageHead } from '@/components/chrome/PageHead';
 import { authService, kycService } from '@/lib/services';
 import type { KycStatus } from '@/lib/types/kyc';
+import { VerifiedDashboard } from './VerifiedDashboard';
 
 type View = 'pending' | 'stage1' | 'stage2' | 'verified';
 
@@ -48,6 +49,10 @@ export function DashboardClient() {
   const view = viewFor(status);
   const firstName = name.split(' ')[0];
 
+  if (view === 'verified') {
+    return <VerifiedDashboard name={name} />;
+  }
+
   const head = (() => {
     if (view === 'pending') return {
       eyebrow: `Welcome · ${firstName}`,
@@ -83,23 +88,17 @@ export function DashboardClient() {
         Checking with CAC…
       </button>
     );
-    if (view === 'stage2') return (
+    return (
       <Link href="/dashboard/kyc/prove" className="dv-btn gold">
         Open identity verification <span className="arrow">→</span>
-      </Link>
-    );
-    return (
-      <Link href="/portfolio/add/type" className="dv-btn primary">
-        Add your first property <span className="arrow">→</span>
       </Link>
     );
   })();
 
   const pill = (() => {
-    if (view === 'pending') return { cls: '', label: 'Account · Founding 50 · Cohort 014' };
-    if (view === 'stage1') return { cls: '', label: 'Company check · in progress' };
-    if (view === 'stage2') return { cls: '', label: 'Identity verification · ready' };
-    return { cls: 'verified', label: 'Workspace · verified' };
+    if (view === 'pending') return { label: 'Account · Founding 50 · Cohort 014' };
+    if (view === 'stage1') return { label: 'Company check · in progress' };
+    return { label: 'Identity verification · ready' };
   })();
 
   return (
@@ -113,7 +112,7 @@ export function DashboardClient() {
           </div>
           <div className="sub">{authService.getSession()?.email || ''}</div>
         </div>
-        <div className={`pill ${pill.cls}`}>
+        <div className="pill">
           <span className="dot" />
           {pill.label}
         </div>
@@ -121,79 +120,64 @@ export function DashboardClient() {
 
       <PageHead eyebrow={head.eyebrow} title={head.title} lede={head.lede} actions={action} />
 
-      {view !== 'verified' ? (
-        <div className="dv-kyc-step">
-          <div className="step-head">
-            <span className="marker">02</span>
+      <div className="dv-kyc-step">
+        <div className="step-head">
+          <span className="marker">02</span>
+          <div className="body">
+            <div className="h">Complete <em>company verification</em> (KYC)</div>
+            <div className="sub">
+              Two short stages — an automatic CAC company check, then a hosted identity capture for the registering director. We never ask you to type your BVN or NIN in Verity; the Mono Prove widget collects them privately.
+            </div>
+          </div>
+          <div className="right">02 · current</div>
+        </div>
+
+        <div className="dv-stages">
+          <div className={`dv-stage-card ${view === 'stage1' ? 'active' : view === 'stage2' ? 'done' : 'locked'}`}>
+            <span className="ic">{view === 'stage2' ? '✓' : '01'}</span>
             <div className="body">
-              <div className="h">Complete <em>company verification</em> (KYC)</div>
-              <div className="sub">
-                Two short stages — an automatic CAC company check, then a hosted identity capture for the registering director. We never ask you to type your BVN or NIN in Verity; the Mono Prove widget collects them privately.
+              <div className="lbl">Stage 01 · Mono Lookup · automatic</div>
+              <div className="h">Company check &amp; director cross-reference</div>
+              <div className="desc">
+                Confirms the company is CAC-registered and that you appear on its director list. No widget — runs in the background.
+              </div>
+              <div className="checks">
+                <span className="it">CAC status</span>
+                <span className="it">RC number</span>
+                <span className="it">Director list</span>
+                <span className="it">Contact match</span>
               </div>
             </div>
-            <div className="right">02 · current</div>
+            <div className="right">
+              {view === 'stage1' ? <>Running<br />~ {Math.ceil(((kycService.msUntilStage1Done() ?? 0) / 1000))}s</> : null}
+              {view === 'stage2' ? <>Completed</> : null}
+              {view === 'pending' ? <>Estimated<br />~ 15s</> : null}
+            </div>
+            {view === 'stage1' && <div className="progress-line" />}
           </div>
 
-          <div className="dv-stages">
-            <div className={`dv-stage-card ${view === 'stage1' ? 'active' : view === 'stage2' ? 'done' : 'locked'}`}>
-              <span className="ic">{view === 'stage2' ? '✓' : '01'}</span>
-              <div className="body">
-                <div className="lbl">Stage 01 · Mono Lookup · automatic</div>
-                <div className="h">Company check &amp; director cross-reference</div>
-                <div className="desc">
-                  Confirms the company is CAC-registered and that you appear on its director list. No widget — runs in the background.
-                </div>
-                <div className="checks">
-                  <span className="it">CAC status</span>
-                  <span className="it">RC number</span>
-                  <span className="it">Director list</span>
-                  <span className="it">Contact match</span>
-                </div>
+          <div className={`dv-stage-card ${view === 'stage2' ? 'active' : 'locked'}`}>
+            <span className="ic">02</span>
+            <div className="body">
+              <div className="lbl">Stage 02 · Mono Prove Tier 2 · in-widget</div>
+              <div className="h">Personal identity verification</div>
+              <div className="desc">
+                Opens a hosted Mono Prove session: BVN/NIN entry, ID document capture, a selfie, and a brief liveness check.
               </div>
-              <div className="right">
-                {view === 'stage1' ? <>Running<br />~ {Math.ceil(((kycService.msUntilStage1Done() ?? 0) / 1000))}s</> : null}
-                {view === 'stage2' ? <>Completed</> : null}
-                {view === 'pending' ? <>Estimated<br />~ 15s</> : null}
+              <div className="checks">
+                <span className="it">BVN / NIN</span>
+                <span className="it">ID document</span>
+                <span className="it">Selfie</span>
+                <span className="it">Liveness</span>
+                <span className="it">Consent</span>
               </div>
-              {view === 'stage1' && <div className="progress-line" />}
             </div>
-
-            <div className={`dv-stage-card ${view === 'stage2' ? 'active' : 'locked'}`}>
-              <span className="ic">02</span>
-              <div className="body">
-                <div className="lbl">Stage 02 · Mono Prove Tier 2 · in-widget</div>
-                <div className="h">Personal identity verification</div>
-                <div className="desc">
-                  Opens a hosted Mono Prove session: BVN/NIN entry, ID document capture, a selfie, and a brief liveness check.
-                </div>
-                <div className="checks">
-                  <span className="it">BVN / NIN</span>
-                  <span className="it">ID document</span>
-                  <span className="it">Selfie</span>
-                  <span className="it">Liveness</span>
-                  <span className="it">Consent</span>
-                </div>
-              </div>
-              <div className="right">
-                {view === 'stage2' ? <>Ready<br />open widget</> : <>Locked<br />after Stage 01</>}
-              </div>
+            <div className="right">
+              {view === 'stage2' ? <>Ready<br />open widget</> : <>Locked<br />after Stage 01</>}
             </div>
           </div>
         </div>
-      ) : (
-        <div className="dv-verified-card">
-          <div className="seal">✓</div>
-          <div className="dv-prove-eyebrow">Onboarding complete</div>
-          <h2 className="dv-prove-title">You&rsquo;re <em>cleared</em> to add properties.</h2>
-          <p className="dv-prove-desc">
-            Your KYC is on file. Phase 2 ships the post-onboarding dashboard. For now, jump into the add wizard or reset onboarding to see the flow again.
-          </p>
-          <div className="dv-prove-footer">
-            <button type="button" className="dv-btn outline" onClick={onResetForDemo}>Reset KYC (demo)</button>
-            <Link href="/portfolio/add/type" className="dv-btn primary">Add your first property →</Link>
-          </div>
-        </div>
-      )}
+      </div>
 
       <div style={{ marginTop: 16, fontFamily: 'var(--f-meta)', fontSize: 10, color: 'var(--slate)', letterSpacing: '0.18em', textTransform: 'uppercase' }}>
         Mock data only ·{' '}
