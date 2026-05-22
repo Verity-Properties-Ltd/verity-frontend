@@ -1,0 +1,8 @@
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: var(--f-body, 'Cormorant Garamond', serif);
+  color: var(--ink, #1E2260);
+  background: var(--cream, #F5F2ED);
+  min-height: 100vh;
+}
+* { box-sizing: border-box; }

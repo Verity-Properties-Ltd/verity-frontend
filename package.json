@@ -7,6 +7,7 @@
     "packages/*"
   ],
   "scripts": {
-    "dev:buyer": "npm run dev --workspace=@verity/buyer"
+    "dev:buyer": "npm run dev --workspace=@verity/buyer",
+    "dev:developer": "npm run dev --workspace=@verity/developer"
   }
 }
