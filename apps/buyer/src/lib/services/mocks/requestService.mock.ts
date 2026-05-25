@@ -166,6 +166,11 @@ export const requestService = {
       Country: 'NG',
       LotSizeSquareMeters: p.LotSizeSquareMeters,
       BedroomsTotal: p.BedroomsTotal,
+      BathroomsFull: p.BathroomsFull,
+      BathroomsHalf: p.BathroomsHalf,
+      BathroomsTotal: p.BathroomsFull != null
+        ? p.BathroomsFull + (p.BathroomsHalf ?? 0) * 0.5
+        : undefined,
       Verity_NG_LandZoning: derived?.Verity_NG_LandZoning,
       Verity_NG_LandFeature: p.landFeatures[0] ?? 'None',
       Verity_NG_HouseStyle: p.houseStyle ?? undefined,

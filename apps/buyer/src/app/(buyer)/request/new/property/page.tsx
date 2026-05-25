@@ -8,6 +8,7 @@ import { CategorySelector } from '@/components/wizard/CategorySelector';
 import { LandSubCategorySelector } from '@/components/wizard/LandSubCategorySelector';
 import { HouseStyleSelector } from '@/components/wizard/HouseStyleSelector';
 import { ApartmentStyleSelector } from '@/components/wizard/ApartmentStyleSelector';
+import { BedsBathsSelector } from '@/components/wizard/BedsBathsSelector';
 import { BQToggle } from '@/components/wizard/BQToggle';
 import { derivePropertySubType, type UICategory } from '@verity/reso';
 
@@ -16,21 +17,29 @@ export default function PropertyStep() {
   const { draft, update, hydrated } = useRequestDraft();
   const p = draft.property;
   const cat = p.category;
-  const showsBQ = cat === 'ResidentialHouse' || cat === 'ApartmentFlat';
 
-  const apartmentNeedsBedrooms =
-    cat === 'ApartmentFlat' && p.apartmentStyle !== null && p.apartmentStyle !== 'Studio';
+  const isHouse     = cat === 'ResidentialHouse';
+  const isApartment = cat === 'ApartmentFlat';
+  const isStudio    = isApartment && p.apartmentStyle === 'Studio';
+  const showsBQ        = isHouse || isApartment;
+  const showsBedsBaths = isHouse || (isApartment && !!p.apartmentStyle);
+  const showsBedrooms  = isHouse || (isApartment && !isStudio);
+  const showsHalfBaths = isHouse || (isApartment && !isStudio);
+
+  const bedsBathsValid =
+    !showsBedsBaths ||
+    ((!showsBedrooms || !!p.BedroomsTotal) && !!p.BathroomsFull);
 
   const level2Valid =
     cat === 'LandedProperty' ? !!p.landSubCategory :
     cat === 'ResidentialHouse' ? !!p.houseStyle && !!p.houseAttachment :
-    cat === 'ApartmentFlat' ? !!p.apartmentStyle && (!apartmentNeedsBedrooms || !!p.BedroomsTotal) :
+    cat === 'ApartmentFlat' ? !!p.apartmentStyle :
     false;
 
   const bqValid = !p.hasBQ || !!p.bqConfig;
   const geoValid = !!p.UnparsedAddress.trim() && !!p.CountyOrParish.trim();
 
-  const valid = !!cat && level2Valid && bqValid && geoValid;
+  const valid = !!cat && level2Valid && bedsBathsValid && bqValid && geoValid;
 
   function patchProperty(patch: Partial<RequestProperty>) {
     update((d) => ({ ...d, property: { ...d.property, ...patch } }));
@@ -45,6 +54,8 @@ export default function PropertyStep() {
       houseAttachment: null,
       apartmentStyle: null,
       BedroomsTotal: undefined,
+      BathroomsFull: undefined,
+      BathroomsHalf: undefined,
       hasBQ: false,
       bqConfig: null,
       bqSeparateTitle: false,
@@ -80,13 +91,13 @@ export default function PropertyStep() {
 
       <div className="bf-stack" style={{ gap: 24, marginTop: 24, maxWidth: 880 }}>
         <section>
-          <SectionLabel>1. Property category</SectionLabel>
+          <SectionLabel>Property category</SectionLabel>
           <CategorySelector value={cat} onChange={onCategoryChange} />
         </section>
 
         {cat === 'LandedProperty' && (
           <section>
-            <SectionLabel>2. Land sub-category</SectionLabel>
+            <SectionLabel>Land sub-category</SectionLabel>
             <LandSubCategorySelector
               value={p.landSubCategory}
               onChange={(v) => patchProperty({ landSubCategory: v })}
@@ -98,7 +109,7 @@ export default function PropertyStep() {
 
         {cat === 'ResidentialHouse' && (
           <section>
-            <SectionLabel>2. Style &amp; attachment</SectionLabel>
+            <SectionLabel>Style &amp; attachment</SectionLabel>
             <HouseStyleSelector
               style={p.houseStyle}
               attachment={p.houseAttachment}
@@ -110,21 +121,35 @@ export default function PropertyStep() {
 
         {cat === 'ApartmentFlat' && (
           <section>
-            <SectionLabel>2. Apartment style</SectionLabel>
+            <SectionLabel>Apartment style</SectionLabel>
             <ApartmentStyleSelector
               value={p.apartmentStyle}
               onChange={(v) =>
                 patchProperty({ apartmentStyle: v, BedroomsTotal: v === 'Studio' ? undefined : p.BedroomsTotal })
               }
+            />
+          </section>
+        )}
+
+        {showsBedsBaths && (
+          <section>
+            <SectionLabel>Bedrooms &amp; bathrooms</SectionLabel>
+            <BedsBathsSelector
+              showBedrooms={showsBedrooms}
+              showHalfBaths={showsHalfBaths}
               bedrooms={p.BedroomsTotal ?? null}
+              bathroomsFull={p.BathroomsFull ?? null}
+              bathroomsHalf={p.BathroomsHalf ?? null}
               onBedroomsChange={(v) => patchProperty({ BedroomsTotal: v })}
+              onBathroomsFullChange={(v) => patchProperty({ BathroomsFull: v })}
+              onBathroomsHalfChange={(v) => patchProperty({ BathroomsHalf: v })}
             />
           </section>
         )}
 
         {showsBQ && (
           <section>
-            <SectionLabel>3. Boys&apos; Quarters</SectionLabel>
+            <SectionLabel>Boys&apos; Quarters</SectionLabel>
             <BQToggle
               hasBQ={p.hasBQ}
               bqConfig={p.bqConfig}
@@ -143,7 +168,7 @@ export default function PropertyStep() {
         )}
 
         <section>
-          <SectionLabel>{showsBQ ? '4' : cat ? '3' : '2'}. Location &amp; size</SectionLabel>
+          <SectionLabel>Location &amp; size</SectionLabel>
           <div className="bf-stack" style={{ gap: 14 }}>
             <div className="bf-grid-2">
               <div className="bf-field">

@@ -106,7 +106,10 @@ export interface RESOProperty {
   Longitude?: number;
 
   BedroomsTotal?: number;
+  /** Computed: BathroomsFull + BathroomsHalf * 0.5 (per RESO convention). */
   BathroomsTotal?: number;
+  BathroomsFull?: number;
+  BathroomsHalf?: number;
   LotSizeSquareMeters?: number;
   YearBuilt?: number;
 

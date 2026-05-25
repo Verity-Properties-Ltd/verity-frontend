@@ -47,8 +47,12 @@ export type AddPropertyDraft = {
   StateOrProvince: string;       // 'Lagos' default
   CountyOrParish: string;        // LGA
   LotSizeSquareMeters: number | null;
-  /** Required for Apartment / Flat when style ≠ Studio. `5` represents "5+". */
+  /** Required for Residential House and for Apartment when style ≠ Studio. `5` represents "5+". */
   BedroomsTotal: number | null;
+  /** Required for Residential House and for Apartment. `5` represents "5+". */
+  BathroomsFull: number | null;
+  /** Optional. A half bath has sink + toilet only. `3` represents "3+". */
+  BathroomsHalf: number | null;
 
   // Documents / reference / tier
   documents: Partial<Record<DocumentSlot, DocumentMeta>>;
@@ -75,6 +79,8 @@ export const EMPTY_ADD_DRAFT: AddPropertyDraft = {
   CountyOrParish: '',
   LotSizeSquareMeters: null,
   BedroomsTotal: null,
+  BathroomsFull: null,
+  BathroomsHalf: null,
 
   documents: {},
   ref: '',

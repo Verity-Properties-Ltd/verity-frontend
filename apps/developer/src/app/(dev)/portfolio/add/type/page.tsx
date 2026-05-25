@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { WizardCard } from '@/components/wizard/WizardCard';
 import { WizardFooter } from '@/components/wizard/WizardFooter';
 import { ApartmentStyleSelector } from '@/components/wizard/ApartmentStyleSelector';
+import { BedsBathsSelector } from '@/components/wizard/BedsBathsSelector';
 import { BQToggle } from '@/components/wizard/BQToggle';
 import { CategorySelector } from '@/components/wizard/CategorySelector';
 import { HouseStyleSelector } from '@/components/wizard/HouseStyleSelector';
@@ -16,25 +17,31 @@ export default function TypeStep() {
   const { draft, update, hydrated } = useAddPropertyDraft();
 
   const cat = draft.category;
-  const showsBQ = cat === 'ResidentialHouse' || cat === 'ApartmentFlat';
+  const isHouse     = cat === 'ResidentialHouse';
+  const isApartment = cat === 'ApartmentFlat';
+  const isStudio    = isApartment && draft.apartmentStyle === 'Studio';
+  const showsBQ        = isHouse || isApartment;
+  const showsBedsBaths = isHouse || (isApartment && !!draft.apartmentStyle);
+  const showsBedrooms  = isHouse || (isApartment && !isStudio);
+  const showsHalfBaths = isHouse || (isApartment && !isStudio);
 
-  // Bedrooms required for non-Studio apartments.
-  const apartmentNeedsBedrooms =
-    cat === 'ApartmentFlat' && draft.apartmentStyle !== null && draft.apartmentStyle !== 'Studio';
+  const bedsBathsValid =
+    !showsBedsBaths ||
+    ((!showsBedrooms || !!draft.BedroomsTotal) && !!draft.BathroomsFull);
 
   const level2Valid =
     cat === 'LandedProperty' ? !!draft.landSubCategory :
     cat === 'ResidentialHouse' ? !!draft.houseStyle && !!draft.houseAttachment :
-    cat === 'ApartmentFlat' ? !!draft.apartmentStyle && (!apartmentNeedsBedrooms || !!draft.BedroomsTotal) :
+    cat === 'ApartmentFlat' ? !!draft.apartmentStyle :
     false;
 
   const bqValid = !draft.hasBQ || !!draft.bqConfig;
   const geoValid = !!draft.UnparsedAddress.trim() && !!draft.CountyOrParish.trim() && !!draft.LotSizeSquareMeters;
 
-  const valid = !!cat && level2Valid && bqValid && geoValid;
+  const valid = !!cat && level2Valid && bedsBathsValid && bqValid && geoValid;
 
   function onCategoryChange(next: UICategory) {
-    // Reset Level-2 + BQ selections when category changes to keep state consistent.
+    // Reset Level-2, beds/baths, and BQ selections when category changes.
     update({
       category: next,
       landSubCategory: null,
@@ -43,6 +50,8 @@ export default function TypeStep() {
       houseAttachment: null,
       apartmentStyle: null,
       BedroomsTotal: null,
+      BathroomsFull: null,
+      BathroomsHalf: null,
       hasBQ: false,
       bqConfig: null,
       bqSeparateTitle: false,
@@ -75,13 +84,13 @@ export default function TypeStep() {
     >
       <div style={{ display: 'flex', flexDirection: 'column', gap: 24, marginTop: 22 }}>
         <section>
-          <SectionLabel>1. Property category</SectionLabel>
+          <SectionLabel>Property category</SectionLabel>
           <CategorySelector value={cat} onChange={onCategoryChange} />
         </section>
 
         {cat === 'LandedProperty' && (
           <section>
-            <SectionLabel>2. Land sub-category</SectionLabel>
+            <SectionLabel>Land sub-category</SectionLabel>
             <LandSubCategorySelector
               value={draft.landSubCategory}
               onChange={(v) => update({ landSubCategory: v })}
@@ -93,7 +102,7 @@ export default function TypeStep() {
 
         {cat === 'ResidentialHouse' && (
           <section>
-            <SectionLabel>2. Style &amp; attachment</SectionLabel>
+            <SectionLabel>Style &amp; attachment</SectionLabel>
             <HouseStyleSelector
               style={draft.houseStyle}
               attachment={draft.houseAttachment}
@@ -105,22 +114,36 @@ export default function TypeStep() {
 
         {cat === 'ApartmentFlat' && (
           <section>
-            <SectionLabel>2. Apartment style</SectionLabel>
+            <SectionLabel>Apartment style</SectionLabel>
             <ApartmentStyleSelector
               value={draft.apartmentStyle}
               onChange={(v) =>
-                // Reset BedroomsTotal when style changes — Studio shouldn't carry a bedroom count.
+                // Reset BedroomsTotal when switching to Studio — a studio has 0 bedrooms by definition.
                 update({ apartmentStyle: v, BedroomsTotal: v === 'Studio' ? null : draft.BedroomsTotal })
               }
+            />
+          </section>
+        )}
+
+        {showsBedsBaths && (
+          <section>
+            <SectionLabel>Bedrooms &amp; bathrooms</SectionLabel>
+            <BedsBathsSelector
+              showBedrooms={showsBedrooms}
+              showHalfBaths={showsHalfBaths}
               bedrooms={draft.BedroomsTotal}
+              bathroomsFull={draft.BathroomsFull}
+              bathroomsHalf={draft.BathroomsHalf}
               onBedroomsChange={(v) => update({ BedroomsTotal: v })}
+              onBathroomsFullChange={(v) => update({ BathroomsFull: v })}
+              onBathroomsHalfChange={(v) => update({ BathroomsHalf: v })}
             />
           </section>
         )}
 
         {showsBQ && (
           <section>
-            <SectionLabel>3. Boys&apos; Quarters</SectionLabel>
+            <SectionLabel>Boys&apos; Quarters</SectionLabel>
             <BQToggle
               hasBQ={draft.hasBQ}
               bqConfig={draft.bqConfig}
@@ -140,7 +163,7 @@ export default function TypeStep() {
         )}
 
         <section>
-          <SectionLabel>{showsBQ ? '4' : cat ? '3' : '2'}. Location &amp; size</SectionLabel>
+          <SectionLabel>Location &amp; size</SectionLabel>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             <div className="dv-field full">
               <label className="lbl" htmlFor="address">Property address</label>

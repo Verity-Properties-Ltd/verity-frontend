@@ -54,13 +54,35 @@ export default function ReviewStep() {
   }
   if (draft.category === 'ApartmentFlat') {
     rows.push({ label: 'Apartment style', field: 'Verity_NG_ApartmentStyle', value: draft.apartmentStyle ?? '—' });
-    if (draft.apartmentStyle && draft.apartmentStyle !== 'Studio' && draft.BedroomsTotal) {
+  }
+
+  // Beds + baths — apply to House and to Apartment (bedrooms hidden for Studio).
+  const showsBeds = draft.category === 'ResidentialHouse' || (draft.category === 'ApartmentFlat' && draft.apartmentStyle !== 'Studio');
+  if (showsBeds && draft.BedroomsTotal) {
+    rows.push({
+      label: 'Bedrooms',
+      field: 'BedroomsTotal',
+      value: draft.BedroomsTotal >= 5 ? '5+' : String(draft.BedroomsTotal),
+    });
+  }
+  if (draft.BathroomsFull) {
+    rows.push({
+      label: 'Full bathrooms',
+      field: 'BathroomsFull',
+      value: draft.BathroomsFull >= 5 ? '5+' : String(draft.BathroomsFull),
+    });
+    if (draft.BathroomsHalf && draft.BathroomsHalf > 0) {
       rows.push({
-        label: 'Bedrooms',
-        field: 'BedroomsTotal',
-        value: draft.BedroomsTotal >= 5 ? '5+' : String(draft.BedroomsTotal),
+        label: 'Half bathrooms',
+        field: 'BathroomsHalf',
+        value: draft.BathroomsHalf >= 3 ? '3+' : String(draft.BathroomsHalf),
       });
     }
+    rows.push({
+      label: 'Total bathrooms',
+      field: 'BathroomsTotal',
+      value: (draft.BathroomsFull + (draft.BathroomsHalf ?? 0) * 0.5).toFixed(1),
+    });
   }
   if (draft.hasBQ) {
     rows.push({ label: 'Boys\' Quarters',  field: 'Verity_NG_HasBQ',           value: 'Yes' });

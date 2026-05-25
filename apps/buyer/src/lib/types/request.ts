@@ -44,8 +44,12 @@ export type RequestProperty = {
   StateOrProvince: string;
   CountyOrParish: string;
   LotSizeSquareMeters?: number;
-  /** Required for Apartment / Flat when style ≠ Studio. `5` represents "5+". */
+  /** Required for Residential House and for Apartment when style ≠ Studio. `5` represents "5+". */
   BedroomsTotal?: number;
+  /** Required for Residential House and for Apartment. `5` represents "5+". */
+  BathroomsFull?: number;
+  /** Optional. A half bath has sink + toilet only. `3` represents "3+". */
+  BathroomsHalf?: number;
 
   // Verity_* title
   Verity_PlotNo?: string;
