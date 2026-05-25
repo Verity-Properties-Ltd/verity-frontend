@@ -63,6 +63,9 @@ function seedToRequestProperty(sp: VerificationSeed['property']): RequestPropert
     hasBQ: !!sp.Verity_NG_HasBQ,
     bqConfig: (sp.Verity_NG_BQConfig as VerityNG_BQConfig | undefined) ?? null,
     bqSeparateTitle: !!sp.Verity_NG_BQSeparateTitle,
+    Verity_NG_BQBedroomsTotal: sp.Verity_NG_BQBedroomsTotal,
+    Verity_NG_BQBathroomsFull: sp.Verity_NG_BQBathroomsFull,
+    Verity_NG_BQBathroomsHalf: sp.Verity_NG_BQBathroomsHalf,
     UnparsedAddress: sp.UnparsedAddress ?? sp.address ?? '',
     StateOrProvince: sp.StateOrProvince ?? 'Lagos',
     CountyOrParish: sp.CountyOrParish ?? sp.lga ?? '',
@@ -157,11 +160,13 @@ export const requestService = {
     const derived = derive ? derivePropertySubType(derive) : null;
 
     // Studio implies 0 bedrooms + 1 full bath (RESO §5.3 standard layout).
-    const isStudio   = p.category === 'ApartmentFlat' && p.apartmentStyle === 'Studio';
-    const bedrooms   = isStudio ? 0 : p.BedroomsTotal;
-    const bathsFull  = isStudio ? 1 : p.BathroomsFull;
-    const bathsHalf  = isStudio ? 0 : p.BathroomsHalf;
-    const bathsTotal = bathsFull != null ? bathsFull + (bathsHalf ?? 0) * 0.5 : undefined;
+    const isStudio       = p.category === 'ApartmentFlat' && p.apartmentStyle === 'Studio';
+    const bedrooms       = isStudio ? 0 : p.BedroomsTotal;
+    const bathsFull      = isStudio ? 1 : p.BathroomsFull;
+    const bathsHalf      = isStudio ? 0 : p.BathroomsHalf;
+    // Derived per Bathroom Standard v1.1 §3 — backend trigger owns canonical correctness.
+    const bathsTotalInt  = bathsFull != null ? bathsFull + (bathsHalf ?? 0)       : undefined;
+    const bathsTotalDec  = bathsFull != null ? bathsFull + (bathsHalf ?? 0) * 0.5 : undefined;
 
     console.info('[mock] buyer.submit — RESO payload', {
       Verity_VPID: vpid,
@@ -176,7 +181,8 @@ export const requestService = {
       BedroomsTotal: bedrooms,
       BathroomsFull: bathsFull,
       BathroomsHalf: bathsHalf,
-      BathroomsTotal: bathsTotal,
+      BathroomsTotalInteger: bathsTotalInt,
+      BathroomsTotalDecimal: bathsTotalDec,
       Verity_NG_LandZoning: derived?.Verity_NG_LandZoning,
       Verity_NG_LandFeature: p.landFeatures[0] ?? 'None',
       Verity_NG_HouseStyle: p.houseStyle ?? undefined,
@@ -185,6 +191,9 @@ export const requestService = {
       Verity_NG_HasBQ: p.hasBQ,
       Verity_NG_BQConfig: p.bqConfig ?? undefined,
       Verity_NG_BQSeparateTitle: p.bqSeparateTitle,
+      Verity_NG_BQBedroomsTotal:  p.hasBQ ? p.Verity_NG_BQBedroomsTotal ?? 0 : undefined,
+      Verity_NG_BQBathroomsFull:  p.hasBQ ? p.Verity_NG_BQBathroomsFull ?? 0 : undefined,
+      Verity_NG_BQBathroomsHalf:  p.hasBQ ? p.Verity_NG_BQBathroomsHalf ?? 0 : undefined,
       Verity_PlotNo: p.Verity_PlotNo,
       files: draft.documents.map((d) => d.name),
     });

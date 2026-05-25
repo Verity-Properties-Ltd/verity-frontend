@@ -106,10 +106,14 @@ export interface RESOProperty {
   Longitude?: number;
 
   BedroomsTotal?: number;
-  /** Computed: BathroomsFull + BathroomsHalf * 0.5 (per RESO convention). */
-  BathroomsTotal?: number;
+  /** Main-building only — count of full bathrooms (sink + toilet + bath/shower). */
   BathroomsFull?: number;
+  /** Main-building only — count of half bathrooms / powder rooms (sink + toilet). */
   BathroomsHalf?: number;
+  /** Derived (DB trigger): BathroomsFull + BathroomsHalf. */
+  BathroomsTotalInteger?: number;
+  /** Derived (DB trigger): BathroomsFull + BathroomsHalf * 0.5 — primary field for bank LOS comparables. */
+  BathroomsTotalDecimal?: number;
   LotSizeSquareMeters?: number;
   YearBuilt?: number;
 
@@ -122,6 +126,15 @@ export interface RESOProperty {
   Verity_NG_HasBQ?: boolean;
   Verity_NG_BQConfig?: VerityNG_BQConfig;
   Verity_NG_BQSeparateTitle?: boolean;
+  /**
+   * Boys' Quarters rooms — captured separately from the main RESO fields to
+   * preserve main-house valuation accuracy. Bank LOS comparables read the
+   * RESO fields (main house); insurance / buyer due diligence can roll up
+   * across both namespaces. See VERITY_RESO_Bathroom_Implementation_v1.md §4.
+   */
+  Verity_NG_BQBedroomsTotal?: number;
+  Verity_NG_BQBathroomsFull?: number;
+  Verity_NG_BQBathroomsHalf?: number;
 
   // Verity_* — title / verification metadata
   Verity_TitleType?: string;

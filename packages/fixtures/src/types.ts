@@ -53,6 +53,9 @@ export interface SeedProperty {
   Verity_NG_HasBQ?:             boolean;
   Verity_NG_BQConfig?:          SeedNGBQConfig;
   Verity_NG_BQSeparateTitle?:   boolean;
+  Verity_NG_BQBedroomsTotal?:   number;
+  Verity_NG_BQBathroomsFull?:   number;
+  Verity_NG_BQBathroomsHalf?:   number;
 }
 
 export interface SeedTrack {

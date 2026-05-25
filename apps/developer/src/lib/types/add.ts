@@ -41,6 +41,10 @@ export type AddPropertyDraft = {
   hasBQ: boolean;
   bqConfig: VerityNG_BQConfig | null;
   bqSeparateTitle: boolean;
+  // BQ rooms (Bathroom Standard v1.1 §4)
+  Verity_NG_BQBedroomsTotal: number | null;
+  Verity_NG_BQBathroomsFull: number | null;
+  Verity_NG_BQBathroomsHalf: number | null;
 
   // RESO geography + apartment-specific
   UnparsedAddress: string;
@@ -73,6 +77,9 @@ export const EMPTY_ADD_DRAFT: AddPropertyDraft = {
   hasBQ: false,
   bqConfig: null,
   bqSeparateTitle: false,
+  Verity_NG_BQBedroomsTotal: null,
+  Verity_NG_BQBathroomsFull: null,
+  Verity_NG_BQBathroomsHalf: null,
 
   UnparsedAddress: '',
   StateOrProvince: 'Lagos',

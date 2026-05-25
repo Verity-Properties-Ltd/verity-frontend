@@ -59,6 +59,9 @@ export default function PropertyStep() {
       hasBQ: false,
       bqConfig: null,
       bqSeparateTitle: false,
+      Verity_NG_BQBedroomsTotal: undefined,
+      Verity_NG_BQBathroomsFull: undefined,
+      Verity_NG_BQBathroomsHalf: undefined,
     });
   }
 
@@ -160,15 +163,24 @@ export default function PropertyStep() {
               hasBQ={p.hasBQ}
               bqConfig={p.bqConfig}
               bqSeparateTitle={p.bqSeparateTitle}
+              bqBedrooms={p.Verity_NG_BQBedroomsTotal ?? null}
+              bqBathFull={p.Verity_NG_BQBathroomsFull ?? null}
+              bqBathHalf={p.Verity_NG_BQBathroomsHalf ?? null}
               onHasBQChange={(v) =>
                 patchProperty({
                   hasBQ: v,
                   bqConfig: v ? p.bqConfig : null,
                   bqSeparateTitle: v ? p.bqSeparateTitle : false,
+                  Verity_NG_BQBedroomsTotal: v ? p.Verity_NG_BQBedroomsTotal : undefined,
+                  Verity_NG_BQBathroomsFull: v ? p.Verity_NG_BQBathroomsFull : undefined,
+                  Verity_NG_BQBathroomsHalf: v ? p.Verity_NG_BQBathroomsHalf : undefined,
                 })
               }
               onConfigChange={(v) => patchProperty({ bqConfig: v })}
               onSeparateTitleChange={(v) => patchProperty({ bqSeparateTitle: v })}
+              onBQBedroomsChange={(v) => patchProperty({ Verity_NG_BQBedroomsTotal: v })}
+              onBQBathFullChange={(v) => patchProperty({ Verity_NG_BQBathroomsFull: v })}
+              onBQBathHalfChange={(v) => patchProperty({ Verity_NG_BQBathroomsHalf: v })}
             />
           </section>
         )}

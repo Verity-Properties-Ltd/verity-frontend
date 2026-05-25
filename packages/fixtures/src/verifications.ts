@@ -31,6 +31,9 @@ export const VERIFICATION_SEEDS: VerificationSeed[] = [
       Verity_NG_HasBQ: true,
       Verity_NG_BQConfig: 'Attached',
       Verity_NG_BQSeparateTitle: false,
+      Verity_NG_BQBedroomsTotal: 1,
+      Verity_NG_BQBathroomsFull: 1,
+      Verity_NG_BQBathroomsHalf: 0,
     },
     documents: [
       { name: 'CofO_Lekki_Plot27B.pdf', size: 2_457_600, type: 'application/pdf', ext: 'PDF' },
@@ -74,6 +77,9 @@ export const VERIFICATION_SEEDS: VerificationSeed[] = [
       Verity_NG_HasBQ: true,
       Verity_NG_BQConfig: 'Detached',
       Verity_NG_BQSeparateTitle: false,
+      Verity_NG_BQBedroomsTotal: 2,
+      Verity_NG_BQBathroomsFull: 1,
+      Verity_NG_BQBathroomsHalf: 0,
     },
     documents: [
       { name: 'CofO_Bourdillon.pdf', size: 2_104_320, type: 'application/pdf', ext: 'PDF' },
@@ -116,6 +122,10 @@ export const VERIFICATION_SEEDS: VerificationSeed[] = [
       Verity_NG_HasBQ: true,
       Verity_NG_BQConfig: 'Detached',
       Verity_NG_BQSeparateTitle: false,
+      // Standard v1.1 §4.1 — large BQ + no separate title triggers analyst flag.
+      Verity_NG_BQBedroomsTotal: 3,
+      Verity_NG_BQBathroomsFull: 1,
+      Verity_NG_BQBathroomsHalf: 1,
     },
     documents: [
       { name: 'CofO_Bourdillon.pdf', size: 2_104_320, type: 'application/pdf', ext: 'PDF' },
@@ -165,6 +175,9 @@ export const VERIFICATION_SEEDS: VerificationSeed[] = [
       Verity_NG_BQConfig: 'Detached',
       // §5.4 — triggers analyst flag + amber callout in the UI
       Verity_NG_BQSeparateTitle: true,
+      Verity_NG_BQBedroomsTotal: 2,
+      Verity_NG_BQBathroomsFull: 1,
+      Verity_NG_BQBathroomsHalf: 0,
     },
     documents: [
       { name: 'CofO_BananaIsland.pdf', size: 3_021_900, type: 'application/pdf', ext: 'PDF' },

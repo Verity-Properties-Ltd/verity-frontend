@@ -55,6 +55,9 @@ export default function TypeStep() {
       hasBQ: false,
       bqConfig: null,
       bqSeparateTitle: false,
+      Verity_NG_BQBedroomsTotal: null,
+      Verity_NG_BQBathroomsFull: null,
+      Verity_NG_BQBathroomsHalf: null,
     });
   }
 
@@ -153,16 +156,25 @@ export default function TypeStep() {
               hasBQ={draft.hasBQ}
               bqConfig={draft.bqConfig}
               bqSeparateTitle={draft.bqSeparateTitle}
+              bqBedrooms={draft.Verity_NG_BQBedroomsTotal}
+              bqBathFull={draft.Verity_NG_BQBathroomsFull}
+              bqBathHalf={draft.Verity_NG_BQBathroomsHalf}
               onHasBQChange={(v) =>
                 update({
                   hasBQ: v,
-                  // Clear sub-fields when toggling off so we don't keep stale state.
+                  // Clear all BQ sub-fields when toggling off so we don't keep stale state.
                   bqConfig: v ? draft.bqConfig : null,
                   bqSeparateTitle: v ? draft.bqSeparateTitle : false,
+                  Verity_NG_BQBedroomsTotal: v ? draft.Verity_NG_BQBedroomsTotal : null,
+                  Verity_NG_BQBathroomsFull: v ? draft.Verity_NG_BQBathroomsFull : null,
+                  Verity_NG_BQBathroomsHalf: v ? draft.Verity_NG_BQBathroomsHalf : null,
                 })
               }
               onConfigChange={(v) => update({ bqConfig: v })}
               onSeparateTitleChange={(v) => update({ bqSeparateTitle: v })}
+              onBQBedroomsChange={(v) => update({ Verity_NG_BQBedroomsTotal: v })}
+              onBQBathFullChange={(v) => update({ Verity_NG_BQBathroomsFull: v })}
+              onBQBathHalfChange={(v) => update({ Verity_NG_BQBathroomsHalf: v })}
             />
           </section>
         )}

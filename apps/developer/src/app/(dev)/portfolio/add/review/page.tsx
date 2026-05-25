@@ -80,14 +80,35 @@ export default function ReviewStep() {
     }
     rows.push({
       label: 'Total bathrooms',
-      field: 'BathroomsTotal',
+      field: 'BathroomsTotalDecimal',
       value: (draft.BathroomsFull + (draft.BathroomsHalf ?? 0) * 0.5).toFixed(1),
     });
   }
   if (draft.hasBQ) {
-    rows.push({ label: 'Boys\' Quarters',  field: 'Verity_NG_HasBQ',           value: 'Yes' });
-    rows.push({ label: 'BQ config',        field: 'Verity_NG_BQConfig',        value: draft.bqConfig ?? '—' });
+    rows.push({ label: 'Boys\' Quarters',   field: 'Verity_NG_HasBQ',           value: 'Yes' });
+    rows.push({ label: 'BQ config',         field: 'Verity_NG_BQConfig',        value: draft.bqConfig ?? '—' });
     rows.push({ label: 'BQ separate title', field: 'Verity_NG_BQSeparateTitle', value: draft.bqSeparateTitle ? 'Yes' : 'No' });
+    if (draft.Verity_NG_BQBedroomsTotal !== null) {
+      rows.push({
+        label: 'BQ bedrooms',
+        field: 'Verity_NG_BQBedroomsTotal',
+        value: draft.Verity_NG_BQBedroomsTotal >= 4 ? '4+' : String(draft.Verity_NG_BQBedroomsTotal),
+      });
+    }
+    if (draft.Verity_NG_BQBathroomsFull !== null) {
+      rows.push({
+        label: 'BQ full bathrooms',
+        field: 'Verity_NG_BQBathroomsFull',
+        value: draft.Verity_NG_BQBathroomsFull >= 2 ? '2+' : String(draft.Verity_NG_BQBathroomsFull),
+      });
+    }
+    if (draft.Verity_NG_BQBathroomsHalf !== null && draft.Verity_NG_BQBathroomsHalf > 0) {
+      rows.push({
+        label: 'BQ half bathrooms',
+        field: 'Verity_NG_BQBathroomsHalf',
+        value: draft.Verity_NG_BQBathroomsHalf >= 1 ? '1+' : String(draft.Verity_NG_BQBathroomsHalf),
+      });
+    }
   }
 
   rows.push({ label: 'Documents', field: '—', value: `${docCount} of 4 attached` });

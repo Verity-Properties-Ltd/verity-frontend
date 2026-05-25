@@ -38,6 +38,10 @@ export type RequestProperty = {
   hasBQ: boolean;
   bqConfig: VerityNG_BQConfig | null;
   bqSeparateTitle: boolean;
+  // BQ rooms (Bathroom Standard v1.1 §4)
+  Verity_NG_BQBedroomsTotal?: number;
+  Verity_NG_BQBathroomsFull?: number;
+  Verity_NG_BQBathroomsHalf?: number;
 
   // RESO geography + apartment-specific
   UnparsedAddress: string;

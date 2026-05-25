@@ -154,12 +154,16 @@ const PROPERTIES: MockRecord[] = [
     Country: 'NG',
     LotSizeSquareMeters: 1_240,
     BedroomsTotal: 5,
-    BathroomsTotal: 6,
+    BathroomsFull: 4,
+    BathroomsHalf: 2,
     Verity_NG_HouseStyle: 'Duplex',
     Verity_NG_HouseAttachment: 'Detached',
     Verity_NG_HasBQ: true,
     Verity_NG_BQConfig: 'Detached',
     Verity_NG_BQSeparateTitle: true,
+    Verity_NG_BQBedroomsTotal: 2,
+    Verity_NG_BQBathroomsFull: 1,
+    Verity_NG_BQBathroomsHalf: 0,
     Verity_LGA: 'Eti-Osa',
     Verity_ConfidenceScore: 28,
     band: 'prov', status: 'in-verification', tier: 'premium', ref: 'BNI-V03',
@@ -177,12 +181,16 @@ const PROPERTIES: MockRecord[] = [
     Country: 'NG',
     LotSizeSquareMeters: 860,
     BedroomsTotal: 4,
-    BathroomsTotal: 5,
+    BathroomsFull: 4,
+    BathroomsHalf: 1,
     Verity_NG_HouseStyle: 'Duplex',
     Verity_NG_HouseAttachment: 'SemiDetached',
     Verity_NG_HasBQ: true,
     Verity_NG_BQConfig: 'Attached',
     Verity_NG_BQSeparateTitle: false,
+    Verity_NG_BQBedroomsTotal: 1,
+    Verity_NG_BQBathroomsFull: 1,
+    Verity_NG_BQBathroomsHalf: 0,
     Verity_LGA: 'Ikeja',
     Verity_ConfidenceScore: 92,
     band: 'platinum', status: 'verified', verifiedAt: '01 May 2026', expiresAt: '01 May 2028', tier: 'premium', ref: 'IKJ-GRA-9',
@@ -200,7 +208,8 @@ const PROPERTIES: MockRecord[] = [
     Country: 'NG',
     LotSizeSquareMeters: 1_080,
     BedroomsTotal: 5,
-    BathroomsTotal: 6,
+    BathroomsFull: 5,
+    BathroomsHalf: 1,
     Verity_NG_HouseStyle: 'Bungalow',
     Verity_NG_HouseAttachment: 'Detached',
     Verity_NG_HasBQ: false,
@@ -221,7 +230,8 @@ const PROPERTIES: MockRecord[] = [
     Country: 'NG',
     LotSizeSquareMeters: 540,
     BedroomsTotal: 4,
-    BathroomsTotal: 4,
+    BathroomsFull: 4,
+    BathroomsHalf: 0,
     Verity_NG_HouseStyle: 'Terrace',
     Verity_NG_HouseAttachment: 'SemiDetached',
     Verity_NG_HasBQ: false,
@@ -242,7 +252,8 @@ const PROPERTIES: MockRecord[] = [
     Country: 'NG',
     LotSizeSquareMeters: 480,
     BedroomsTotal: 3,
-    BathroomsTotal: 4,
+    BathroomsFull: 3,
+    BathroomsHalf: 1,
     Verity_NG_HouseStyle: 'Terrace',
     Verity_NG_HouseAttachment: 'Detached',
     Verity_NG_HasBQ: false,
@@ -265,7 +276,8 @@ const PROPERTIES: MockRecord[] = [
     Country: 'NG',
     LotSizeSquareMeters: 180,
     BedroomsTotal: 3,
-    BathroomsTotal: 3,
+    BathroomsFull: 3,
+    BathroomsHalf: 0,
     Verity_NG_ApartmentStyle: 'StandardFlat',
     Verity_NG_HasBQ: false,
     Verity_LGA: 'Eti-Osa',
@@ -285,11 +297,15 @@ const PROPERTIES: MockRecord[] = [
     Country: 'NG',
     LotSizeSquareMeters: 240,
     BedroomsTotal: 4,
-    BathroomsTotal: 4,
+    BathroomsFull: 4,
+    BathroomsHalf: 0,
     Verity_NG_ApartmentStyle: 'Penthouse',
     Verity_NG_HasBQ: true,
     Verity_NG_BQConfig: 'Rooftop',
     Verity_NG_BQSeparateTitle: false,
+    Verity_NG_BQBedroomsTotal: 1,
+    Verity_NG_BQBathroomsFull: 1,
+    Verity_NG_BQBathroomsHalf: 0,
     Verity_LGA: 'Eti-Osa',
     Verity_ConfidenceScore: 94,
     band: 'platinum', status: 'verified', verifiedAt: '11 May 2026', expiresAt: '11 May 2028', tier: 'premium', ref: 'VI-T2-14',
@@ -306,8 +322,9 @@ const PROPERTIES: MockRecord[] = [
     StateOrProvince: 'Lagos',
     Country: 'NG',
     LotSizeSquareMeters: 95,
-    BedroomsTotal: 1,
-    BathroomsTotal: 1,
+    BedroomsTotal: 0,
+    BathroomsFull: 1,
+    BathroomsHalf: 0,
     Verity_NG_ApartmentStyle: 'Studio',
     Verity_NG_HasBQ: false,
     Verity_LGA: 'Lagos Mainland',
@@ -459,10 +476,12 @@ export const propertyService = {
 
     // Studio implies 0 bedrooms + 1 full bath (RESO §5.3 standard layout).
     const isStudio = draft.category === 'ApartmentFlat' && draft.apartmentStyle === 'Studio';
-    const bedrooms     = isStudio ? 0 : draft.BedroomsTotal ?? undefined;
-    const bathsFull    = isStudio ? 1 : draft.BathroomsFull ?? undefined;
-    const bathsHalf    = isStudio ? 0 : draft.BathroomsHalf ?? undefined;
-    const bathsTotal   = bathsFull != null ? bathsFull + (bathsHalf ?? 0) * 0.5 : undefined;
+    const bedrooms        = isStudio ? 0 : draft.BedroomsTotal ?? undefined;
+    const bathsFull       = isStudio ? 1 : draft.BathroomsFull ?? undefined;
+    const bathsHalf       = isStudio ? 0 : draft.BathroomsHalf ?? undefined;
+    // Derived per Bathroom Standard v1.1 §3 — backend trigger owns canonical correctness.
+    const bathsTotalInt   = bathsFull != null ? bathsFull + (bathsHalf ?? 0)       : undefined;
+    const bathsTotalDec   = bathsFull != null ? bathsFull + (bathsHalf ?? 0) * 0.5 : undefined;
 
     const payload: Partial<RESOProperty> = {
       Verity_VPID: vpid,
@@ -477,7 +496,8 @@ export const propertyService = {
       BedroomsTotal: bedrooms,
       BathroomsFull: bathsFull,
       BathroomsHalf: bathsHalf,
-      BathroomsTotal: bathsTotal,
+      BathroomsTotalInteger: bathsTotalInt,
+      BathroomsTotalDecimal: bathsTotalDec,
       Verity_NG_LandZoning: derived?.Verity_NG_LandZoning,
       Verity_NG_LandFeature: draft.landFeatures[0] ?? 'None',
       Verity_NG_HouseStyle: draft.houseStyle ?? undefined,
@@ -486,6 +506,9 @@ export const propertyService = {
       Verity_NG_HasBQ: draft.hasBQ,
       Verity_NG_BQConfig: draft.bqConfig ?? undefined,
       Verity_NG_BQSeparateTitle: draft.bqSeparateTitle,
+      Verity_NG_BQBedroomsTotal:  draft.hasBQ ? draft.Verity_NG_BQBedroomsTotal ?? 0 : undefined,
+      Verity_NG_BQBathroomsFull:  draft.hasBQ ? draft.Verity_NG_BQBathroomsFull ?? 0 : undefined,
+      Verity_NG_BQBathroomsHalf:  draft.hasBQ ? draft.Verity_NG_BQBathroomsHalf ?? 0 : undefined,
     };
 
     console.info('[mock] propertyService.submit — RESO payload', payload);

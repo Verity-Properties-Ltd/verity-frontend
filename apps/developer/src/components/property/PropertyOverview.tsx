@@ -31,7 +31,14 @@ export function PropertyOverview({ property }: { property: PropertyDetail }) {
   push('LotSizeSquareMeters', 'Lot size',
     property.LotSizeSquareMeters ? `${property.LotSizeSquareMeters.toLocaleString()} m²` : undefined);
   push('BedroomsTotal',    'Bedrooms',         property.BedroomsTotal);
-  push('BathroomsTotal',   'Bathrooms',        property.BathroomsTotal);
+  push('BathroomsFull',    'Full bathrooms',   property.BathroomsFull);
+  push('BathroomsHalf',    'Half bathrooms',   property.BathroomsHalf && property.BathroomsHalf > 0 ? property.BathroomsHalf : undefined);
+  push('BathroomsTotalDecimal', 'Bathrooms (total)',
+    property.BathroomsTotalDecimal !== undefined
+      ? property.BathroomsTotalDecimal.toFixed(1)
+      : property.BathroomsFull !== undefined
+        ? (property.BathroomsFull + (property.BathroomsHalf ?? 0) * 0.5).toFixed(1)
+        : undefined);
 
   // Verity_NG_*
   push('Verity_NG_HouseStyle',      'House style',     property.Verity_NG_HouseStyle);
@@ -46,6 +53,9 @@ export function PropertyOverview({ property }: { property: PropertyDetail }) {
     push('Verity_NG_BQConfig',  'BQ configuration', property.Verity_NG_BQConfig);
     push('Verity_NG_BQSeparateTitle', 'BQ separate title',
       property.Verity_NG_BQSeparateTitle ? 'Yes' : 'No');
+    push('Verity_NG_BQBedroomsTotal',  'BQ bedrooms',      property.Verity_NG_BQBedroomsTotal);
+    push('Verity_NG_BQBathroomsFull',  'BQ full bathrooms', property.Verity_NG_BQBathroomsFull);
+    push('Verity_NG_BQBathroomsHalf',  'BQ half bathrooms', property.Verity_NG_BQBathroomsHalf);
   }
 
   // Verity_* (title)
