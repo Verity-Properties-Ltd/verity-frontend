@@ -12,7 +12,7 @@ import type {
   VerificationEvent,
 } from '@/lib/types/property';
 import type { AddPropertyDraft } from '@/lib/types/add';
-import { derivePropertySubType, type DeriveInput, type RESOProperty } from '@/lib/types/reso';
+import { derivePropertySubType, type DeriveInput, type RESOProperty } from '@verity/reso';
 
 const KPIS: KpiSnapshot = {
   total: 87,

@@ -2,7 +2,7 @@ import { EMPTY_DRAFT, EMPTY_PROPERTY, type RequestDetail, type RequestDraft, typ
 import type { BandTier, VerificationTrack } from '@/lib/types/verification';
 import { skippedStagesForTier } from '@/lib/types/verification';
 import type { Certificate } from '@/lib/types/certificate';
-import { derivePropertySubType, type DeriveInput, type UICategory, type VerityNG_ApartmentStyle, type VerityNG_BQConfig, type VerityNG_HouseAttachment, type VerityNG_HouseStyle, type VerityNG_LandFeature } from '@/lib/types/reso';
+import { derivePropertySubType, type DeriveInput, type UICategory, type VerityNG_ApartmentStyle, type VerityNG_BQConfig, type VerityNG_HouseAttachment, type VerityNG_HouseStyle, type VerityNG_LandFeature } from '@verity/reso';
 import { VERIFICATION_SEEDS, type VerificationSeed } from '@verity/fixtures';
 
 const REQUESTS_KEY = 'verity:requests';

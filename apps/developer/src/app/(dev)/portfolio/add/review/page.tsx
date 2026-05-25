@@ -8,7 +8,7 @@ import { ResoTag } from '@/components/property/ResoTag';
 import { useAddPropertyDraft } from '@/lib/hooks/useAddPropertyDraft';
 import { propertyService } from '@/lib/services';
 import { DOCUMENT_LABELS, type DocumentSlot } from '@/lib/types/add';
-import { derivePropertySubType, type DeriveInput, type DeriveOutput, UI_CATEGORY_LABEL } from '@/lib/types/reso';
+import { derivePropertySubType, type DeriveInput, type DeriveOutput, UI_CATEGORY_LABEL } from '@verity/reso';
 
 type Row = { label: string; field: string; value: React.ReactNode };
 

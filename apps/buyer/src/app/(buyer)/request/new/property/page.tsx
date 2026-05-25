@@ -9,7 +9,7 @@ import { LandSubCategorySelector } from '@/components/wizard/LandSubCategorySele
 import { HouseStyleSelector } from '@/components/wizard/HouseStyleSelector';
 import { ApartmentStyleSelector } from '@/components/wizard/ApartmentStyleSelector';
 import { BQToggle } from '@/components/wizard/BQToggle';
-import { derivePropertySubType, type UICategory } from '@/lib/types/reso';
+import { derivePropertySubType, type UICategory } from '@verity/reso';
 
 export default function PropertyStep() {
   const router = useRouter();

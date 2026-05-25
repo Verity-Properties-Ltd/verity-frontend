@@ -1,6 +1,6 @@
 'use client';
 
-import { APARTMENT_STYLE_TOOLTIP, type VerityNG_ApartmentStyle } from '@/lib/types/reso';
+import { APARTMENT_STYLE_TOOLTIP, type VerityNG_ApartmentStyle } from '@verity/reso';
 
 const STYLES: { id: VerityNG_ApartmentStyle; label: string }[] = [
   { id: 'Studio',       label: 'Studio' },

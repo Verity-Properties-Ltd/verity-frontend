@@ -1,6 +1,6 @@
 'use client';
 
-import type { VerityNG_BQConfig } from '@/lib/types/reso';
+import type { VerityNG_BQConfig } from '@verity/reso';
 
 const CONFIGS: VerityNG_BQConfig[] = ['Attached', 'Detached', 'Rooftop'];
 

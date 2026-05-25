@@ -1,13 +1,20 @@
 /**
- * RESO Data Dictionary v2.0 — buyer-app type system.
+ * @verity/reso — RESO Data Dictionary v2.0 type system.
  *
- * Kept in sync with `apps/developer/src/lib/types/reso.ts`. The two files
- * are intentionally identical — RESO field types are universal across
- * VERITY apps (the buyer requesting a verification and the developer
- * filing one capture the same canonical schema). A future refactor
- * could promote this to a shared `packages/reso/` workspace.
+ * Shared by every VERITY app (developer dashboard, buyer flow) and any
+ * future workspace. The buyer requesting a verification and the developer
+ * filing one capture the same canonical schema; the API will too.
  *
  * Spec: docs/VERITY_RESO_Adoption_Brief_v1.md
+ *
+ * Two namespaces:
+ *   - RESO_*    — universal field/enum values defined by RESO
+ *   - Verity_NG_* / Verity_* — country-specific (Nigeria) custom additions
+ *
+ * The union RESO_PropertySubType DELIBERATELY excludes 'Duplex' and
+ * 'Condominium' (brief §6.1 / §6.2) — adding either to a literal of type
+ * RESOProperty produces TS2322. This is the frontend mirror of the
+ * `chk_no_reso_duplex` / `chk_no_condominium` PostgreSQL constraints.
  */
 
 // ───────────────────────────────────────────────────────────────────────────
@@ -24,7 +31,9 @@ export type RESO_PropertySubType =
   | 'CommercialLand'
   | 'AgriculturalLand';
 
-// Compile-time guard against re-introducing forbidden subtypes (§6.1 / §6.2).
+// Compile-time guard. If a future edit ever loosens RESO_PropertySubType to
+// include 'Duplex' or 'Condominium', RESO_SubTypeIntegrity collapses to
+// `never`, and any consumer importing it will fail typecheck. See §6.
 type _AssertNoDuplex      = [Extract<RESO_PropertySubType, 'Duplex'>]      extends [never] ? true : false;
 type _AssertNoCondominium = [Extract<RESO_PropertySubType, 'Condominium'>] extends [never] ? true : false;
 export type RESO_SubTypeIntegrity = _AssertNoDuplex & _AssertNoCondominium;
@@ -32,11 +41,17 @@ const _resoSubTypeIntegrityCheck: RESO_SubTypeIntegrity = true;
 void _resoSubTypeIntegrityCheck;
 
 export type RESO_StandardStatus =
-  | 'Active' | 'ActiveUnderContract' | 'Pending' | 'Sold' | 'Expired'
-  | 'Withdrawn' | 'Cancelled' | 'Incomplete';
+  | 'Active'
+  | 'ActiveUnderContract'
+  | 'Pending'
+  | 'Sold'
+  | 'Expired'
+  | 'Withdrawn'
+  | 'Cancelled'
+  | 'Incomplete';
 
 // ───────────────────────────────────────────────────────────────────────────
-// Verity_NG_*
+// Verity_NG_* — Nigeria-specific custom unions
 // ───────────────────────────────────────────────────────────────────────────
 
 export type VerityNG_HouseStyle      = 'Bungalow' | 'Duplex' | 'Terrace';
@@ -47,21 +62,81 @@ export type VerityNG_LandFeature     = 'Waterfront' | 'Reclaimed' | 'None';
 export type VerityNG_BQConfig        = 'Attached' | 'Detached' | 'Rooftop';
 
 // ───────────────────────────────────────────────────────────────────────────
-// UI Level 1 / Level 2
+// UI category (Level 1) — the 5 user-facing cards in the wizard.
+// NOT a RESO field — the RESO PropertyType/PropertySubType is *derived* from
+// (category + Level 2 inputs) by derivePropertySubType().
 // ───────────────────────────────────────────────────────────────────────────
 
 export type UICategory =
-  | 'LandedProperty' | 'ResidentialHouse' | 'ApartmentFlat'
-  | 'Commercial'     | 'Farm';
+  | 'LandedProperty'   // Phase 1 — MVP
+  | 'ResidentialHouse' // Phase 1 — MVP
+  | 'ApartmentFlat'    // Phase 1 — MVP
+  | 'Commercial'       // Phase 2 — disabled in UI
+  | 'Farm';            // Phase 2 — disabled in UI
 
 export type UILandSubCategory =
-  | 'ResidentialPlot' | 'CommercialPlot' | 'MixedUsePlot'
-  | 'IndustrialPlot'  | 'AgriculturalPlot';
+  | 'ResidentialPlot'
+  | 'CommercialPlot'
+  | 'MixedUsePlot'
+  | 'IndustrialPlot'
+  | 'AgriculturalPlot';
 
 export const UI_CATEGORY_PHASE2: ReadonlySet<UICategory> = new Set<UICategory>(['Commercial', 'Farm']);
 
 // ───────────────────────────────────────────────────────────────────────────
-// derivePropertySubType — UI → RESO (mirror of developer impl)
+// RESOProperty — canonical property record (mirrors the §4 pg schema)
+// ───────────────────────────────────────────────────────────────────────────
+
+export interface RESOProperty {
+  /** RESO primary key — UUID. */
+  ListingKey: string;
+  /** Verity VPID — `VRT-XXXXXXXXX`. */
+  Verity_VPID: string;
+
+  PropertyType: RESO_PropertyType;
+  PropertySubType: RESO_PropertySubType;
+  StandardStatus: RESO_StandardStatus;
+
+  UnparsedAddress: string;
+  CountyOrParish: string;       // LGA
+  StateOrProvince: string;      // 'Lagos' (Phase 1 default)
+  Country: 'NG';
+  PostalCode?: string;
+  Latitude?: number;
+  Longitude?: number;
+
+  BedroomsTotal?: number;
+  BathroomsTotal?: number;
+  LotSizeSquareMeters?: number;
+  YearBuilt?: number;
+
+  // Verity_NG_* — Nigeria-specific
+  Verity_NG_HouseStyle?: VerityNG_HouseStyle;
+  Verity_NG_HouseAttachment?: VerityNG_HouseAttachment;
+  Verity_NG_ApartmentStyle?: VerityNG_ApartmentStyle;
+  Verity_NG_LandZoning?: VerityNG_LandZoning;
+  Verity_NG_LandFeature?: VerityNG_LandFeature;
+  Verity_NG_HasBQ?: boolean;
+  Verity_NG_BQConfig?: VerityNG_BQConfig;
+  Verity_NG_BQSeparateTitle?: boolean;
+
+  // Verity_* — title / verification metadata
+  Verity_TitleType?: string;
+  Verity_CofONumber?: string;
+  Verity_RegisteredOwner?: string;
+  Verity_TitleIssueDate?: string;
+  Verity_TitleDuration?: string;
+  Verity_SurveyPlanRef?: string;
+  Verity_LGA?: string;
+  Verity_ConfidenceScore?: number;
+}
+
+// ───────────────────────────────────────────────────────────────────────────
+// derivePropertySubType — UI choices → RESO PropertyType + PropertySubType
+//
+// Per brief §5. This is the *frontend* mapping function; a server-side
+// mirror will run on the API as defence in depth (tracked in the backend
+// issue created during Phase 6 of the original adoption).
 // ───────────────────────────────────────────────────────────────────────────
 
 export type DeriveInput =
@@ -95,18 +170,26 @@ export function derivePropertySubType(input: DeriveInput): DeriveOutput {
       return { PropertyType: 'Land', PropertySubType: m.PropertySubType, Verity_NG_LandZoning: m.Verity_NG_LandZoning };
     }
     case 'ResidentialHouse': {
+      // §5.2 — Nigerian "Duplex" colloquially = single-family two-storey.
+      // It maps to RESO SingleFamilyResidence, NOT RESO 'Duplex' (§6.1).
       const PropertySubType: RESO_PropertySubType =
         input.houseStyle === 'Terrace' ? 'Townhouse' : 'SingleFamilyResidence';
       return { PropertyType: 'Residential', PropertySubType };
     }
-    case 'ApartmentFlat':
+    case 'ApartmentFlat': {
+      // §5.3 — PropertySubType is always Apartment regardless of style.
+      // ApartmentStyle (Studio/StandardFlat/Penthouse/Maisonette) is the
+      // Verity_NG_* distinction.
       return { PropertyType: 'Residential', PropertySubType: 'Apartment' };
+    }
     case 'Commercial':
     case 'Farm':
       throw new Error(`derivePropertySubType: '${input.category}' is a Phase 2 category`);
   }
 }
 
+// Apartment-style Nigerian colloquial tooltips (brief §5.3 — buyer-facing
+// labels only; the actual Verity_NG_ApartmentStyle value is what's stored).
 export const APARTMENT_STYLE_TOOLTIP: Record<VerityNG_ApartmentStyle, string> = {
   Studio:       'Self-Contain',
   StandardFlat: 'Mini-Flat (1-bed)',
@@ -114,6 +197,7 @@ export const APARTMENT_STYLE_TOOLTIP: Record<VerityNG_ApartmentStyle, string> = 
   Maisonette:   '',
 };
 
+// UI labels for the 5 Level-1 cards.
 export const UI_CATEGORY_LABEL: Record<UICategory, string> = {
   LandedProperty:   'Landed Property',
   ResidentialHouse: 'Residential House',

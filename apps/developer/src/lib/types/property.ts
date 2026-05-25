@@ -1,5 +1,5 @@
 import type { Band } from '@/components/dashboard/BandPill';
-import type { RESOProperty } from './reso';
+import type { RESOProperty } from '@verity/reso';
 
 export type PropertyStatus = 'verified' | 'in-verification' | 'awaiting-docs' | 'expiring' | 'expired';
 

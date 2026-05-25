@@ -4,7 +4,7 @@ import {
   UI_LAND_SUBCATEGORY_LABEL,
   type UILandSubCategory,
   type VerityNG_LandFeature,
-} from '@/lib/types/reso';
+} from '@verity/reso';
 
 const SUBS: { id: UILandSubCategory; hint: string }[] = [
   { id: 'ResidentialPlot',  hint: 'Zoned for housing — RESO: VacantLand' },

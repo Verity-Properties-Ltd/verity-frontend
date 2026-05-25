@@ -1,6 +1,6 @@
 'use client';
 
-import type { VerityNG_HouseAttachment, VerityNG_HouseStyle } from '@/lib/types/reso';
+import type { VerityNG_HouseAttachment, VerityNG_HouseStyle } from '@verity/reso';
 
 const STYLES: { id: VerityNG_HouseStyle; hint: string }[] = [
   { id: 'Bungalow', hint: 'Single-storey — RESO: SingleFamilyResidence' },

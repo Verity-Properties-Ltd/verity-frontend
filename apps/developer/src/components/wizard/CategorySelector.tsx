@@ -1,6 +1,6 @@
 'use client';
 
-import { UI_CATEGORY_LABEL, UI_CATEGORY_PHASE2, type UICategory } from '@/lib/types/reso';
+import { UI_CATEGORY_LABEL, UI_CATEGORY_PHASE2, type UICategory } from '@verity/reso';
 
 const CATEGORIES: { id: UICategory; sub: string }[] = [
   { id: 'LandedProperty',   sub: 'Plots — residential, commercial, mixed-use, industrial, agricultural' },

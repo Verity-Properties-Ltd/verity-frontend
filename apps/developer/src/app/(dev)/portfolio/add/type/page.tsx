@@ -9,7 +9,7 @@ import { CategorySelector } from '@/components/wizard/CategorySelector';
 import { HouseStyleSelector } from '@/components/wizard/HouseStyleSelector';
 import { LandSubCategorySelector } from '@/components/wizard/LandSubCategorySelector';
 import { useAddPropertyDraft } from '@/lib/hooks/useAddPropertyDraft';
-import { derivePropertySubType, type UICategory } from '@/lib/types/reso';
+import { derivePropertySubType, type UICategory } from '@verity/reso';
 
 export default function TypeStep() {
   const router = useRouter();

@@ -6,7 +6,7 @@ import type {
   VerityNG_HouseAttachment,
   VerityNG_HouseStyle,
   VerityNG_LandFeature,
-} from './reso';
+} from '@verity/reso';
 
 export type Tier = 'standard' | 'premium';
 export type PaymentMethod = 'card' | 'bank';
