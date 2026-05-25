@@ -40,7 +40,7 @@ export function ConfirmedSummary({ vpid }: { vpid?: string }) {
         <div>
           <div className="bf-mono" style={{ fontSize: 9, color: 'var(--slate)', letterSpacing: '0.22em' }}>PROPERTY</div>
           <div className="bf-body" style={{ fontSize: 14, marginTop: 4, color: 'var(--navy)' }}>
-            {draft.property.UnparsedAddress || '—'}
+            {draft.property.streetAddressInput || '—'}
           </div>
         </div>
         {draft.tier && (

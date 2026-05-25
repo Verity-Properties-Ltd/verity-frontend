@@ -3,41 +3,48 @@ import type { Certificate } from '@/lib/types/certificate';
 /**
  * Public-cert property card.
  *
- * Per brief §9.4, the public surface exposes the canonical RESO field
- * names verbatim (Verity_VPID / StandardStatus / PropertyType / Verity_LGA)
- * — institutional consumers (banks, valuers) read this surface directly.
+ * Per Adoption Brief §9.4 and Address Capture v1 §13, the public
+ * verification surface only carries the locality subset of address
+ * fields (no street number / street name / unit number / plot number /
+ * lat-lng). The shown labels are RESO field names verbatim — institutional
+ * consumers read this surface directly.
  */
 export function CertProperty({ cert }: { cert: Certificate }) {
-  const rows: { field: string; value: string }[] = [
-    { field: 'Verity_VPID',    value: cert.vpid.toUpperCase() },
-  ];
-  if (cert.property.plotNo) {
-    rows.push({ field: 'Verity_PlotNo', value: cert.property.plotNo });
-  }
-  if (cert.property.PropertyType) {
+  const p = cert.property;
+
+  // Compose a single locality line for the heading from the safe subset.
+  const localityLine = [p.Verity_NG_Neighborhood, p.City, p.CountyOrParish ? `${p.CountyOrParish} LGA` : null, p.StateOrProvince]
+    .filter(Boolean)
+    .join(', ');
+
+  const rows: { field: string; value: string }[] = [];
+  rows.push({ field: 'Verity_VPID', value: cert.vpid.toUpperCase() });
+  if (p.PropertyType) {
     rows.push({
       field: 'PropertyType',
-      value:
-        cert.property.PropertySubType
-          ? `${cert.property.PropertyType} · ${cert.property.PropertySubType}`
-          : cert.property.PropertyType,
+      value: p.PropertySubType ? `${p.PropertyType} · ${p.PropertySubType}` : p.PropertyType,
     });
   }
-  if (cert.property.StandardStatus) {
-    rows.push({ field: 'StandardStatus', value: cert.property.StandardStatus });
-  }
-  if (cert.property.Verity_LGA) {
-    rows.push({ field: 'Verity_LGA', value: cert.property.Verity_LGA });
-  }
+  if (p.StandardStatus) rows.push({ field: 'StandardStatus', value: p.StandardStatus });
+  if (p.City)            rows.push({ field: 'City', value: p.City });
+  if (p.CountyOrParish)  rows.push({ field: 'CountyOrParish', value: p.CountyOrParish });
+  if (p.StateOrProvince) rows.push({ field: 'StateOrProvince', value: p.StateOrProvince });
+  if (p.PostalCode)      rows.push({ field: 'PostalCode', value: p.PostalCode });
+  if (p.Verity_NG_Neighborhood)
+    rows.push({ field: 'Verity_NG_Neighborhood', value: p.Verity_NG_Neighborhood });
   rows.push({ field: 'Verity_TitleIssueDate', value: cert.verifiedAt });
 
   return (
     <div className="bf-card" style={{ padding: 18 }}>
       <div className="bf-eyebrow slate" style={{ marginBottom: 10, fontSize: 9 }}>— Property identification · RESO</div>
-      <div className="bf-h3" style={{ marginTop: 4, fontSize: 18, fontWeight: 500 }}>{cert.property.addressLine1}</div>
-      <div className="bf-body" style={{ fontStyle: 'italic', color: 'var(--slate)', fontSize: 14, marginTop: 2 }}>
-        {cert.property.addressLine2}, Lagos State, Nigeria
-      </div>
+      {localityLine && (
+        <>
+          <div className="bf-h3" style={{ marginTop: 4, fontSize: 18, fontWeight: 500 }}>{localityLine}</div>
+          <div className="bf-body" style={{ fontStyle: 'italic', color: 'var(--slate)', fontSize: 14, marginTop: 2 }}>
+            Lagos State, Nigeria
+          </div>
+        </>
+      )}
       <hr className="bf-divider" style={{ margin: '14px 0' }} />
       <div className="bf-stack" style={{ gap: 8 }}>
         {rows.map((r) => (

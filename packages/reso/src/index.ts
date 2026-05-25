@@ -105,6 +105,14 @@ export interface RESOProperty {
   Latitude?: number;
   Longitude?: number;
 
+  // Parsed RESO street components (Address Capture v1 §4.1)
+  StreetNumber?: string;        // e.g. "12B"
+  StreetNumberNumeric?: number; // derived: 12
+  StreetName?: string;
+  StreetSuffix?: string;
+  UnitNumber?: string;
+  City?: string;                // free-text in MVP (§5)
+
   BedroomsTotal?: number;
   /** Main-building only — count of full bathrooms (sink + toilet + bath/shower). */
   BathroomsFull?: number;
@@ -135,6 +143,10 @@ export interface RESOProperty {
   Verity_NG_BQBedroomsTotal?: number;
   Verity_NG_BQBathroomsFull?: number;
   Verity_NG_BQBathroomsHalf?: number;
+
+  // Verity_NG_* address extensions (Address Capture v1 §4.5)
+  Verity_NG_PlotNumber?: string;
+  Verity_NG_Neighborhood?: string;
 
   // Verity_* — title / verification metadata
   Verity_TitleType?: string;
@@ -229,3 +241,16 @@ export const UI_LAND_SUBCATEGORY_LABEL: Record<UILandSubCategory, string> = {
   IndustrialPlot:   'Industrial Plot',
   AgriculturalPlot: 'Agricultural Plot',
 };
+
+// Address Capture v1 — Nigerian states / LGAs / suffixes + naive parser
+export {
+  NG_STATES,
+  NG_STREET_SUFFIXES,
+  LAGOS_LGAS,
+  FCT_AREA_COUNCILS,
+  NG_LGAS_BY_STATE,
+  lgasFor,
+  type NGState,
+  type NGStreetSuffix,
+} from './ng-lgas';
+export { parseStreetAddress, buildUnparsedAddress } from './address';

@@ -67,10 +67,10 @@ export default function PaymentStep() {
             <span className="bf-small" style={{ color: 'var(--navy)' }}>{tier && TIER_LABEL[tier]} verification</span>
             <span className="bf-mono" style={{ fontSize: 13, color: 'var(--navy)' }}>{totalLabel}</span>
           </div>
-          {draft.property.UnparsedAddress && (
+          {draft.property.streetAddressInput && (
             <div className="bf-row" style={{ justifyContent: 'space-between' }}>
-              <span className="bf-small">{draft.property.UnparsedAddress.split(',').slice(0, 2).join(',')}</span>
-              <span className="bf-small" style={{ fontStyle: 'italic' }}>{draft.property.CountyOrParish || ''}</span>
+              <span className="bf-small">{draft.property.streetAddressInput}</span>
+              <span className="bf-small" style={{ fontStyle: 'italic' }}>{draft.property.City || draft.property.CountyOrParish || ''}</span>
             </div>
           )}
         </div>

@@ -20,8 +20,8 @@ export function RequestSidebar() {
   const summary = [
     {
       label: 'Property',
-      value: hydrated && draft.property.UnparsedAddress
-        ? draft.property.UnparsedAddress.split(',')[0]
+      value: hydrated && draft.property.streetAddressInput
+        ? draft.property.streetAddressInput
         : '—',
     },
     {

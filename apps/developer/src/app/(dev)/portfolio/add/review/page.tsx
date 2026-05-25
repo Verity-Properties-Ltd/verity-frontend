@@ -8,7 +8,7 @@ import { ResoTag } from '@/components/property/ResoTag';
 import { useAddPropertyDraft } from '@/lib/hooks/useAddPropertyDraft';
 import { propertyService } from '@/lib/services';
 import { DOCUMENT_LABELS, type DocumentSlot } from '@/lib/types/add';
-import { derivePropertySubType, type DeriveInput, type DeriveOutput, UI_CATEGORY_LABEL } from '@verity/reso';
+import { derivePropertySubType, parseStreetAddress, type DeriveInput, type DeriveOutput, UI_CATEGORY_LABEL } from '@verity/reso';
 
 type Row = { label: string; field: string; value: React.ReactNode };
 
@@ -32,15 +32,31 @@ export default function ReviewStep() {
 
   const derived: DeriveOutput | null = derive ? derivePropertySubType(derive) : null;
 
+  const street = parseStreetAddress(draft.streetAddressInput);
+
   const rows: Row[] = [
     { label: 'Category',           field: '—',                            value: draft.category ? UI_CATEGORY_LABEL[draft.category] : '—' },
     { label: 'Property type',      field: 'PropertyType',                 value: derived?.PropertyType ?? '—' },
     { label: 'Property sub-type',  field: 'PropertySubType',              value: derived?.PropertySubType ?? '—' },
-    { label: 'Address',            field: 'UnparsedAddress',              value: draft.UnparsedAddress || '—' },
-    { label: 'State',              field: 'StateOrProvince',              value: draft.StateOrProvince },
-    { label: 'LGA',                field: 'CountyOrParish',               value: draft.CountyOrParish || '—' },
-    { label: 'Lot size',           field: 'LotSizeSquareMeters',          value: draft.LotSizeSquareMeters ? `${draft.LotSizeSquareMeters.toLocaleString()} m²` : '—' },
   ];
+
+  // Address Capture v1 — parsed RESO street + locality
+  if (street.StreetNumber) rows.push({ label: 'Street number', field: 'StreetNumber', value: street.StreetNumber });
+  if (street.StreetName)   rows.push({ label: 'Street name',   field: 'StreetName',   value: street.StreetName });
+  if (street.StreetSuffix) rows.push({ label: 'Street suffix', field: 'StreetSuffix', value: street.StreetSuffix });
+  if (draft.UnitNumber)    rows.push({ label: 'Unit number',   field: 'UnitNumber',   value: draft.UnitNumber });
+  if (draft.Verity_NG_PlotNumber)
+    rows.push({ label: 'Plot number', field: 'Verity_NG_PlotNumber', value: draft.Verity_NG_PlotNumber });
+  if (draft.Verity_NG_Neighborhood)
+    rows.push({ label: 'Neighbourhood', field: 'Verity_NG_Neighborhood', value: draft.Verity_NG_Neighborhood });
+  rows.push({ label: 'City',     field: 'City',           value: draft.City || '—' });
+  rows.push({ label: 'LGA',      field: 'CountyOrParish', value: draft.CountyOrParish || '—' });
+  rows.push({ label: 'State',    field: 'StateOrProvince', value: draft.StateOrProvince });
+  if (draft.PostalCode)
+    rows.push({ label: 'Postal code', field: 'PostalCode', value: draft.PostalCode });
+
+  rows.push({ label: 'Lot size', field: 'LotSizeSquareMeters',
+    value: draft.LotSizeSquareMeters ? `${draft.LotSizeSquareMeters.toLocaleString()} m²` : '—' });
 
   if (draft.category === 'LandedProperty') {
     rows.push({ label: 'Land zoning', field: 'Verity_NG_LandZoning', value: derived?.Verity_NG_LandZoning ?? '—' });

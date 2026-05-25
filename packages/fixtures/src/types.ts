@@ -56,6 +56,17 @@ export interface SeedProperty {
   Verity_NG_BQBedroomsTotal?:   number;
   Verity_NG_BQBathroomsFull?:   number;
   Verity_NG_BQBathroomsHalf?:   number;
+
+  // Address Capture v1 — parsed RESO street + locality
+  StreetNumber?:                string;
+  StreetNumberNumeric?:         number;
+  StreetName?:                  string;
+  StreetSuffix?:                string;
+  UnitNumber?:                  string;
+  City?:                        string;
+  PostalCode?:                  string;
+  Verity_NG_PlotNumber?:        string;
+  Verity_NG_Neighborhood?:      string;
 }
 
 export interface SeedTrack {

@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useRequestDraft } from '@/lib/hooks/useRequestDraft';
 import type { RequestProperty } from '@/lib/types/request';
 import { WizardFooter } from '@/components/wizard/WizardFooter';
+import { AddressSection } from '@/components/wizard/AddressSection';
 import { CategorySelector } from '@/components/wizard/CategorySelector';
 import { LandSubCategorySelector } from '@/components/wizard/LandSubCategorySelector';
 import { HouseStyleSelector } from '@/components/wizard/HouseStyleSelector';
@@ -37,9 +38,14 @@ export default function PropertyStep() {
     false;
 
   const bqValid = !p.hasBQ || !!p.bqConfig;
-  const geoValid = !!p.UnparsedAddress.trim() && !!p.CountyOrParish.trim();
+  const addressValid =
+    !!p.streetAddressInput.trim() &&
+    !!p.City.trim() &&
+    !!p.CountyOrParish.trim() &&
+    !!p.StateOrProvince.trim() &&
+    (!p.PostalCode || /^\d{6}$/.test(p.PostalCode));
 
-  const valid = !!cat && level2Valid && bedsBathsValid && bqValid && geoValid;
+  const valid = !!cat && level2Valid && bedsBathsValid && bqValid && addressValid;
 
   function patchProperty(patch: Partial<RequestProperty>) {
     update((d) => ({ ...d, property: { ...d.property, ...patch } }));
@@ -186,66 +192,36 @@ export default function PropertyStep() {
         )}
 
         <section>
-          <SectionLabel>Location &amp; size</SectionLabel>
-          <div className="bf-stack" style={{ gap: 14 }}>
-            <div className="bf-grid-2">
-              <div className="bf-field">
-                <label className="bf-label">State *</label>
-                <div className="bf-input" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <span>Lagos</span>
-                  <span className="bf-mono" style={{ color: 'var(--slate)', fontSize: 10 }}>NG-LA</span>
-                </div>
-              </div>
-              <div className="bf-field">
-                <label className="bf-label" htmlFor="lga">Local Government Area *</label>
-                <input
-                  id="lga"
-                  className="bf-input"
-                  value={p.CountyOrParish}
-                  placeholder="Eti-Osa"
-                  onChange={(e) => patchProperty({ CountyOrParish: e.target.value })}
-                />
-              </div>
-            </div>
+          <SectionLabel>Property address</SectionLabel>
+          <AddressSection
+            value={{
+              streetAddressInput: p.streetAddressInput,
+              Verity_NG_PlotNumber: p.Verity_NG_PlotNumber,
+              Verity_NG_Neighborhood: p.Verity_NG_Neighborhood,
+              UnitNumber: p.UnitNumber,
+              City: p.City,
+              CountyOrParish: p.CountyOrParish,
+              StateOrProvince: p.StateOrProvince,
+              PostalCode: p.PostalCode,
+            }}
+            onChange={(patch) => patchProperty(patch)}
+          />
+        </section>
 
-            <div className="bf-field">
-              <label className="bf-label" htmlFor="address">Plot address *</label>
-              <textarea
-                id="address"
-                className="bf-textarea"
-                value={p.UnparsedAddress}
-                placeholder="Plot 27B, Admiralty Way, Lekki Phase 1, Lagos."
-                onChange={(e) => patchProperty({ UnparsedAddress: e.target.value })}
-              />
-            </div>
-
-            <div className="bf-grid-2">
-              <div className="bf-field">
-                <label className="bf-label" htmlFor="plotNo">
-                  Plot no. <span style={{ fontSize: 10, color: 'var(--slate)' }}>(optional)</span>
-                </label>
-                <input
-                  id="plotNo"
-                  className="bf-input mono"
-                  value={p.Verity_PlotNo || ''}
-                  placeholder="LEK/PH1/27B"
-                  onChange={(e) => patchProperty({ Verity_PlotNo: e.target.value || undefined })}
-                />
-              </div>
-              <div className="bf-field">
-                <label className="bf-label" htmlFor="sizeSqm">
-                  Lot size (m²) <span style={{ fontSize: 10, color: 'var(--slate)' }}>(optional)</span>
-                </label>
-                <input
-                  id="sizeSqm"
-                  className="bf-input mono"
-                  type="number"
-                  value={p.LotSizeSquareMeters ?? ''}
-                  placeholder="640"
-                  onChange={(e) => patchProperty({ LotSizeSquareMeters: e.target.value ? Number(e.target.value) : undefined })}
-                />
-              </div>
-            </div>
+        <section>
+          <SectionLabel>Lot size</SectionLabel>
+          <div className="bf-field">
+            <label className="bf-label" htmlFor="sizeSqm">
+              Lot size (m²) <span style={{ fontSize: 10, color: 'var(--slate)' }}>(optional)</span>
+            </label>
+            <input
+              id="sizeSqm"
+              className="bf-input mono"
+              type="number"
+              value={p.LotSizeSquareMeters ?? ''}
+              placeholder="640"
+              onChange={(e) => patchProperty({ LotSizeSquareMeters: e.target.value ? Number(e.target.value) : undefined })}
+            />
           </div>
         </section>
       </div>

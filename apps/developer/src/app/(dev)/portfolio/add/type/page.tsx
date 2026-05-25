@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { WizardCard } from '@/components/wizard/WizardCard';
 import { WizardFooter } from '@/components/wizard/WizardFooter';
+import { AddressSection } from '@/components/wizard/AddressSection';
 import { ApartmentStyleSelector } from '@/components/wizard/ApartmentStyleSelector';
 import { BedsBathsSelector } from '@/components/wizard/BedsBathsSelector';
 import { BQToggle } from '@/components/wizard/BQToggle';
@@ -36,9 +37,15 @@ export default function TypeStep() {
     false;
 
   const bqValid = !draft.hasBQ || !!draft.bqConfig;
-  const geoValid = !!draft.UnparsedAddress.trim() && !!draft.CountyOrParish.trim() && !!draft.LotSizeSquareMeters;
+  const addressValid =
+    !!draft.streetAddressInput.trim() &&
+    !!draft.City.trim() &&
+    !!draft.CountyOrParish.trim() &&
+    !!draft.StateOrProvince.trim() &&
+    (draft.PostalCode === '' || /^\d{6}$/.test(draft.PostalCode));
+  const sizeValid = !!draft.LotSizeSquareMeters;
 
-  const valid = !!cat && level2Valid && bedsBathsValid && bqValid && geoValid;
+  const valid = !!cat && level2Valid && bedsBathsValid && bqValid && addressValid && sizeValid;
 
   function onCategoryChange(next: UICategory) {
     // Reset Level-2, beds/baths, and BQ selections when category changes.
@@ -180,50 +187,36 @@ export default function TypeStep() {
         )}
 
         <section>
-          <SectionLabel>Location &amp; size</SectionLabel>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            <div className="dv-field full">
-              <label className="lbl" htmlFor="address">Property address</label>
-              <input
-                id="address"
-                className="dv-input"
-                placeholder="Lekki Block A · Plot 12, Lekki Phase II"
-                value={draft.UnparsedAddress}
-                onChange={(e) => update({ UnparsedAddress: e.target.value })}
-              />
-            </div>
-            <div className="row">
-              <div className="dv-field">
-                <label className="lbl">State</label>
-                <div className="dv-input" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <span>Lagos</span>
-                  <span style={{ fontFamily: 'var(--f-meta)', fontSize: 10, color: 'var(--slate)' }}>NG-LA</span>
-                </div>
-              </div>
-              <div className="dv-field">
-                <label className="lbl" htmlFor="lga">Local Government Area</label>
-                <input
-                  id="lga"
-                  className="dv-input"
-                  placeholder="Eti-Osa"
-                  value={draft.CountyOrParish}
-                  onChange={(e) => update({ CountyOrParish: e.target.value })}
-                />
-              </div>
-            </div>
-            <div className="dv-field full">
-              <label className="lbl" htmlFor="sizeSqm">Lot size (m²)</label>
-              <input
-                id="sizeSqm"
-                className="dv-input mono"
-                type="number"
-                placeholder="1250"
-                value={draft.LotSizeSquareMeters ?? ''}
-                onChange={(e) =>
-                  update({ LotSizeSquareMeters: e.target.value ? Number(e.target.value) : null })
-                }
-              />
-            </div>
+          <SectionLabel>Property address</SectionLabel>
+          <AddressSection
+            value={{
+              streetAddressInput: draft.streetAddressInput,
+              Verity_NG_PlotNumber: draft.Verity_NG_PlotNumber,
+              Verity_NG_Neighborhood: draft.Verity_NG_Neighborhood,
+              UnitNumber: draft.UnitNumber,
+              City: draft.City,
+              CountyOrParish: draft.CountyOrParish,
+              StateOrProvince: draft.StateOrProvince,
+              PostalCode: draft.PostalCode,
+            }}
+            onChange={(patch) => update(patch)}
+          />
+        </section>
+
+        <section>
+          <SectionLabel>Lot size</SectionLabel>
+          <div className="dv-field full">
+            <label className="lbl" htmlFor="sizeSqm">Lot size (m²)</label>
+            <input
+              id="sizeSqm"
+              className="dv-input mono"
+              type="number"
+              placeholder="1250"
+              value={draft.LotSizeSquareMeters ?? ''}
+              onChange={(e) =>
+                update({ LotSizeSquareMeters: e.target.value ? Number(e.target.value) : null })
+              }
+            />
           </div>
         </section>
       </div>

@@ -23,11 +23,19 @@ export function PropertyOverview({ property }: { property: PropertyDetail }) {
   push('PropertySubType',  'Property sub-type', property.PropertySubType);
   push('StandardStatus',   'Status',           property.StandardStatus);
 
-  // Geo
-  push('UnparsedAddress',  'Address',          property.UnparsedAddress);
+  // Address — parsed components + composite
+  push('StreetNumber',     'Street number',    property.StreetNumber);
+  push('StreetName',       'Street name',      property.StreetName);
+  push('StreetSuffix',     'Street suffix',    property.StreetSuffix);
+  push('UnitNumber',       'Unit / Flat',      property.UnitNumber);
+  push('Verity_NG_PlotNumber',   'Plot number',    property.Verity_NG_PlotNumber);
+  push('Verity_NG_Neighborhood', 'Neighbourhood',  property.Verity_NG_Neighborhood);
+  push('City',             'City',             property.City);
   push('CountyOrParish',   'LGA',              property.CountyOrParish);
   push('StateOrProvince',  'State',            property.StateOrProvince);
+  push('PostalCode',       'Postal code',      property.PostalCode);
   push('Country',          'Country',          property.Country);
+  push('UnparsedAddress',  'Address (composed)', property.UnparsedAddress);
   push('LotSizeSquareMeters', 'Lot size',
     property.LotSizeSquareMeters ? `${property.LotSizeSquareMeters.toLocaleString()} m²` : undefined);
   push('BedroomsTotal',    'Bedrooms',         property.BedroomsTotal);

@@ -46,10 +46,24 @@ export type AddPropertyDraft = {
   Verity_NG_BQBathroomsFull: number | null;
   Verity_NG_BQBathroomsHalf: number | null;
 
-  // RESO geography + apartment-specific
-  UnparsedAddress: string;
-  StateOrProvince: string;       // 'Lagos' default
-  CountyOrParish: string;        // LGA
+  // Address Capture v1 — parsed RESO address fields.
+  /** Combined "Street address" input — parsed into StreetNumber/Name/Suffix at submit. */
+  streetAddressInput: string;
+  /** Verity NG plot identifier — "Plot 14, Block 23". */
+  Verity_NG_PlotNumber: string;
+  /** Free-text neighbourhood or estate name (City vs Estate reconciliation deferred §5). */
+  Verity_NG_Neighborhood: string;
+  /** Flat / Apt / Unit number — RESO UnitNumber. */
+  UnitNumber: string;
+  /** City — free text in MVP per §5. */
+  City: string;
+  /** LGA. Cascading dropdown for the 36 states + FCT. */
+  CountyOrParish: string;
+  /** 37 values (36 states + FCT). */
+  StateOrProvince: string;
+  /** NIPOST 6-digit postal code. */
+  PostalCode: string;
+
   LotSizeSquareMeters: number | null;
   /** Required for Residential House and for Apartment when style ≠ Studio. `5` represents "5+". */
   BedroomsTotal: number | null;
@@ -81,9 +95,14 @@ export const EMPTY_ADD_DRAFT: AddPropertyDraft = {
   Verity_NG_BQBathroomsFull: null,
   Verity_NG_BQBathroomsHalf: null,
 
-  UnparsedAddress: '',
-  StateOrProvince: 'Lagos',
+  streetAddressInput: '',
+  Verity_NG_PlotNumber: '',
+  Verity_NG_Neighborhood: '',
+  UnitNumber: '',
+  City: '',
   CountyOrParish: '',
+  StateOrProvince: 'Lagos',
+  PostalCode: '',
   LotSizeSquareMeters: null,
   BedroomsTotal: null,
   BathroomsFull: null,

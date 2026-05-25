@@ -2,7 +2,18 @@ import { EMPTY_DRAFT, EMPTY_PROPERTY, type RequestDetail, type RequestDraft, typ
 import type { BandTier, VerificationTrack } from '@/lib/types/verification';
 import { skippedStagesForTier } from '@/lib/types/verification';
 import type { Certificate } from '@/lib/types/certificate';
-import { derivePropertySubType, type DeriveInput, type UICategory, type VerityNG_ApartmentStyle, type VerityNG_BQConfig, type VerityNG_HouseAttachment, type VerityNG_HouseStyle, type VerityNG_LandFeature } from '@verity/reso';
+import {
+  buildUnparsedAddress,
+  derivePropertySubType,
+  parseStreetAddress,
+  type DeriveInput,
+  type UICategory,
+  type VerityNG_ApartmentStyle,
+  type VerityNG_BQConfig,
+  type VerityNG_HouseAttachment,
+  type VerityNG_HouseStyle,
+  type VerityNG_LandFeature,
+} from '@verity/reso';
 import { VERIFICATION_SEEDS, type VerificationSeed } from '@verity/fixtures';
 
 const REQUESTS_KEY = 'verity:requests';
@@ -66,11 +77,15 @@ function seedToRequestProperty(sp: VerificationSeed['property']): RequestPropert
     Verity_NG_BQBedroomsTotal: sp.Verity_NG_BQBedroomsTotal,
     Verity_NG_BQBathroomsFull: sp.Verity_NG_BQBathroomsFull,
     Verity_NG_BQBathroomsHalf: sp.Verity_NG_BQBathroomsHalf,
-    UnparsedAddress: sp.UnparsedAddress ?? sp.address ?? '',
+    streetAddressInput: [sp.StreetNumber, sp.StreetName, sp.StreetSuffix].filter(Boolean).join(' '),
+    Verity_NG_PlotNumber: sp.Verity_NG_PlotNumber ?? sp.plotNo,
+    Verity_NG_Neighborhood: sp.Verity_NG_Neighborhood,
+    UnitNumber: sp.UnitNumber,
+    City: sp.City ?? '',
+    PostalCode: sp.PostalCode,
     StateOrProvince: sp.StateOrProvince ?? 'Lagos',
     CountyOrParish: sp.CountyOrParish ?? sp.lga ?? '',
     LotSizeSquareMeters: sp.LotSizeSquareMeters ?? sp.sizeSqm,
-    Verity_PlotNo: sp.plotNo,
   };
 }
 
@@ -92,9 +107,12 @@ function readStored(): Record<string, StoredRecord> {
 }
 
 function storedToSummary(r: StoredRecord): RequestSummary {
-  const ua = r.draft.property.UnparsedAddress || '';
-  const firstLine = ua.split(',')[0]?.trim() || 'Untitled property';
-  const cityPart = ua.split(',').slice(1, 2).join('').trim() || r.draft.property.CountyOrParish || '';
+  const p = r.draft.property;
+  const street = parseStreetAddress(p.streetAddressInput);
+  const firstLine = [street.StreetNumber, street.StreetName, street.StreetSuffix].filter(Boolean).join(' ').trim()
+    || p.streetAddressInput.trim()
+    || 'Untitled property';
+  const cityPart = p.City || p.CountyOrParish || '';
   return {
     vpid: r.vpid,
     address: firstLine,
@@ -168,15 +186,36 @@ export const requestService = {
     const bathsTotalInt  = bathsFull != null ? bathsFull + (bathsHalf ?? 0)       : undefined;
     const bathsTotalDec  = bathsFull != null ? bathsFull + (bathsHalf ?? 0) * 0.5 : undefined;
 
+    // Address Capture v1 — parse + compose
+    const street = parseStreetAddress(p.streetAddressInput);
+    const unparsed = buildUnparsedAddress({
+      StreetNumber: street.StreetNumber,
+      StreetName: street.StreetName,
+      StreetSuffix: street.StreetSuffix,
+      UnitNumber: p.UnitNumber,
+      Verity_NG_PlotNumber: p.Verity_NG_PlotNumber,
+      Verity_NG_Neighborhood: p.Verity_NG_Neighborhood,
+      City: p.City,
+      CountyOrParish: p.CountyOrParish,
+      StateOrProvince: p.StateOrProvince,
+    });
+
     console.info('[mock] buyer.submit — RESO payload', {
       Verity_VPID: vpid,
       PropertyType: derived?.PropertyType,
       PropertySubType: derived?.PropertySubType,
       StandardStatus: 'Incomplete',
-      UnparsedAddress: p.UnparsedAddress,
+      StreetNumber: street.StreetNumber,
+      StreetNumberNumeric: street.StreetNumberNumeric,
+      StreetName: street.StreetName,
+      StreetSuffix: street.StreetSuffix,
+      UnitNumber: p.UnitNumber,
+      UnparsedAddress: unparsed,
+      City: p.City,
       CountyOrParish: p.CountyOrParish,
       StateOrProvince: p.StateOrProvince,
       Country: 'NG',
+      PostalCode: p.PostalCode,
       LotSizeSquareMeters: p.LotSizeSquareMeters,
       BedroomsTotal: bedrooms,
       BathroomsFull: bathsFull,
@@ -188,13 +227,14 @@ export const requestService = {
       Verity_NG_HouseStyle: p.houseStyle ?? undefined,
       Verity_NG_HouseAttachment: p.houseAttachment ?? undefined,
       Verity_NG_ApartmentStyle: p.apartmentStyle ?? undefined,
+      Verity_NG_PlotNumber: p.Verity_NG_PlotNumber,
+      Verity_NG_Neighborhood: p.Verity_NG_Neighborhood,
       Verity_NG_HasBQ: p.hasBQ,
       Verity_NG_BQConfig: p.bqConfig ?? undefined,
       Verity_NG_BQSeparateTitle: p.bqSeparateTitle,
       Verity_NG_BQBedroomsTotal:  p.hasBQ ? p.Verity_NG_BQBedroomsTotal ?? 0 : undefined,
       Verity_NG_BQBathroomsFull:  p.hasBQ ? p.Verity_NG_BQBathroomsFull ?? 0 : undefined,
       Verity_NG_BQBathroomsHalf:  p.hasBQ ? p.Verity_NG_BQBathroomsHalf ?? 0 : undefined,
-      Verity_PlotNo: p.Verity_PlotNo,
       files: draft.documents.map((d) => d.name),
     });
     return { vpid, expectedAt: fmtDate(expected) };
@@ -275,22 +315,24 @@ export const certificateService = {
     await new Promise((r) => setTimeout(r, 120));
     const seed = SEEDS.find((s) => s.vpid === vpid);
     if (!seed || seed.status !== 'complete' || !seed.band) return null;
-    const [addr1, ...rest] = seed.property.address.split(',');
     const verifiedIso = seed.expectedAt || seed.createdAt;
     return {
       vpid,
       publicUrl: `verity.properties/v/${vpid.toUpperCase()}`,
+      // Public-safe subset only — Address Capture v1 §13.
+      // Street-level data (StreetNumber / StreetName / UnitNumber /
+      // PlotNumber / Lat / Lng) is intentionally withheld.
       property: {
-        addressLine1: addr1.trim(),
-        addressLine2: rest.join(',').trim() || seed.city,
-        plotNo: seed.property.plotNo,
-        type: propertyTypeLabel(seed.property.type, seed.property.sizeSqm),
-        sizeSqm: seed.property.sizeSqm,
-        // RESO-named fields surfaced on the public cert (§9.4).
+        City: seed.property.City ?? seed.city,
+        CountyOrParish: seed.property.CountyOrParish ?? seed.property.lga,
+        StateOrProvince: seed.property.StateOrProvince ?? 'Lagos',
+        PostalCode: seed.property.PostalCode,
+        Verity_NG_Neighborhood: seed.property.Verity_NG_Neighborhood,
         PropertyType: seed.property.PropertyType,
         PropertySubType: seed.property.PropertySubType,
         StandardStatus: 'Active',
-        Verity_LGA: seed.property.lga,
+        Verity_LGA: seed.property.CountyOrParish ?? seed.property.lga,
+        sizeSqm: seed.property.sizeSqm,
       },
       verifiedAt: fmtVerifiedDate(verifiedIso),
       band: seed.band,

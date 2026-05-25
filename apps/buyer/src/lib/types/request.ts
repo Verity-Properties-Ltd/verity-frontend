@@ -43,10 +43,17 @@ export type RequestProperty = {
   Verity_NG_BQBathroomsFull?: number;
   Verity_NG_BQBathroomsHalf?: number;
 
-  // RESO geography + apartment-specific
-  UnparsedAddress: string;
-  StateOrProvince: string;
+  // Address Capture v1 — parsed RESO address fields
+  /** Combined "Street address" input — parsed into StreetNumber/Name/Suffix at submit. */
+  streetAddressInput: string;
+  Verity_NG_PlotNumber?: string;
+  Verity_NG_Neighborhood?: string;
+  UnitNumber?: string;
+  City: string;
   CountyOrParish: string;
+  StateOrProvince: string;
+  PostalCode?: string;
+
   LotSizeSquareMeters?: number;
   /** Required for Residential House and for Apartment when style ≠ Studio. `5` represents "5+". */
   BedroomsTotal?: number;
@@ -55,8 +62,6 @@ export type RequestProperty = {
   /** Optional. A half bath has sink + toilet only. `3` represents "3+". */
   BathroomsHalf?: number;
 
-  // Verity_* title
-  Verity_PlotNo?: string;
 };
 
 export type RequestDraft = {
@@ -106,9 +111,10 @@ export const EMPTY_PROPERTY: RequestProperty = {
   hasBQ: false,
   bqConfig: null,
   bqSeparateTitle: false,
-  UnparsedAddress: '',
-  StateOrProvince: 'Lagos',
+  streetAddressInput: '',
+  City: '',
   CountyOrParish: '',
+  StateOrProvince: 'Lagos',
 };
 
 export const EMPTY_DRAFT: RequestDraft = {

@@ -2,11 +2,12 @@
 
 | | |
 |---|---|
-| **Version** | 1.0 — April 2026 |
+| **Version** | 1.1 — April 2026 |
 | **Status** | Internal — Engineering, Product & Design Reference |
 | **Scope** | RESO Data Dictionary v2.0 adoption — decision, scope, property type mapping, MVP implementation surfaces |
 | **Owner** | Ladi Awolaja — CPO |
-| **Source documents** | Tech Stack v1.1 (§2.2, §2.3, §10), CTO Reference — Ruro v1.1 (§3, §8), Frontend Reference — Boniface v1.1 (§3, §6), Designer Reference — Adebayo v1.1 (§3, §5), MVP PRD v1.1, RESO Property Type Mapping — Nigeria v1, Full Business Plan v1.1 (§7, §15) |
+| **Source documents** | Tech Stack v1.1 (§2.2, §2.3, §10), CTO Reference — Ruro v1.1 (§3, §8), Frontend Reference — Boniface v1.1 (§3, §6), Designer Reference — Adebayo v1.1 (§3, §5), MVP PRD v1.1, RESO Property Type Mapping — Nigeria v1, Full Business Plan v1.1 (§7, §15), RESO Bathroom Implementation v1.1 |
+| **Changelog** | v1.1: Added `Verity_NG_BQBedroomsTotal` to the BQ extension field set in §4 schema and §7 field register. Cross-reference to Bathroom Implementation v1.1 updated. |
 
 *STRICTLY CONFIDENTIAL — INTERNAL DOCUMENT*
 
@@ -86,7 +87,10 @@ CREATE TABLE properties (
     Latitude                DECIMAL(10, 7),
     Longitude               DECIMAL(10, 7),
     BedroomsTotal           SMALLINT,
-    BathroomsTotal          DECIMAL(3, 1),
+    BathroomsFull           SMALLINT,
+    BathroomsHalf           SMALLINT,
+    BathroomsTotalInteger   SMALLINT,
+    BathroomsTotalDecimal   DECIMAL(3, 1),
     LotSizeSquareMeters     INTEGER,
     YearBuilt               SMALLINT,
 
@@ -99,6 +103,9 @@ CREATE TABLE properties (
     Verity_NG_HasBQ           BOOLEAN DEFAULT FALSE,
     Verity_NG_BQConfig        VARCHAR(20),
     Verity_NG_BQSeparateTitle BOOLEAN DEFAULT FALSE,
+    Verity_NG_BQBedroomsTotal SMALLINT DEFAULT 0,
+    Verity_NG_BQBathroomsFull SMALLINT DEFAULT 0,
+    Verity_NG_BQBathroomsHalf SMALLINT DEFAULT 0,
 
     -- Verity title fields (Verity_* namespace)
     Verity_TitleType        VARCHAR(50),
@@ -259,8 +266,28 @@ The complete list of Nigeria-specific custom fields used in MVP:
 | `Verity_NG_HasBQ` | BOOLEAN | Cat 2 & 3 | `true`, `false` | Boys' Quarters toggle |
 | `Verity_NG_BQConfig` | VARCHAR(20) | Cat 2 & 3 | `Attached`, `Detached`, `Rooftop` | Required if `Verity_NG_HasBQ = true` |
 | `Verity_NG_BQSeparateTitle` | BOOLEAN | Cat 2 & 3 | `true`, `false` | Triggers analyst flag if `true` |
+| `Verity_NG_BQBedroomsTotal` | SMALLINT | Cat 2 & 3 | Non-negative integer | BQ bedrooms count; defaults 0. Triggers analyst flag if `>= 3` AND `BQSeparateTitle = false` |
+| `Verity_NG_BQBathroomsFull` | SMALLINT | Cat 2 & 3 | Non-negative integer | BQ-only count of full bathrooms; defaults 0 |
+| `Verity_NG_BQBathroomsHalf` | SMALLINT | Cat 2 & 3 | Non-negative integer | BQ-only count of half bathrooms; defaults 0 |
 
-### 7.1 Pan-African Namespace Convention
+### 7.1 RESO Bathroom Fields & BQ Extensions — Separate Implementation Standard
+
+The bathroom + BQ extension field implementation is significant enough to warrant its own standalone reference document. See **VERITY RESO Bathroom Implementation v1.1** for the full specification covering all 7 RESO bathroom fields, the arithmetic decimal convention, the Boys' Quarters split (`BedroomsTotal`/`BathroomsFull`/`BathroomsHalf` for main building vs `Verity_NG_BQBedroomsTotal`/`Verity_NG_BQBathroomsFull`/`Verity_NG_BQBathroomsHalf` for BQ), the auto-compute trigger, UI design, analyst flag thresholds, and bank API implications.
+
+Summary of the four RESO bathroom fields adopted in MVP:
+
+| Field | Type | Purpose |
+|---|---|---|
+| `BathroomsFull` | SMALLINT (input) | Count of full bathrooms in main building |
+| `BathroomsHalf` | SMALLINT (input) | Count of half bathrooms / powder rooms in main building |
+| `BathroomsTotalInteger` | SMALLINT (derived) | Sum of full + half, whole count |
+| `BathroomsTotalDecimal` | DECIMAL(3,1) (derived) | `BathroomsFull + (BathroomsHalf × 0.5)` — consumed by bank LOS comparables |
+
+Plus three BQ extension fields in the `Verity_NG_*` namespace: `Verity_NG_BQBedroomsTotal`, `Verity_NG_BQBathroomsFull`, `Verity_NG_BQBathroomsHalf`. Analyst flag trigger: large BQ (3+ bedrooms) + no separate title → manual title verification.
+
+`BathroomsThreeQuarter`, `BathroomsOneQuarter`, and `BathroomsPartial` are deferred to Phase 2 or excluded entirely.
+
+### 7.2 Pan-African Namespace Convention
 
 For Series B+ expansion, the namespace pattern is preserved:
 
@@ -470,4 +497,6 @@ This is why the Series B pan-African expansion narrative in the Business Plan is
 
 ---
 
-*v1.0 — April 2026 — Initial consolidated brief. Sourced from Tech Stack v1.1, CTO Reference v1.1, Frontend Reference v1.1, Designer Reference v1.1, MVP PRD v1.1, RESO Property Type Mapping — Nigeria v1, and Full Business Plan v1.1.*
+*v1.0 — April 2026 — Initial consolidated brief. Sourced from Tech Stack v1.1, CTO Reference v1.1, Frontend Reference v1.1, Designer Reference v1.1, MVP PRD v1.1, RESO Property Type Mapping — Nigeria v1, and Full Business Plan v1.1. Cross-references the standalone RESO Bathroom Implementation v1 document for full bathroom field specification.*
+
+*v1.1 — April 2026 — Added `Verity_NG_BQBedroomsTotal` to the BQ extension field set in §4 canonical schema and §7 field register. Cross-reference updated to Bathroom Implementation v1.1.*
