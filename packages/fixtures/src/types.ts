@@ -10,13 +10,49 @@ export interface SeedDocument {
   ext: string;
 }
 
+/**
+ * RESO Data Dictionary v2.0 — universal field types.
+ * Brief: docs/VERITY_RESO_Adoption_Brief_v1.md
+ *
+ * 'Duplex' and 'Condominium' are deliberately excluded (§6.1 / §6.2).
+ */
+export type SeedRESOPropertyType    = 'Land' | 'Residential' | 'Commercial' | 'Farm';
+export type SeedRESOPropertySubType =
+  | 'SingleFamilyResidence' | 'Townhouse' | 'Apartment'
+  | 'VacantLand' | 'CommercialLand' | 'AgriculturalLand';
+export type SeedNGHouseStyle      = 'Bungalow' | 'Duplex' | 'Terrace';
+export type SeedNGHouseAttachment = 'Detached' | 'SemiDetached';
+export type SeedNGApartmentStyle  = 'Studio' | 'StandardFlat' | 'Penthouse' | 'Maisonette';
+export type SeedNGLandZoning      = 'Residential' | 'Commercial' | 'MixedUse' | 'Industrial' | 'Agricultural';
+export type SeedNGLandFeature     = 'Waterfront' | 'Reclaimed' | 'None';
+export type SeedNGBQConfig        = 'Attached' | 'Detached' | 'Rooftop';
+
 export interface SeedProperty {
+  /** @deprecated kept for backward-compat; prefer PropertyType + PropertySubType. */
   type: SeedPropertyType;
   state: string;
   lga: string;
   address: string;
   plotNo?: string;
   sizeSqm?: number;
+
+  // RESO universal
+  PropertyType?:    SeedRESOPropertyType;
+  PropertySubType?: SeedRESOPropertySubType;
+  UnparsedAddress?: string;
+  CountyOrParish?:  string;
+  StateOrProvince?: string;
+  LotSizeSquareMeters?: number;
+
+  // Verity_NG_*
+  Verity_NG_HouseStyle?:        SeedNGHouseStyle;
+  Verity_NG_HouseAttachment?:   SeedNGHouseAttachment;
+  Verity_NG_ApartmentStyle?:    SeedNGApartmentStyle;
+  Verity_NG_LandZoning?:        SeedNGLandZoning;
+  Verity_NG_LandFeature?:       SeedNGLandFeature;
+  Verity_NG_HasBQ?:             boolean;
+  Verity_NG_BQConfig?:          SeedNGBQConfig;
+  Verity_NG_BQSeparateTitle?:   boolean;
 }
 
 export interface SeedTrack {

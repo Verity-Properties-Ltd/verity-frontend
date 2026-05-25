@@ -1,4 +1,5 @@
 import type { Band } from '@/components/dashboard/BandPill';
+import type { RESOProperty } from './reso';
 
 export type PropertyStatus = 'verified' | 'in-verification' | 'awaiting-docs' | 'expiring' | 'expired';
 
@@ -75,7 +76,15 @@ export type SalesMetadata = {
   notes?: string;
 };
 
-export type PropertyDetail = PropertySummary & {
+/**
+ * Detailed property record.
+ *
+ * Carries the full RESO + Verity_NG_* + Verity_* surface (via Partial — not
+ * every mock has every field). Display surfaces should prefer the RESO
+ * field names; legacy `address`/`city`/`type` projections are kept on
+ * PropertySummary for the portfolio table until Phase 4 swaps it.
+ */
+export type PropertyDetail = PropertySummary & Partial<RESOProperty> & {
   sizeSqm: number;
   type: string;
   cityLong: string;
