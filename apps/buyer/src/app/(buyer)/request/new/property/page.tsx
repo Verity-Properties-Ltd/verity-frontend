@@ -2,28 +2,65 @@
 
 import { useRouter } from 'next/navigation';
 import { useRequestDraft } from '@/lib/hooks/useRequestDraft';
-import type { PropertyType } from '@/lib/types/request';
+import type { RequestProperty } from '@/lib/types/request';
 import { WizardFooter } from '@/components/wizard/WizardFooter';
-
-const TYPES: { id: PropertyType; label: string }[] = [
-  { id: 'residential', label: 'Residential' },
-  { id: 'commercial', label: 'Commercial' },
-  { id: 'mixed-use', label: 'Mixed-use' },
-  { id: 'land', label: 'Land' },
-];
+import { CategorySelector } from '@/components/wizard/CategorySelector';
+import { LandSubCategorySelector } from '@/components/wizard/LandSubCategorySelector';
+import { HouseStyleSelector } from '@/components/wizard/HouseStyleSelector';
+import { ApartmentStyleSelector } from '@/components/wizard/ApartmentStyleSelector';
+import { BQToggle } from '@/components/wizard/BQToggle';
+import { derivePropertySubType, type UICategory } from '@/lib/types/reso';
 
 export default function PropertyStep() {
   const router = useRouter();
   const { draft, update, hydrated } = useRequestDraft();
   const p = draft.property;
-  const valid = !!p.type && !!p.lga.trim() && !!p.address.trim();
+  const cat = p.category;
+  const showsBQ = cat === 'ResidentialHouse' || cat === 'ApartmentFlat';
 
-  function setProp<K extends keyof typeof p>(key: K, value: (typeof p)[K]) {
-    update((d) => ({ ...d, property: { ...d.property, [key]: value } }));
+  const level2Valid =
+    cat === 'LandedProperty' ? !!p.landSubCategory :
+    cat === 'ResidentialHouse' ? !!p.houseStyle && !!p.houseAttachment :
+    cat === 'ApartmentFlat' ? !!p.apartmentStyle :
+    false;
+
+  const bqValid = !p.hasBQ || !!p.bqConfig;
+  const geoValid = !!p.UnparsedAddress.trim() && !!p.CountyOrParish.trim();
+
+  const valid = !!cat && level2Valid && bqValid && geoValid;
+
+  function patchProperty(patch: Partial<RequestProperty>) {
+    update((d) => ({ ...d, property: { ...d.property, ...patch } }));
+  }
+
+  function onCategoryChange(next: UICategory) {
+    patchProperty({
+      category: next,
+      landSubCategory: null,
+      landFeatures: [],
+      houseStyle: null,
+      houseAttachment: null,
+      apartmentStyle: null,
+      hasBQ: false,
+      bqConfig: null,
+      bqSeparateTitle: false,
+    });
   }
 
   function onContinue() {
-    if (!valid) return;
+    if (!valid || !cat) return;
+    try {
+      if (cat === 'LandedProperty' && p.landSubCategory) {
+        derivePropertySubType({ category: 'LandedProperty', landSubCategory: p.landSubCategory });
+      } else if (cat === 'ResidentialHouse' && p.houseStyle && p.houseAttachment) {
+        derivePropertySubType({ category: 'ResidentialHouse', houseStyle: p.houseStyle, attachment: p.houseAttachment });
+      } else if (cat === 'ApartmentFlat' && p.apartmentStyle) {
+        derivePropertySubType({ category: 'ApartmentFlat', apartmentStyle: p.apartmentStyle });
+      }
+    } catch (err) {
+      console.error('derivePropertySubType failed', err);
+      return;
+    }
     router.push('/request/new/documents');
   }
 
@@ -33,82 +70,133 @@ export default function PropertyStep() {
       <h2 className="bf-h2">
         Tell us about <em className="bf-italic">the property</em> you want verified.
       </h2>
+      <p className="bf-body" style={{ fontStyle: 'italic', color: 'var(--slate)', marginTop: 6, maxWidth: '56ch' }}>
+        Your selections drive the RESO PropertyType / PropertySubType we record — and shape the verification workflow.
+      </p>
 
-      <div className="bf-stack" style={{ gap: 18, marginTop: 24, maxWidth: 720 }}>
-        <div className="bf-field">
-          <label className="bf-label">Property type *</label>
-          <div className="bf-seg">
-            {TYPES.map((t) => (
-              <button
-                key={t.id}
-                type="button"
-                className={p.type === t.id ? 'on' : ''}
-                onClick={() => setProp('type', t.id)}
-              >
-                {t.label}
-              </button>
-            ))}
-          </div>
-        </div>
+      <div className="bf-stack" style={{ gap: 24, marginTop: 24, maxWidth: 880 }}>
+        <section>
+          <SectionLabel>1. Property category</SectionLabel>
+          <CategorySelector value={cat} onChange={onCategoryChange} />
+        </section>
 
-        <div className="bf-grid-2">
-          <div className="bf-field">
-            <label className="bf-label">State *</label>
-            <div className="bf-input" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <span>Lagos State</span>
-              <span className="bf-mono" style={{ color: 'var(--slate)', fontSize: 10 }}>NG-LA</span>
+        {cat === 'LandedProperty' && (
+          <section>
+            <SectionLabel>2. Land sub-category</SectionLabel>
+            <LandSubCategorySelector
+              value={p.landSubCategory}
+              onChange={(v) => patchProperty({ landSubCategory: v })}
+              features={p.landFeatures}
+              onFeaturesChange={(v) => patchProperty({ landFeatures: v })}
+            />
+          </section>
+        )}
+
+        {cat === 'ResidentialHouse' && (
+          <section>
+            <SectionLabel>2. Style &amp; attachment</SectionLabel>
+            <HouseStyleSelector
+              style={p.houseStyle}
+              attachment={p.houseAttachment}
+              onStyleChange={(v) => patchProperty({ houseStyle: v })}
+              onAttachmentChange={(v) => patchProperty({ houseAttachment: v })}
+            />
+          </section>
+        )}
+
+        {cat === 'ApartmentFlat' && (
+          <section>
+            <SectionLabel>2. Apartment style</SectionLabel>
+            <ApartmentStyleSelector
+              value={p.apartmentStyle}
+              onChange={(v) => patchProperty({ apartmentStyle: v })}
+            />
+          </section>
+        )}
+
+        {showsBQ && (
+          <section>
+            <SectionLabel>3. Boys&apos; Quarters</SectionLabel>
+            <BQToggle
+              hasBQ={p.hasBQ}
+              bqConfig={p.bqConfig}
+              bqSeparateTitle={p.bqSeparateTitle}
+              onHasBQChange={(v) =>
+                patchProperty({
+                  hasBQ: v,
+                  bqConfig: v ? p.bqConfig : null,
+                  bqSeparateTitle: v ? p.bqSeparateTitle : false,
+                })
+              }
+              onConfigChange={(v) => patchProperty({ bqConfig: v })}
+              onSeparateTitleChange={(v) => patchProperty({ bqSeparateTitle: v })}
+            />
+          </section>
+        )}
+
+        <section>
+          <SectionLabel>{showsBQ ? '4' : cat ? '3' : '2'}. Location &amp; size</SectionLabel>
+          <div className="bf-stack" style={{ gap: 14 }}>
+            <div className="bf-grid-2">
+              <div className="bf-field">
+                <label className="bf-label">State (StateOrProvince) *</label>
+                <div className="bf-input" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span>Lagos</span>
+                  <span className="bf-mono" style={{ color: 'var(--slate)', fontSize: 10 }}>NG-LA</span>
+                </div>
+              </div>
+              <div className="bf-field">
+                <label className="bf-label" htmlFor="lga">Local Government Area (CountyOrParish) *</label>
+                <input
+                  id="lga"
+                  className="bf-input"
+                  value={p.CountyOrParish}
+                  placeholder="Eti-Osa"
+                  onChange={(e) => patchProperty({ CountyOrParish: e.target.value })}
+                />
+              </div>
+            </div>
+
+            <div className="bf-field">
+              <label className="bf-label" htmlFor="address">Plot address (UnparsedAddress) *</label>
+              <textarea
+                id="address"
+                className="bf-textarea"
+                value={p.UnparsedAddress}
+                placeholder="Plot 27B, Admiralty Way, Lekki Phase 1, Lagos."
+                onChange={(e) => patchProperty({ UnparsedAddress: e.target.value })}
+              />
+            </div>
+
+            <div className="bf-grid-2">
+              <div className="bf-field">
+                <label className="bf-label" htmlFor="plotNo">
+                  Plot no. <span style={{ fontSize: 10, color: 'var(--slate)' }}>(optional)</span>
+                </label>
+                <input
+                  id="plotNo"
+                  className="bf-input mono"
+                  value={p.Verity_PlotNo || ''}
+                  placeholder="LEK/PH1/27B"
+                  onChange={(e) => patchProperty({ Verity_PlotNo: e.target.value || undefined })}
+                />
+              </div>
+              <div className="bf-field">
+                <label className="bf-label" htmlFor="sizeSqm">
+                  Lot size m² (LotSizeSquareMeters) <span style={{ fontSize: 10, color: 'var(--slate)' }}>(optional)</span>
+                </label>
+                <input
+                  id="sizeSqm"
+                  className="bf-input mono"
+                  type="number"
+                  value={p.LotSizeSquareMeters ?? ''}
+                  placeholder="640"
+                  onChange={(e) => patchProperty({ LotSizeSquareMeters: e.target.value ? Number(e.target.value) : undefined })}
+                />
+              </div>
             </div>
           </div>
-          <div className="bf-field">
-            <label className="bf-label" htmlFor="lga">Local Government Area *</label>
-            <input
-              id="lga"
-              className="bf-input"
-              value={p.lga}
-              placeholder="Eti-Osa"
-              onChange={(e) => setProp('lga', e.target.value)}
-            />
-          </div>
-        </div>
-
-        <div className="bf-field">
-          <label className="bf-label" htmlFor="address">Plot address *</label>
-          <textarea
-            id="address"
-            className="bf-textarea"
-            value={p.address}
-            placeholder="Plot 27B, Admiralty Way, Lekki Phase 1, Lagos."
-            onChange={(e) => setProp('address', e.target.value)}
-          />
-        </div>
-
-        <div className="bf-grid-2">
-          <div className="bf-field">
-            <label className="bf-label" htmlFor="plotNo">
-              Plot no. <span style={{ fontSize: 10, color: 'var(--slate)' }}>(optional)</span>
-            </label>
-            <input
-              id="plotNo"
-              className="bf-input mono"
-              value={p.plotNo || ''}
-              placeholder="LEK/PH1/27B"
-              onChange={(e) => setProp('plotNo', e.target.value)}
-            />
-          </div>
-          <div className="bf-field">
-            <label className="bf-label" htmlFor="sizeSqm">
-              Size (sqm) <span style={{ fontSize: 10, color: 'var(--slate)' }}>(optional)</span>
-            </label>
-            <input
-              id="sizeSqm"
-              className="bf-input mono"
-              type="number"
-              value={p.sizeSqm ?? ''}
-              placeholder="640"
-              onChange={(e) => setProp('sizeSqm', e.target.value ? Number(e.target.value) : undefined)}
-            />
-          </div>
-        </div>
+        </section>
       </div>
 
       <WizardFooter
@@ -119,5 +207,22 @@ export default function PropertyStep() {
         }}
       />
     </>
+  );
+}
+
+function SectionLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <div
+      className="bf-mono"
+      style={{
+        fontSize: 10,
+        letterSpacing: '0.22em',
+        textTransform: 'uppercase',
+        color: 'var(--gold-deep)',
+        marginBottom: 12,
+      }}
+    >
+      {children}
+    </div>
   );
 }

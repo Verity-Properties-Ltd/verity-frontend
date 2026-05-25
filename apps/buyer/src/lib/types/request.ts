@@ -1,4 +1,13 @@
-export type PropertyType = 'residential' | 'commercial' | 'mixed-use' | 'land';
+import type {
+  UICategory,
+  UILandSubCategory,
+  VerityNG_ApartmentStyle,
+  VerityNG_BQConfig,
+  VerityNG_HouseAttachment,
+  VerityNG_HouseStyle,
+  VerityNG_LandFeature,
+} from './reso';
+
 export type Tier = 'standard' | 'premium';
 export type PaymentMethod = 'card' | 'bank';
 
@@ -9,15 +18,39 @@ export type DocumentMeta = {
   ext: string;
 };
 
+/**
+ * Property payload carried through the buyer request wizard.
+ *
+ * Mirrors AddPropertyDraft on the developer side — UI category + Level 2
+ * captures, RESO geo fields, BQ flow. The canonical RESO PropertyType /
+ * PropertySubType is derived at submit time via derivePropertySubType().
+ */
+export type RequestProperty = {
+  // Level 1 + Level 2 (brief §5)
+  category: UICategory | null;
+  landSubCategory: UILandSubCategory | null;
+  landFeatures: VerityNG_LandFeature[];
+  houseStyle: VerityNG_HouseStyle | null;
+  houseAttachment: VerityNG_HouseAttachment | null;
+  apartmentStyle: VerityNG_ApartmentStyle | null;
+
+  // Boys' Quarters (brief §5.4)
+  hasBQ: boolean;
+  bqConfig: VerityNG_BQConfig | null;
+  bqSeparateTitle: boolean;
+
+  // RESO geography
+  UnparsedAddress: string;
+  StateOrProvince: string;
+  CountyOrParish: string;
+  LotSizeSquareMeters?: number;
+
+  // Verity_* title
+  Verity_PlotNo?: string;
+};
+
 export type RequestDraft = {
-  property: {
-    type: PropertyType | null;
-    state: string;
-    lga: string;
-    address: string;
-    plotNo?: string;
-    sizeSqm?: number;
-  };
+  property: RequestProperty;
   documents: DocumentMeta[];
   noDocuments: boolean;
   tier: Tier | null;
@@ -39,7 +72,7 @@ export type RequestSummary = {
 };
 
 export type RequestDetail = RequestSummary & {
-  property: RequestDraft['property'];
+  property: RequestProperty;
   documents: DocumentMeta[];
 };
 
@@ -53,8 +86,23 @@ export const TIER_LABEL: Record<Tier, string> = {
   premium: 'Premium',
 };
 
+export const EMPTY_PROPERTY: RequestProperty = {
+  category: null,
+  landSubCategory: null,
+  landFeatures: [],
+  houseStyle: null,
+  houseAttachment: null,
+  apartmentStyle: null,
+  hasBQ: false,
+  bqConfig: null,
+  bqSeparateTitle: false,
+  UnparsedAddress: '',
+  StateOrProvince: 'Lagos',
+  CountyOrParish: '',
+};
+
 export const EMPTY_DRAFT: RequestDraft = {
-  property: { type: null, state: 'Lagos State', lga: '', address: '' },
+  property: EMPTY_PROPERTY,
   documents: [],
   noDocuments: false,
   tier: null,

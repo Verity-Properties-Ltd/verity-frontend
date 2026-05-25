@@ -1,7 +1,8 @@
-import { EMPTY_DRAFT, type RequestDetail, type RequestDraft, type RequestStatus, type RequestSummary, type Tier } from '@/lib/types/request';
+import { EMPTY_DRAFT, EMPTY_PROPERTY, type RequestDetail, type RequestDraft, type RequestProperty, type RequestStatus, type RequestSummary, type Tier } from '@/lib/types/request';
 import type { BandTier, VerificationTrack } from '@/lib/types/verification';
 import { skippedStagesForTier } from '@/lib/types/verification';
 import type { Certificate } from '@/lib/types/certificate';
+import { derivePropertySubType, type DeriveInput, type UICategory, type VerityNG_ApartmentStyle, type VerityNG_BQConfig, type VerityNG_HouseAttachment, type VerityNG_HouseStyle, type VerityNG_LandFeature } from '@/lib/types/reso';
 import { VERIFICATION_SEEDS, type VerificationSeed } from '@verity/fixtures';
 
 const REQUESTS_KEY = 'verity:requests';
@@ -32,10 +33,48 @@ function seedToSummary(s: VerificationSeed): RequestSummary {
   };
 }
 
+/**
+ * Project a SeedProperty (legacy + RESO mixed shape) into the RESO-only
+ * RequestProperty shape consumed by the buyer wizard. SeedProperty carries
+ * both legacy fields (address/state/lga) and RESO fields (PropertyType
+ * / Verity_NG_*) — we read RESO-first and fall back where absent.
+ */
+function seedToRequestProperty(sp: VerificationSeed['property']): RequestProperty {
+  // Reverse the §5 derivation: pick the UI category that best fits the
+  // seed's RESO PropertyType + Verity_NG_* shape so the wizard could be
+  // resumed mid-flight in the future if needed.
+  const category: UICategory | null =
+    sp.PropertyType === 'Land' ? 'LandedProperty' :
+    sp.PropertyType === 'Residential' && sp.PropertySubType === 'Apartment' ? 'ApartmentFlat' :
+    sp.PropertyType === 'Residential' ? 'ResidentialHouse' :
+    sp.PropertyType === 'Commercial' ? 'Commercial' :
+    sp.PropertyType === 'Farm' ? 'Farm' :
+    null;
+
+  return {
+    ...EMPTY_PROPERTY,
+    category,
+    houseStyle: (sp.Verity_NG_HouseStyle as VerityNG_HouseStyle | undefined) ?? null,
+    houseAttachment: (sp.Verity_NG_HouseAttachment as VerityNG_HouseAttachment | undefined) ?? null,
+    apartmentStyle: (sp.Verity_NG_ApartmentStyle as VerityNG_ApartmentStyle | undefined) ?? null,
+    landFeatures: sp.Verity_NG_LandFeature && sp.Verity_NG_LandFeature !== 'None'
+      ? [sp.Verity_NG_LandFeature as VerityNG_LandFeature]
+      : [],
+    hasBQ: !!sp.Verity_NG_HasBQ,
+    bqConfig: (sp.Verity_NG_BQConfig as VerityNG_BQConfig | undefined) ?? null,
+    bqSeparateTitle: !!sp.Verity_NG_BQSeparateTitle,
+    UnparsedAddress: sp.UnparsedAddress ?? sp.address ?? '',
+    StateOrProvince: sp.StateOrProvince ?? 'Lagos',
+    CountyOrParish: sp.CountyOrParish ?? sp.lga ?? '',
+    LotSizeSquareMeters: sp.LotSizeSquareMeters ?? sp.sizeSqm,
+    Verity_PlotNo: sp.plotNo,
+  };
+}
+
 function seedToDetail(s: VerificationSeed): RequestDetail {
   return {
     ...seedToSummary(s),
-    property: s.property,
+    property: seedToRequestProperty(s.property),
     documents: s.documents,
   };
 }
@@ -50,8 +89,9 @@ function readStored(): Record<string, StoredRecord> {
 }
 
 function storedToSummary(r: StoredRecord): RequestSummary {
-  const firstLine = r.draft.property.address?.split(',')[0]?.trim() || 'Untitled property';
-  const cityPart = r.draft.property.address?.split(',').slice(1, 2).join('').trim() || r.draft.property.lga || '';
+  const ua = r.draft.property.UnparsedAddress || '';
+  const firstLine = ua.split(',')[0]?.trim() || 'Untitled property';
+  const cityPart = ua.split(',').slice(1, 2).join('').trim() || r.draft.property.CountyOrParish || '';
   return {
     vpid: r.vpid,
     address: firstLine,
@@ -102,7 +142,40 @@ export const requestService = {
       };
       window.localStorage.setItem(REQUESTS_KEY, JSON.stringify(records));
     }
-    console.info('[mock] submit', { vpid, files: draft.documents.map((d) => d.name) });
+
+    // Log the RESO-shaped payload that the backend will eventually accept
+    // (brief §9.1). Mirrors the developer-side submit().
+    const p = draft.property;
+    const derive: DeriveInput | null =
+      p.category === 'LandedProperty' && p.landSubCategory
+        ? { category: 'LandedProperty', landSubCategory: p.landSubCategory }
+      : p.category === 'ResidentialHouse' && p.houseStyle && p.houseAttachment
+        ? { category: 'ResidentialHouse', houseStyle: p.houseStyle, attachment: p.houseAttachment }
+      : p.category === 'ApartmentFlat' && p.apartmentStyle
+        ? { category: 'ApartmentFlat', apartmentStyle: p.apartmentStyle }
+      : null;
+    const derived = derive ? derivePropertySubType(derive) : null;
+    console.info('[mock] buyer.submit — RESO payload', {
+      Verity_VPID: vpid,
+      PropertyType: derived?.PropertyType,
+      PropertySubType: derived?.PropertySubType,
+      StandardStatus: 'Incomplete',
+      UnparsedAddress: p.UnparsedAddress,
+      CountyOrParish: p.CountyOrParish,
+      StateOrProvince: p.StateOrProvince,
+      Country: 'NG',
+      LotSizeSquareMeters: p.LotSizeSquareMeters,
+      Verity_NG_LandZoning: derived?.Verity_NG_LandZoning,
+      Verity_NG_LandFeature: p.landFeatures[0] ?? 'None',
+      Verity_NG_HouseStyle: p.houseStyle ?? undefined,
+      Verity_NG_HouseAttachment: p.houseAttachment ?? undefined,
+      Verity_NG_ApartmentStyle: p.apartmentStyle ?? undefined,
+      Verity_NG_HasBQ: p.hasBQ,
+      Verity_NG_BQConfig: p.bqConfig ?? undefined,
+      Verity_NG_BQSeparateTitle: p.bqSeparateTitle,
+      Verity_PlotNo: p.Verity_PlotNo,
+      files: draft.documents.map((d) => d.name),
+    });
     return { vpid, expectedAt: fmtDate(expected) };
   },
 
@@ -171,7 +244,7 @@ function fmtVerifiedDate(iso?: string) {
   return new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }).toUpperCase();
 }
 
-function propertyTypeLabel(t: RequestDraft['property']['type'], sizeSqm?: number) {
+function propertyTypeLabel(t: string | undefined, sizeSqm?: number) {
   const type = t ? t.charAt(0).toUpperCase() + t.slice(1) : 'Property';
   return sizeSqm ? `${type} · ${sizeSqm} sqm` : type;
 }

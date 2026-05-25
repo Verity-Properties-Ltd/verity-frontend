@@ -1,16 +1,25 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { EMPTY_DRAFT, type RequestDraft } from '@/lib/types/request';
+import { EMPTY_DRAFT, EMPTY_PROPERTY, type RequestDraft } from '@/lib/types/request';
 
-const KEY = 'verity:draft';
+// v2 — bumped when RequestProperty was restructured for RESO adoption.
+// Old `verity:draft` entries (pre-RESO shape) are simply ignored on load.
+const KEY = 'verity:draft-v2';
 
 function readDraft(): RequestDraft {
   if (typeof window === 'undefined') return structuredClone(EMPTY_DRAFT);
   const raw = window.sessionStorage.getItem(KEY);
   if (!raw) return structuredClone(EMPTY_DRAFT);
   try {
-    return { ...structuredClone(EMPTY_DRAFT), ...JSON.parse(raw) };
+    const parsed = JSON.parse(raw) as Partial<RequestDraft>;
+    // Deep-merge the `property` key so any missing RESO fields are backfilled
+    // from EMPTY_PROPERTY instead of leaving the wizard in a half-initialized state.
+    return {
+      ...structuredClone(EMPTY_DRAFT),
+      ...parsed,
+      property: { ...EMPTY_PROPERTY, ...(parsed.property ?? {}) },
+    };
   } catch {
     return structuredClone(EMPTY_DRAFT);
   }
