@@ -7,6 +7,7 @@ import { WizardFooter } from '@/components/wizard/WizardFooter';
 import { useAddPropertyDraft } from '@/lib/hooks/useAddPropertyDraft';
 import { propertyService } from '@/lib/services';
 import { DOCUMENT_LABELS, type DocumentSlot } from '@/lib/types/add';
+import { UI_CATEGORY_LABEL } from '@/lib/types/reso';
 
 export default function ReviewStep() {
   const router = useRouter();
@@ -14,11 +15,19 @@ export default function ReviewStep() {
   const [submitting, setSubmitting] = useState(false);
 
   const docCount = Object.keys(draft.documents).length;
+  const categoryLabel = draft.category ? UI_CATEGORY_LABEL[draft.category] : '—';
+  const level2 =
+    draft.category === 'LandedProperty' ? draft.landSubCategory ?? '—' :
+    draft.category === 'ResidentialHouse' ? `${draft.houseStyle ?? '—'} · ${draft.houseAttachment ?? '—'}` :
+    draft.category === 'ApartmentFlat' ? draft.apartmentStyle ?? '—' :
+    '—';
   const rows: [string, React.ReactNode][] = [
-    ['Type',     draft.kind || '—'],
-    ['Address',  draft.address || '—'],
-    ['State · LGA', `${draft.state} · ${draft.lga || '—'}`],
-    ['Size',     draft.sizeSqm ? `${draft.sizeSqm.toLocaleString()} sqm` : '—'],
+    ['Category', categoryLabel],
+    ['Detail',   level2],
+    ['Address',  draft.UnparsedAddress || '—'],
+    ['State · LGA', `${draft.StateOrProvince} · ${draft.CountyOrParish || '—'}`],
+    ['Size',     draft.LotSizeSquareMeters ? `${draft.LotSizeSquareMeters.toLocaleString()} m²` : '—'],
+    ['Boys\' Quarters', draft.hasBQ ? `${draft.bqConfig ?? '—'}${draft.bqSeparateTitle ? ' · separate title' : ''}` : 'None'],
     ['Documents', `${docCount} of 4 attached`],
     ['Reference', draft.ref || '—'],
     ['Tier',     draft.tier === 'premium' ? 'Premium · cohort credit' : 'Standard · cohort credit'],

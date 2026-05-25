@@ -8,9 +8,6 @@ import type {
   VerityNG_LandFeature,
 } from './reso';
 
-/** @deprecated Pre-RESO category union. Removed once Phase 3 (wizard rebuild) lands. */
-export type PropertyKind = 'land' | 'apartment' | 'villa' | 'commercial' | 'mixed-use';
-
 export type DocumentSlot = 'cofo' | 'survey' | 'deed' | 'consent';
 
 export type DocumentMeta = {
@@ -25,10 +22,6 @@ export type VerificationTier = 'standard' | 'premium';
  * Wizard draft state.
  *
  * RESO fields (category + Level 2 + BQ + RESO geo) are the canonical capture.
- * The legacy fields (kind/address/state/lga/sizeSqm) remain present until the
- * Phase 3 wizard rebuild swaps them out — kept here so the pre-RESO Step 1
- * and Review pages still typecheck.
- *
  * At submit time, derivePropertySubType() converts (category + Level 2) into
  * canonical RESO PropertyType + PropertySubType.
  */
@@ -59,18 +52,6 @@ export type AddPropertyDraft = {
   documents: Partial<Record<DocumentSlot, DocumentMeta>>;
   ref: string;
   tier: VerificationTier;
-
-  // ─── Legacy pre-RESO fields (removed in Phase 3) ──────────────────────
-  /** @deprecated use `category` + derive */
-  kind: PropertyKind | null;
-  /** @deprecated use `UnparsedAddress` */
-  address: string;
-  /** @deprecated use `StateOrProvince` */
-  state: string;
-  /** @deprecated use `CountyOrParish` */
-  lga: string;
-  /** @deprecated use `LotSizeSquareMeters` */
-  sizeSqm: number | null;
 };
 
 export const EMPTY_ADD_DRAFT: AddPropertyDraft = {
@@ -95,13 +76,6 @@ export const EMPTY_ADD_DRAFT: AddPropertyDraft = {
   documents: {},
   ref: '',
   tier: 'premium',
-
-  // legacy
-  kind: null,
-  address: '',
-  state: 'Lagos State',
-  lga: '',
-  sizeSqm: null,
 };
 
 export const ADD_STEPS = [
