@@ -11,6 +11,7 @@ import type {
   PropertySummary,
   VerificationEvent,
 } from '@/lib/types/property';
+import type { RESOProperty } from '@/lib/types/reso';
 
 const KPIS: KpiSnapshot = {
   total: 87,
@@ -48,19 +49,271 @@ const ACTIVITY: ActivityEvent[] = [
 
 const SPARKLINE = [28, 32, 24, 40, 36, 52, 44, 38, 46, 58, 42, 50, 56, 62, 48, 54, 68, 74, 60, 66, 82, 76, 84, 72, 78, 88, 94, 86, 92, 98];
 
-const PROPERTIES: PropertySummary[] = [
-  { vpid: 'VRT-LA-2025-0184', address: 'Lekki Block A · Plot 12',           city: 'Lekki Phase 1',    band: 'gold',     status: 'verified',       verifiedAt: '12 May 2026', expiresAt: '12 May 2027', tier: 'premium', ref: 'LKI-A-12' },
-  { vpid: 'VRT-LA-2025-0151', address: 'Ikoyi Foreshore · Unit 7B',         city: 'Ikoyi',            band: 'gold',     status: 'verified',       verifiedAt: '11 May 2026', expiresAt: '11 May 2027', tier: 'premium', ref: 'IKY-FS-07B' },
-  { vpid: 'VRT-LA-2025-0207', address: 'Victoria Island Tower II · Fl. 14', city: 'Victoria Island',  band: 'platinum', status: 'verified',       verifiedAt: '11 May 2026', expiresAt: '11 May 2028', tier: 'premium', ref: 'VI-T2-14' },
-  { vpid: 'VRT-LA-2025-0212', address: 'Banana Island · Villa 3',           city: 'Banana Island',    band: 'prov',     status: 'in-verification', tier: 'premium', ref: 'BNI-V03' },
-  { vpid: 'VRT-LA-2024-0312', address: 'Lekki Block B · Plot 04',           city: 'Lekki Phase 1',    band: 'silver',   status: 'verified',       verifiedAt: '02 Apr 2026', expiresAt: '02 Apr 2027', tier: 'standard', ref: 'LKI-B-04' },
-  { vpid: 'VRT-LA-2024-0089', address: 'Surulere Block C · Plot 04',        city: 'Surulere',         band: 'unconf',   status: 'expired',        verifiedAt: '07 May 2024', expiresAt: '07 May 2026', tier: 'standard', ref: 'SUR-C-04' },
-  { vpid: 'VRT-LA-2025-0099', address: 'Yaba Heights · Unit 22',            city: 'Yaba',             band: 'gold',     status: 'expiring',       verifiedAt: '14 Jan 2026', expiresAt: '14 Jul 2026', tier: 'premium', ref: 'YBH-22' },
-  { vpid: 'VRT-LA-2025-0143', address: 'Ajah Garden Estate · Plot 31',      city: 'Ajah',             band: 'silver',   status: 'verified',       verifiedAt: '08 Mar 2026', expiresAt: '08 Mar 2027', tier: 'standard', ref: 'AJG-31' },
-  { vpid: 'VRT-LA-2025-0162', address: 'Magodo Phase II · Plot 18',         city: 'Magodo',           band: 'gold',     status: 'verified',       verifiedAt: '22 Mar 2026', expiresAt: '22 Mar 2027', tier: 'premium', ref: 'MGD-2-18' },
-  { vpid: 'VRT-LA-2025-0188', address: 'Ikeja GRA · House 9',               city: 'Ikeja',            band: 'platinum', status: 'verified',       verifiedAt: '01 May 2026', expiresAt: '01 May 2028', tier: 'premium', ref: 'IKJ-GRA-9' },
-  { vpid: 'VRT-LA-2025-0201', address: 'Oniru Estate · Block D · Plot 7',   city: 'Victoria Island',  band: 'bronze',   status: 'verified',       verifiedAt: '05 May 2026', expiresAt: '05 May 2027', tier: 'standard', ref: 'ONI-D-07' },
-  { vpid: 'VRT-LA-2025-0218', address: 'Chevron Drive · Villa 11',          city: 'Lekki Phase 2',    band: 'prov',     status: 'in-verification', tier: 'premium', ref: 'CHV-V11' },
+/**
+ * RESO-shaped record + the display extras the existing UI consumes.
+ *
+ * Once the backend is wired, the RESOProperty side comes from the API and
+ * the display extras are computed/joined client-side.
+ */
+type MockRecord = RESOProperty & Omit<PropertySummary, 'vpid' | 'address' | 'city'> & {
+  /** Long-form city used on the property detail hero. */
+  cityLong: string;
+};
+
+const PROPERTIES: MockRecord[] = [
+  // ── Landed Property (4) — mix of zonings; one Waterfront ─────────────────
+  {
+    ListingKey: '8f3e2a10-0184-4ec7-aaaa-000000000001',
+    Verity_VPID: 'VRT-LA-2025-0184',
+    PropertyType: 'Land',
+    PropertySubType: 'VacantLand',
+    StandardStatus: 'Active',
+    UnparsedAddress: 'Lekki Block A · Plot 12, Lekki Phase 1',
+    CountyOrParish: 'Eti-Osa',
+    StateOrProvince: 'Lagos',
+    Country: 'NG',
+    LotSizeSquareMeters: 1_250,
+    Verity_NG_LandZoning: 'Residential',
+    Verity_NG_LandFeature: 'Waterfront',
+    Verity_LGA: 'Eti-Osa',
+    Verity_TitleType: 'Certificate of Occupancy',
+    Verity_CofONumber: 'LS/2019/047/A',
+    Verity_RegisteredOwner: 'Adeola Ogundipe',
+    Verity_TitleIssueDate: '2019-08-11',
+    Verity_ConfidenceScore: 84,
+    band: 'gold', status: 'verified', verifiedAt: '12 May 2026', expiresAt: '12 May 2027', tier: 'premium', ref: 'LKI-A-12',
+    cityLong: 'Lekki Phase 1, Lagos State',
+  },
+  {
+    ListingKey: '8f3e2a10-0312-4ec7-aaaa-000000000002',
+    Verity_VPID: 'VRT-LA-2024-0312',
+    PropertyType: 'Land',
+    PropertySubType: 'VacantLand',
+    StandardStatus: 'Active',
+    UnparsedAddress: 'Lekki Block B · Plot 04, Lekki Phase 1',
+    CountyOrParish: 'Eti-Osa',
+    StateOrProvince: 'Lagos',
+    Country: 'NG',
+    LotSizeSquareMeters: 980,
+    Verity_NG_LandZoning: 'MixedUse',
+    Verity_NG_LandFeature: 'None',
+    Verity_LGA: 'Eti-Osa',
+    Verity_ConfidenceScore: 71,
+    band: 'silver', status: 'verified', verifiedAt: '02 Apr 2026', expiresAt: '02 Apr 2027', tier: 'standard', ref: 'LKI-B-04',
+    cityLong: 'Lekki Phase 1, Lagos State',
+  },
+  {
+    ListingKey: '8f3e2a10-0089-4ec7-aaaa-000000000003',
+    Verity_VPID: 'VRT-LA-2024-0089',
+    PropertyType: 'Land',
+    PropertySubType: 'CommercialLand',
+    StandardStatus: 'Expired',
+    UnparsedAddress: 'Surulere Block C · Plot 04, Surulere',
+    CountyOrParish: 'Surulere',
+    StateOrProvince: 'Lagos',
+    Country: 'NG',
+    LotSizeSquareMeters: 1_120,
+    Verity_NG_LandZoning: 'Commercial',
+    Verity_NG_LandFeature: 'None',
+    Verity_LGA: 'Surulere',
+    Verity_ConfidenceScore: 42,
+    band: 'unconf', status: 'expired', verifiedAt: '07 May 2024', expiresAt: '07 May 2026', tier: 'standard', ref: 'SUR-C-04',
+    cityLong: 'Surulere, Lagos State',
+  },
+  {
+    ListingKey: '8f3e2a10-0143-4ec7-aaaa-000000000004',
+    Verity_VPID: 'VRT-LA-2025-0143',
+    PropertyType: 'Land',
+    PropertySubType: 'AgriculturalLand',
+    StandardStatus: 'Active',
+    UnparsedAddress: 'Ajah Garden Estate · Plot 31, Ajah',
+    CountyOrParish: 'Ibeju-Lekki',
+    StateOrProvince: 'Lagos',
+    Country: 'NG',
+    LotSizeSquareMeters: 2_400,
+    Verity_NG_LandZoning: 'Agricultural',
+    Verity_NG_LandFeature: 'None',
+    Verity_LGA: 'Ibeju-Lekki',
+    Verity_ConfidenceScore: 68,
+    band: 'silver', status: 'verified', verifiedAt: '08 Mar 2026', expiresAt: '08 Mar 2027', tier: 'standard', ref: 'AJG-31',
+    cityLong: 'Ajah, Lagos State',
+  },
+
+  // ── Residential House (5) — mix of HouseStyle, one with BQ separate title
+  {
+    ListingKey: '8f3e2a10-0212-4ec7-bbbb-000000000005',
+    Verity_VPID: 'VRT-LA-2025-0212',
+    PropertyType: 'Residential',
+    // Nigerian colloquial "Villa/Duplex" → RESO SingleFamilyResidence (§6.1)
+    PropertySubType: 'SingleFamilyResidence',
+    StandardStatus: 'Incomplete',
+    UnparsedAddress: 'Banana Island · Villa 3, Foreshore Estate',
+    CountyOrParish: 'Eti-Osa',
+    StateOrProvince: 'Lagos',
+    Country: 'NG',
+    LotSizeSquareMeters: 1_240,
+    BedroomsTotal: 5,
+    BathroomsTotal: 6,
+    Verity_NG_HouseStyle: 'Duplex',
+    Verity_NG_HouseAttachment: 'Detached',
+    Verity_NG_HasBQ: true,
+    Verity_NG_BQConfig: 'Detached',
+    Verity_NG_BQSeparateTitle: true,
+    Verity_LGA: 'Eti-Osa',
+    Verity_ConfidenceScore: 28,
+    band: 'prov', status: 'in-verification', tier: 'premium', ref: 'BNI-V03',
+    cityLong: 'Banana Island, Lagos State',
+  },
+  {
+    ListingKey: '8f3e2a10-0188-4ec7-bbbb-000000000006',
+    Verity_VPID: 'VRT-LA-2025-0188',
+    PropertyType: 'Residential',
+    PropertySubType: 'SingleFamilyResidence',
+    StandardStatus: 'Active',
+    UnparsedAddress: 'Ikeja GRA · House 9, Ikeja GRA',
+    CountyOrParish: 'Ikeja',
+    StateOrProvince: 'Lagos',
+    Country: 'NG',
+    LotSizeSquareMeters: 860,
+    BedroomsTotal: 4,
+    BathroomsTotal: 5,
+    Verity_NG_HouseStyle: 'Duplex',
+    Verity_NG_HouseAttachment: 'SemiDetached',
+    Verity_NG_HasBQ: true,
+    Verity_NG_BQConfig: 'Attached',
+    Verity_NG_BQSeparateTitle: false,
+    Verity_LGA: 'Ikeja',
+    Verity_ConfidenceScore: 92,
+    band: 'platinum', status: 'verified', verifiedAt: '01 May 2026', expiresAt: '01 May 2028', tier: 'premium', ref: 'IKJ-GRA-9',
+    cityLong: 'Ikeja GRA, Lagos State',
+  },
+  {
+    ListingKey: '8f3e2a10-0218-4ec7-bbbb-000000000007',
+    Verity_VPID: 'VRT-LA-2025-0218',
+    PropertyType: 'Residential',
+    PropertySubType: 'SingleFamilyResidence',
+    StandardStatus: 'Incomplete',
+    UnparsedAddress: 'Chevron Drive · Villa 11, Lekki Phase 2',
+    CountyOrParish: 'Eti-Osa',
+    StateOrProvince: 'Lagos',
+    Country: 'NG',
+    LotSizeSquareMeters: 1_080,
+    BedroomsTotal: 5,
+    BathroomsTotal: 6,
+    Verity_NG_HouseStyle: 'Bungalow',
+    Verity_NG_HouseAttachment: 'Detached',
+    Verity_NG_HasBQ: false,
+    Verity_LGA: 'Eti-Osa',
+    Verity_ConfidenceScore: 24,
+    band: 'prov', status: 'in-verification', tier: 'premium', ref: 'CHV-V11',
+    cityLong: 'Lekki Phase 2, Lagos State',
+  },
+  {
+    ListingKey: '8f3e2a10-0162-4ec7-bbbb-000000000008',
+    Verity_VPID: 'VRT-LA-2025-0162',
+    PropertyType: 'Residential',
+    PropertySubType: 'Townhouse',
+    StandardStatus: 'Active',
+    UnparsedAddress: 'Magodo Phase II · Plot 18, Magodo',
+    CountyOrParish: 'Kosofe',
+    StateOrProvince: 'Lagos',
+    Country: 'NG',
+    LotSizeSquareMeters: 540,
+    BedroomsTotal: 4,
+    BathroomsTotal: 4,
+    Verity_NG_HouseStyle: 'Terrace',
+    Verity_NG_HouseAttachment: 'SemiDetached',
+    Verity_NG_HasBQ: false,
+    Verity_LGA: 'Kosofe',
+    Verity_ConfidenceScore: 80,
+    band: 'gold', status: 'verified', verifiedAt: '22 Mar 2026', expiresAt: '22 Mar 2027', tier: 'premium', ref: 'MGD-2-18',
+    cityLong: 'Magodo, Lagos State',
+  },
+  {
+    ListingKey: '8f3e2a10-0201-4ec7-bbbb-000000000009',
+    Verity_VPID: 'VRT-LA-2025-0201',
+    PropertyType: 'Residential',
+    PropertySubType: 'Townhouse',
+    StandardStatus: 'Active',
+    UnparsedAddress: 'Oniru Estate · Block D · Plot 7, Victoria Island',
+    CountyOrParish: 'Eti-Osa',
+    StateOrProvince: 'Lagos',
+    Country: 'NG',
+    LotSizeSquareMeters: 480,
+    BedroomsTotal: 3,
+    BathroomsTotal: 4,
+    Verity_NG_HouseStyle: 'Terrace',
+    Verity_NG_HouseAttachment: 'Detached',
+    Verity_NG_HasBQ: false,
+    Verity_LGA: 'Eti-Osa',
+    Verity_ConfidenceScore: 58,
+    band: 'bronze', status: 'verified', verifiedAt: '05 May 2026', expiresAt: '05 May 2027', tier: 'standard', ref: 'ONI-D-07',
+    cityLong: 'Victoria Island, Lagos State',
+  },
+
+  // ── Apartment / Flat (3) — mix of ApartmentStyle ─────────────────────────
+  {
+    ListingKey: '8f3e2a10-0151-4ec7-cccc-000000000010',
+    Verity_VPID: 'VRT-LA-2025-0151',
+    PropertyType: 'Residential',
+    PropertySubType: 'Apartment',
+    StandardStatus: 'Active',
+    UnparsedAddress: 'Ikoyi Foreshore · Unit 7B, Ikoyi',
+    CountyOrParish: 'Eti-Osa',
+    StateOrProvince: 'Lagos',
+    Country: 'NG',
+    LotSizeSquareMeters: 180,
+    BedroomsTotal: 3,
+    BathroomsTotal: 3,
+    Verity_NG_ApartmentStyle: 'StandardFlat',
+    Verity_NG_HasBQ: false,
+    Verity_LGA: 'Eti-Osa',
+    Verity_ConfidenceScore: 82,
+    band: 'gold', status: 'verified', verifiedAt: '11 May 2026', expiresAt: '11 May 2027', tier: 'premium', ref: 'IKY-FS-07B',
+    cityLong: 'Ikoyi, Lagos State',
+  },
+  {
+    ListingKey: '8f3e2a10-0207-4ec7-cccc-000000000011',
+    Verity_VPID: 'VRT-LA-2025-0207',
+    PropertyType: 'Residential',
+    PropertySubType: 'Apartment',
+    StandardStatus: 'Active',
+    UnparsedAddress: 'Victoria Island Tower II · Floor 14, Victoria Island',
+    CountyOrParish: 'Eti-Osa',
+    StateOrProvince: 'Lagos',
+    Country: 'NG',
+    LotSizeSquareMeters: 240,
+    BedroomsTotal: 4,
+    BathroomsTotal: 4,
+    Verity_NG_ApartmentStyle: 'Penthouse',
+    Verity_NG_HasBQ: true,
+    Verity_NG_BQConfig: 'Rooftop',
+    Verity_NG_BQSeparateTitle: false,
+    Verity_LGA: 'Eti-Osa',
+    Verity_ConfidenceScore: 94,
+    band: 'platinum', status: 'verified', verifiedAt: '11 May 2026', expiresAt: '11 May 2028', tier: 'premium', ref: 'VI-T2-14',
+    cityLong: 'Victoria Island, Lagos State',
+  },
+  {
+    ListingKey: '8f3e2a10-0099-4ec7-cccc-000000000012',
+    Verity_VPID: 'VRT-LA-2025-0099',
+    PropertyType: 'Residential',
+    PropertySubType: 'Apartment',
+    StandardStatus: 'Active',
+    UnparsedAddress: 'Yaba Heights · Unit 22, Yaba',
+    CountyOrParish: 'Lagos Mainland',
+    StateOrProvince: 'Lagos',
+    Country: 'NG',
+    LotSizeSquareMeters: 95,
+    BedroomsTotal: 1,
+    BathroomsTotal: 1,
+    Verity_NG_ApartmentStyle: 'Studio',
+    Verity_NG_HasBQ: false,
+    Verity_LGA: 'Lagos Mainland',
+    Verity_ConfidenceScore: 76,
+    band: 'gold', status: 'expiring', verifiedAt: '14 Jan 2026', expiresAt: '14 Jul 2026', tier: 'premium', ref: 'YBH-22',
+    cityLong: 'Yaba, Lagos State',
+  },
 ];
 
 const EMPTY_KEY = 'verity:dev-portfolio-empty';
@@ -68,6 +321,41 @@ const EMPTY_KEY = 'verity:dev-portfolio-empty';
 function isEmptyMode(): boolean {
   if (typeof window === 'undefined') return false;
   return window.localStorage.getItem(EMPTY_KEY) === 'true';
+}
+
+/**
+ * Project a RESO MockRecord into the legacy PropertySummary shape consumed
+ * by the portfolio table. Phase 4 swaps the table to read RESO fields
+ * directly, after which this helper goes away.
+ */
+function toSummary(r: MockRecord): PropertySummary {
+  return {
+    vpid: r.Verity_VPID,
+    address: r.UnparsedAddress.split(',')[0].trim(),
+    city: r.CountyOrParish,
+    band: r.band,
+    status: r.status,
+    verifiedAt: r.verifiedAt,
+    expiresAt: r.expiresAt,
+    views30d: r.views30d,
+    tier: r.tier,
+    ref: r.ref,
+  };
+}
+
+/** Map RESO PropertySubType + Verity_NG_* style to a human display string. */
+function displayType(r: MockRecord): string {
+  if (r.PropertyType === 'Land') {
+    if (r.Verity_NG_LandZoning && r.Verity_NG_LandZoning !== 'Residential') {
+      return `Land · ${r.Verity_NG_LandZoning}`;
+    }
+    return 'Land';
+  }
+  if (r.PropertySubType === 'Apartment' && r.Verity_NG_ApartmentStyle) {
+    return `Apartment · ${r.Verity_NG_ApartmentStyle}`;
+  }
+  if (r.Verity_NG_HouseStyle) return r.Verity_NG_HouseStyle;
+  return r.PropertyType;
 }
 
 const HISTORY_FALLBACK: VerificationEvent[] = [
@@ -104,18 +392,22 @@ const DISTRIBUTION_FALLBACK: DistributionEvent[] = [
   { id: 'd5', when: '07 May · 14:02', what: 'Public certificate viewed via', source: 'verity.properties/v/VRT-LA-2025-0184', channel: 'direct' },
 ];
 
-function detailFor(p: PropertySummary): PropertyDetail {
+function detailFor(r: MockRecord): PropertyDetail {
   return {
-    ...p,
-    sizeSqm: 1_250,
-    type: 'Land',
-    cityLong: `${p.city}, Lagos State`,
+    // PropertySummary fields
+    ...toSummary(r),
+    // RESO fields (spread directly so detail consumers can read them)
+    ...r,
+    // legacy display extras (kept until Phase 4 detail rewrite)
+    sizeSqm: r.LotSizeSquareMeters ?? 0,
+    type: displayType(r),
+    cityLong: r.cityLong,
     sales: {
-      reference: p.ref || 'LKI-A-12',
-      status: p.status === 'verified' ? 'Active · listed' : 'Active · pending verification',
+      reference: r.ref || r.Verity_VPID,
+      status: r.status === 'verified' ? 'Active · listed' : 'Active · pending verification',
       listPrice: '₦ 165,000,000',
       buyer: '—',
-      notes: 'Premium plot · waterfront access',
+      notes: r.Verity_NG_LandFeature === 'Waterfront' ? 'Premium plot · waterfront access' : '—',
     },
     history: HISTORY_FALLBACK,
     distribution: DISTRIBUTION_FALLBACK,
@@ -130,13 +422,13 @@ function fakeVpid(): string {
 export const propertyService = {
   async list(): Promise<PropertySummary[]> {
     await new Promise((r) => setTimeout(r, 120));
-    return isEmptyMode() ? [] : PROPERTIES;
+    return isEmptyMode() ? [] : PROPERTIES.map(toSummary);
   },
 
   async get(vpid: string): Promise<PropertyDetail | null> {
     await new Promise((r) => setTimeout(r, 120));
-    const summary = PROPERTIES.find((p) => p.vpid === vpid);
-    return summary ? detailFor(summary) : null;
+    const record = PROPERTIES.find((p) => p.Verity_VPID === vpid);
+    return record ? detailFor(record) : null;
   },
 
   async submit(_draft: unknown): Promise<{ vpid: string }> {
