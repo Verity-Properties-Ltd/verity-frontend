@@ -18,10 +18,13 @@ export default function PropertyStep() {
   const cat = p.category;
   const showsBQ = cat === 'ResidentialHouse' || cat === 'ApartmentFlat';
 
+  const apartmentNeedsBedrooms =
+    cat === 'ApartmentFlat' && p.apartmentStyle !== null && p.apartmentStyle !== 'Studio';
+
   const level2Valid =
     cat === 'LandedProperty' ? !!p.landSubCategory :
     cat === 'ResidentialHouse' ? !!p.houseStyle && !!p.houseAttachment :
-    cat === 'ApartmentFlat' ? !!p.apartmentStyle :
+    cat === 'ApartmentFlat' ? !!p.apartmentStyle && (!apartmentNeedsBedrooms || !!p.BedroomsTotal) :
     false;
 
   const bqValid = !p.hasBQ || !!p.bqConfig;
@@ -41,6 +44,7 @@ export default function PropertyStep() {
       houseStyle: null,
       houseAttachment: null,
       apartmentStyle: null,
+      BedroomsTotal: undefined,
       hasBQ: false,
       bqConfig: null,
       bqSeparateTitle: false,
@@ -71,7 +75,7 @@ export default function PropertyStep() {
         Tell us about <em className="bf-italic">the property</em> you want verified.
       </h2>
       <p className="bf-body" style={{ fontStyle: 'italic', color: 'var(--slate)', marginTop: 6, maxWidth: '56ch' }}>
-        Your selections drive the RESO PropertyType / PropertySubType we record — and shape the verification workflow.
+        A few quick selections — the category shapes what evidence we'll need for verification.
       </p>
 
       <div className="bf-stack" style={{ gap: 24, marginTop: 24, maxWidth: 880 }}>
@@ -109,7 +113,11 @@ export default function PropertyStep() {
             <SectionLabel>2. Apartment style</SectionLabel>
             <ApartmentStyleSelector
               value={p.apartmentStyle}
-              onChange={(v) => patchProperty({ apartmentStyle: v })}
+              onChange={(v) =>
+                patchProperty({ apartmentStyle: v, BedroomsTotal: v === 'Studio' ? undefined : p.BedroomsTotal })
+              }
+              bedrooms={p.BedroomsTotal ?? null}
+              onBedroomsChange={(v) => patchProperty({ BedroomsTotal: v })}
             />
           </section>
         )}
@@ -139,14 +147,14 @@ export default function PropertyStep() {
           <div className="bf-stack" style={{ gap: 14 }}>
             <div className="bf-grid-2">
               <div className="bf-field">
-                <label className="bf-label">State (StateOrProvince) *</label>
+                <label className="bf-label">State *</label>
                 <div className="bf-input" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <span>Lagos</span>
                   <span className="bf-mono" style={{ color: 'var(--slate)', fontSize: 10 }}>NG-LA</span>
                 </div>
               </div>
               <div className="bf-field">
-                <label className="bf-label" htmlFor="lga">Local Government Area (CountyOrParish) *</label>
+                <label className="bf-label" htmlFor="lga">Local Government Area *</label>
                 <input
                   id="lga"
                   className="bf-input"
@@ -158,7 +166,7 @@ export default function PropertyStep() {
             </div>
 
             <div className="bf-field">
-              <label className="bf-label" htmlFor="address">Plot address (UnparsedAddress) *</label>
+              <label className="bf-label" htmlFor="address">Plot address *</label>
               <textarea
                 id="address"
                 className="bf-textarea"
@@ -183,7 +191,7 @@ export default function PropertyStep() {
               </div>
               <div className="bf-field">
                 <label className="bf-label" htmlFor="sizeSqm">
-                  Lot size m² (LotSizeSquareMeters) <span style={{ fontSize: 10, color: 'var(--slate)' }}>(optional)</span>
+                  Lot size (m²) <span style={{ fontSize: 10, color: 'var(--slate)' }}>(optional)</span>
                 </label>
                 <input
                   id="sizeSqm"

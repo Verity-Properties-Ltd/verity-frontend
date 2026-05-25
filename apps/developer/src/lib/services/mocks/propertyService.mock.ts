@@ -467,6 +467,7 @@ export const propertyService = {
       StateOrProvince: draft.StateOrProvince,
       Country: 'NG',
       LotSizeSquareMeters: draft.LotSizeSquareMeters ?? undefined,
+      BedroomsTotal: draft.BedroomsTotal ?? undefined,
       Verity_NG_LandZoning: derived?.Verity_NG_LandZoning,
       Verity_NG_LandFeature: draft.landFeatures[0] ?? 'None',
       Verity_NG_HouseStyle: draft.houseStyle ?? undefined,

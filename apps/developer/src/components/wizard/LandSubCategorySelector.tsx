@@ -6,15 +6,18 @@ import {
   type VerityNG_LandFeature,
 } from '@verity/reso';
 
-const SUBS: { id: UILandSubCategory; hint: string }[] = [
-  { id: 'ResidentialPlot',  hint: 'Zoned for housing — RESO: VacantLand' },
-  { id: 'CommercialPlot',   hint: 'Office / retail use — RESO: CommercialLand' },
-  { id: 'MixedUsePlot',     hint: 'Combined residential + commercial — RESO: VacantLand' },
-  { id: 'IndustrialPlot',   hint: 'Factory / warehouse — RESO: CommercialLand' },
-  { id: 'AgriculturalPlot', hint: 'Farmland — RESO: AgriculturalLand' },
+const SUBS: { id: UILandSubCategory; tip: string }[] = [
+  { id: 'ResidentialPlot',  tip: 'Zoned for housing' },
+  { id: 'CommercialPlot',   tip: 'Office / retail use' },
+  { id: 'MixedUsePlot',     tip: 'Combined residential + commercial' },
+  { id: 'IndustrialPlot',   tip: 'Factory / warehouse' },
+  { id: 'AgriculturalPlot', tip: 'Farmland' },
 ];
 
-const FEATURES: VerityNG_LandFeature[] = ['Waterfront', 'Reclaimed'];
+const FEATURES: { id: VerityNG_LandFeature; label: string; tip: string }[] = [
+  { id: 'Waterfront', label: 'Waterfront', tip: 'Direct frontage on a lagoon, river, or coastline' },
+  { id: 'Reclaimed',  label: 'Reclaimed',  tip: 'Reclaimed land — typically Lekki / Eko Atlantic style' },
+];
 
 export function LandSubCategorySelector({
   value,
@@ -29,8 +32,7 @@ export function LandSubCategorySelector({
 }) {
   function toggleFeature(f: VerityNG_LandFeature) {
     const isOn = features.includes(f);
-    // Phase 1: single-select. Tapping 'Waterfront' replaces 'Reclaimed' and vice versa.
-    onFeaturesChange(isOn ? [] : [f]);
+    onFeaturesChange(isOn ? features.filter((x) => x !== f) : [...features, f]);
   }
 
   return (
@@ -38,8 +40,8 @@ export function LandSubCategorySelector({
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-          gap: 10,
+          gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
+          gap: 8,
         }}
       >
         {SUBS.map((s) => {
@@ -49,32 +51,22 @@ export function LandSubCategorySelector({
               key={s.id}
               type="button"
               onClick={() => onChange(s.id)}
+              title={s.tip}
               style={{
                 background: '#fff',
                 border: selected ? '1px solid var(--gold)' : '1px solid var(--line)',
                 boxShadow: selected ? '0 0 0 1px var(--gold) inset' : undefined,
-                padding: 12,
+                padding: '11px 14px',
                 borderRadius: 6,
                 textAlign: 'left',
                 cursor: 'pointer',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 4,
-                minHeight: 76,
+                minHeight: 48,
+                fontSize: 14,
+                color: 'var(--navy)',
+                fontWeight: selected ? 500 : 400,
               }}
             >
-              <span
-                style={{
-                  fontFamily: 'var(--f-meta)',
-                  fontSize: 10,
-                  letterSpacing: '0.22em',
-                  textTransform: 'uppercase',
-                  color: selected ? 'var(--gold-deep)' : 'var(--slate)',
-                }}
-              >
-                — {UI_LAND_SUBCATEGORY_LABEL[s.id]}
-              </span>
-              <span style={{ fontSize: 12, color: 'var(--navy)', lineHeight: 1.4 }}>{s.hint}</span>
+              {UI_LAND_SUBCATEGORY_LABEL[s.id]}
             </button>
           );
         })}
@@ -93,22 +85,55 @@ export function LandSubCategorySelector({
         >
           Land features <span style={{ color: 'var(--slate-soft)', marginLeft: 4 }}>· optional</span>
         </div>
-        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
           {FEATURES.map((f) => {
-            const active = features.includes(f);
+            const on = features.includes(f.id);
             return (
-              <button
-                key={f}
-                type="button"
-                onClick={() => toggleFeature(f)}
-                className={`dv-chip${active ? ' active' : ''}`}
-              >
-                {f}
-              </button>
+              <CheckRow key={f.id} checked={on} onChange={() => toggleFeature(f.id)} label={f.label} title={f.tip} />
             );
           })}
         </div>
       </div>
     </div>
+  );
+}
+
+function CheckRow({
+  checked,
+  onChange,
+  label,
+  title,
+}: {
+  checked: boolean;
+  onChange: () => void;
+  label: string;
+  title?: string;
+}) {
+  return (
+    <label
+      title={title}
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: 10,
+        padding: '8px 12px',
+        background: '#fff',
+        border: checked ? '1px solid var(--gold)' : '1px solid var(--line)',
+        borderRadius: 4,
+        cursor: 'pointer',
+        fontSize: 14,
+        color: 'var(--navy)',
+        width: 'fit-content',
+        minWidth: 220,
+      }}
+    >
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={onChange}
+        style={{ width: 16, height: 16, accentColor: 'var(--navy)' }}
+      />
+      {label}
+    </label>
   );
 }

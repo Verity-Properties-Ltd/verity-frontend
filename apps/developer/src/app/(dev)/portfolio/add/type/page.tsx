@@ -18,10 +18,14 @@ export default function TypeStep() {
   const cat = draft.category;
   const showsBQ = cat === 'ResidentialHouse' || cat === 'ApartmentFlat';
 
+  // Bedrooms required for non-Studio apartments.
+  const apartmentNeedsBedrooms =
+    cat === 'ApartmentFlat' && draft.apartmentStyle !== null && draft.apartmentStyle !== 'Studio';
+
   const level2Valid =
     cat === 'LandedProperty' ? !!draft.landSubCategory :
     cat === 'ResidentialHouse' ? !!draft.houseStyle && !!draft.houseAttachment :
-    cat === 'ApartmentFlat' ? !!draft.apartmentStyle :
+    cat === 'ApartmentFlat' ? !!draft.apartmentStyle && (!apartmentNeedsBedrooms || !!draft.BedroomsTotal) :
     false;
 
   const bqValid = !draft.hasBQ || !!draft.bqConfig;
@@ -38,6 +42,7 @@ export default function TypeStep() {
       houseStyle: null,
       houseAttachment: null,
       apartmentStyle: null,
+      BedroomsTotal: null,
       hasBQ: false,
       bqConfig: null,
       bqSeparateTitle: false,
@@ -66,7 +71,7 @@ export default function TypeStep() {
     <WizardCard
       slug="type"
       title={<>What is <em>this property</em> and where?</>}
-      lede="The category drives how we verify — and which RESO PropertyType / PropertySubType your record will carry."
+      lede="The category drives how we verify and what evidence we'll ask for."
     >
       <div style={{ display: 'flex', flexDirection: 'column', gap: 24, marginTop: 22 }}>
         <section>
@@ -103,7 +108,12 @@ export default function TypeStep() {
             <SectionLabel>2. Apartment style</SectionLabel>
             <ApartmentStyleSelector
               value={draft.apartmentStyle}
-              onChange={(v) => update({ apartmentStyle: v })}
+              onChange={(v) =>
+                // Reset BedroomsTotal when style changes — Studio shouldn't carry a bedroom count.
+                update({ apartmentStyle: v, BedroomsTotal: v === 'Studio' ? null : draft.BedroomsTotal })
+              }
+              bedrooms={draft.BedroomsTotal}
+              onBedroomsChange={(v) => update({ BedroomsTotal: v })}
             />
           </section>
         )}
@@ -144,14 +154,14 @@ export default function TypeStep() {
             </div>
             <div className="row">
               <div className="dv-field">
-                <label className="lbl">State (StateOrProvince)</label>
+                <label className="lbl">State</label>
                 <div className="dv-input" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <span>Lagos</span>
                   <span style={{ fontFamily: 'var(--f-meta)', fontSize: 10, color: 'var(--slate)' }}>NG-LA</span>
                 </div>
               </div>
               <div className="dv-field">
-                <label className="lbl" htmlFor="lga">Local Government Area (CountyOrParish)</label>
+                <label className="lbl" htmlFor="lga">Local Government Area</label>
                 <input
                   id="lga"
                   className="dv-input"
@@ -162,7 +172,7 @@ export default function TypeStep() {
               </div>
             </div>
             <div className="dv-field full">
-              <label className="lbl" htmlFor="sizeSqm">Lot size (LotSizeSquareMeters)</label>
+              <label className="lbl" htmlFor="sizeSqm">Lot size (m²)</label>
               <input
                 id="sizeSqm"
                 className="dv-input mono"

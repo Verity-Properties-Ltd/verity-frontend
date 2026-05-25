@@ -39,11 +39,13 @@ export type RequestProperty = {
   bqConfig: VerityNG_BQConfig | null;
   bqSeparateTitle: boolean;
 
-  // RESO geography
+  // RESO geography + apartment-specific
   UnparsedAddress: string;
   StateOrProvince: string;
   CountyOrParish: string;
   LotSizeSquareMeters?: number;
+  /** Required for Apartment / Flat when style ≠ Studio. `5` represents "5+". */
+  BedroomsTotal?: number;
 
   // Verity_* title
   Verity_PlotNo?: string;

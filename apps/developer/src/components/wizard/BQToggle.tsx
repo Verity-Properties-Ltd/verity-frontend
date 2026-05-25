@@ -2,7 +2,11 @@
 
 import type { VerityNG_BQConfig } from '@verity/reso';
 
-const CONFIGS: VerityNG_BQConfig[] = ['Attached', 'Detached', 'Rooftop'];
+const CONFIGS: { id: VerityNG_BQConfig; tip: string }[] = [
+  { id: 'Attached', tip: 'Inside the main building' },
+  { id: 'Detached', tip: 'Standalone unit on the same plot' },
+  { id: 'Rooftop',  tip: 'On the rooftop level' },
+];
 
 export function BQToggle({
   hasBQ,
@@ -20,33 +24,30 @@ export function BQToggle({
   onSeparateTitleChange: (next: boolean) => void;
 }) {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
       <label
         style={{
-          display: 'flex',
-          alignItems: 'flex-start',
-          gap: 12,
-          padding: 14,
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: 10,
+          padding: '8px 12px',
           background: '#fff',
-          border: '1px solid var(--line)',
-          borderRadius: 6,
+          border: hasBQ ? '1px solid var(--gold)' : '1px solid var(--line)',
+          borderRadius: 4,
           cursor: 'pointer',
+          fontSize: 14,
+          color: 'var(--navy)',
+          width: 'fit-content',
+          minWidth: 260,
         }}
       >
         <input
           type="checkbox"
           checked={hasBQ}
           onChange={(e) => onHasBQChange(e.target.checked)}
-          style={{ marginTop: 2 }}
+          style={{ width: 16, height: 16, accentColor: 'var(--navy)' }}
         />
-        <span style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-          <span style={{ fontSize: 14, color: 'var(--navy)', fontWeight: 500 }}>
-            This property includes a Boys&apos; Quarters
-          </span>
-          <span style={{ fontSize: 12, color: 'var(--slate)', lineHeight: 1.4 }}>
-            Captured as <code style={{ fontFamily: 'var(--f-meta)', fontSize: 11 }}>Verity_NG_HasBQ</code>.
-          </span>
-        </span>
+        Includes Boys&apos; Quarters
       </label>
 
       {hasBQ && (
@@ -64,15 +65,16 @@ export function BQToggle({
             >
               BQ configuration
             </div>
-            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
               {CONFIGS.map((c) => (
                 <button
-                  key={c}
+                  key={c.id}
                   type="button"
-                  onClick={() => onConfigChange(c)}
-                  className={`dv-chip${bqConfig === c ? ' active' : ''}`}
+                  onClick={() => onConfigChange(c.id)}
+                  title={c.tip}
+                  className={`dv-chip${bqConfig === c.id ? ' active' : ''}`}
                 >
-                  {c}
+                  {c.id}
                 </button>
               ))}
             </div>
@@ -80,28 +82,27 @@ export function BQToggle({
 
           <label
             style={{
-              display: 'flex',
-              alignItems: 'flex-start',
-              gap: 12,
-              padding: 12,
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 10,
+              padding: '8px 12px',
               background: '#fff',
-              border: '1px solid var(--line)',
-              borderRadius: 6,
+              border: bqSeparateTitle ? '1px solid var(--gold)' : '1px solid var(--line)',
+              borderRadius: 4,
               cursor: 'pointer',
+              fontSize: 13,
+              color: 'var(--navy)',
+              width: 'fit-content',
+              minWidth: 260,
             }}
           >
             <input
               type="checkbox"
               checked={bqSeparateTitle}
               onChange={(e) => onSeparateTitleChange(e.target.checked)}
-              style={{ marginTop: 2 }}
+              style={{ width: 16, height: 16, accentColor: 'var(--navy)' }}
             />
-            <span style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              <span style={{ fontSize: 13, color: 'var(--navy)' }}>BQ has a separate C of O</span>
-              <span style={{ fontSize: 12, color: 'var(--slate)', lineHeight: 1.4 }}>
-                Triggers a separate title-verification workflow.
-              </span>
-            </span>
+            BQ has a separate C of O
           </label>
 
           {bqSeparateTitle && (

@@ -42,11 +42,13 @@ export type AddPropertyDraft = {
   bqConfig: VerityNG_BQConfig | null;
   bqSeparateTitle: boolean;
 
-  // RESO geography
+  // RESO geography + apartment-specific
   UnparsedAddress: string;
   StateOrProvince: string;       // 'Lagos' default
   CountyOrParish: string;        // LGA
   LotSizeSquareMeters: number | null;
+  /** Required for Apartment / Flat when style ≠ Studio. `5` represents "5+". */
+  BedroomsTotal: number | null;
 
   // Documents / reference / tier
   documents: Partial<Record<DocumentSlot, DocumentMeta>>;
@@ -72,6 +74,7 @@ export const EMPTY_ADD_DRAFT: AddPropertyDraft = {
   StateOrProvince: 'Lagos',
   CountyOrParish: '',
   LotSizeSquareMeters: null,
+  BedroomsTotal: null,
 
   documents: {},
   ref: '',

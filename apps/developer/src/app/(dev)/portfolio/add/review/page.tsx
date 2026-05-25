@@ -54,6 +54,13 @@ export default function ReviewStep() {
   }
   if (draft.category === 'ApartmentFlat') {
     rows.push({ label: 'Apartment style', field: 'Verity_NG_ApartmentStyle', value: draft.apartmentStyle ?? '—' });
+    if (draft.apartmentStyle && draft.apartmentStyle !== 'Studio' && draft.BedroomsTotal) {
+      rows.push({
+        label: 'Bedrooms',
+        field: 'BedroomsTotal',
+        value: draft.BedroomsTotal >= 5 ? '5+' : String(draft.BedroomsTotal),
+      });
+    }
   }
   if (draft.hasBQ) {
     rows.push({ label: 'Boys\' Quarters',  field: 'Verity_NG_HasBQ',           value: 'Yes' });

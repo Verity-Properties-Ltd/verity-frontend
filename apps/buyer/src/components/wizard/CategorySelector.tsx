@@ -2,12 +2,12 @@
 
 import { UI_CATEGORY_LABEL, UI_CATEGORY_PHASE2, type UICategory } from '@verity/reso';
 
-const CATEGORIES: { id: UICategory; sub: string }[] = [
-  { id: 'LandedProperty',   sub: 'Plots — residential, commercial, mixed-use, industrial, agricultural' },
-  { id: 'ResidentialHouse', sub: 'Bungalow · Duplex · Terrace — single-family ownership' },
-  { id: 'ApartmentFlat',    sub: 'Studio · Flat · Penthouse · Maisonette' },
-  { id: 'Commercial',       sub: 'Office · Retail · Warehouse' },
-  { id: 'Farm',             sub: 'Active farm with operations' },
+const CATEGORIES: { id: UICategory; tip: string }[] = [
+  { id: 'LandedProperty',   tip: 'Plots — residential, commercial, mixed-use, industrial, agricultural' },
+  { id: 'ResidentialHouse', tip: 'Bungalow · Duplex · Terrace — single-family ownership' },
+  { id: 'ApartmentFlat',    tip: 'Studio · Flat · Penthouse · Maisonette' },
+  { id: 'Commercial',       tip: 'Office · Retail · Warehouse' },
+  { id: 'Farm',             tip: 'Active farm with operations' },
 ];
 
 export function CategorySelector({
@@ -21,8 +21,8 @@ export function CategorySelector({
     <div
       style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-        gap: 12,
+        gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+        gap: 10,
       }}
     >
       {CATEGORIES.map((c) => {
@@ -36,35 +36,44 @@ export function CategorySelector({
             onClick={() => !disabled && onChange(c.id)}
             aria-disabled={disabled || undefined}
             disabled={disabled}
-            title={disabled ? 'Phase 2 — coming in MVP+1' : undefined}
+            title={disabled ? 'Coming in MVP+1' : c.tip}
             style={{
               textAlign: 'left',
               cursor: disabled ? 'not-allowed' : 'pointer',
               opacity: disabled ? 0.55 : 1,
-              minHeight: 96,
+              padding: '12px 14px',
+              minHeight: disabled ? 72 : 56,
               display: 'flex',
               flexDirection: 'column',
-              gap: 6,
+              justifyContent: 'center',
+              gap: 4,
             }}
           >
             <div
-              className="bf-mono"
               style={{
-                fontSize: 10,
-                letterSpacing: '0.22em',
-                textTransform: 'uppercase',
-                color: selected ? 'var(--gold-deep)' : 'var(--slate)',
                 display: 'flex',
                 justifyContent: 'space-between',
+                alignItems: 'center',
                 gap: 8,
               }}
             >
-              <span>— {UI_CATEGORY_LABEL[c.id]}</span>
-              {disabled && <span style={{ color: 'var(--slate)', letterSpacing: '0.18em' }}>PHASE 2</span>}
+              <span className="bf-body" style={{ fontSize: 14, color: 'var(--navy)', fontWeight: selected ? 500 : 400 }}>
+                {UI_CATEGORY_LABEL[c.id]}
+              </span>
+              {disabled && (
+                <span
+                  className="bf-mono"
+                  style={{ fontSize: 9, color: 'var(--slate)', letterSpacing: '0.18em' }}
+                >
+                  PHASE 2
+                </span>
+              )}
             </div>
-            <div className="bf-body" style={{ fontSize: 14, color: 'var(--navy)', lineHeight: 1.4 }}>
-              {c.sub}
-            </div>
+            {disabled && (
+              <div className="bf-body" style={{ fontSize: 12, color: 'var(--slate)', lineHeight: 1.4 }}>
+                {c.tip}
+              </div>
+            )}
           </button>
         );
       })}
