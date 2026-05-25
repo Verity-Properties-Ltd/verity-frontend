@@ -22,13 +22,13 @@ export default function PropertyStep() {
   const isApartment = cat === 'ApartmentFlat';
   const isStudio    = isApartment && p.apartmentStyle === 'Studio';
   const showsBQ        = isHouse || isApartment;
-  const showsBedsBaths = isHouse || (isApartment && !!p.apartmentStyle);
-  const showsBedrooms  = isHouse || (isApartment && !isStudio);
-  const showsHalfBaths = isHouse || (isApartment && !isStudio);
+  // Studio implies 0 bedrooms + 1 full bath — no user input needed.
+  const showsBedsBaths = isHouse || (isApartment && !!p.apartmentStyle && !isStudio);
+  const showsBedrooms  = showsBedsBaths;
+  const showsHalfBaths = showsBedsBaths;
 
   const bedsBathsValid =
-    !showsBedsBaths ||
-    ((!showsBedrooms || !!p.BedroomsTotal) && !!p.BathroomsFull);
+    !showsBedsBaths || (!!p.BedroomsTotal && !!p.BathroomsFull);
 
   const level2Valid =
     cat === 'LandedProperty' ? !!p.landSubCategory :
@@ -124,9 +124,15 @@ export default function PropertyStep() {
             <SectionLabel>Apartment style</SectionLabel>
             <ApartmentStyleSelector
               value={p.apartmentStyle}
-              onChange={(v) =>
-                patchProperty({ apartmentStyle: v, BedroomsTotal: v === 'Studio' ? undefined : p.BedroomsTotal })
-              }
+              onChange={(v) => {
+                // Studio implies 0 bedrooms + 1 full bath (set at submit time);
+                // clear any prior user-entered beds/baths state.
+                if (v === 'Studio') {
+                  patchProperty({ apartmentStyle: v, BedroomsTotal: undefined, BathroomsFull: undefined, BathroomsHalf: undefined });
+                } else {
+                  patchProperty({ apartmentStyle: v });
+                }
+              }}
             />
           </section>
         )}

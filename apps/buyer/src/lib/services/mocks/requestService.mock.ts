@@ -155,6 +155,14 @@ export const requestService = {
         ? { category: 'ApartmentFlat', apartmentStyle: p.apartmentStyle }
       : null;
     const derived = derive ? derivePropertySubType(derive) : null;
+
+    // Studio implies 0 bedrooms + 1 full bath (RESO §5.3 standard layout).
+    const isStudio   = p.category === 'ApartmentFlat' && p.apartmentStyle === 'Studio';
+    const bedrooms   = isStudio ? 0 : p.BedroomsTotal;
+    const bathsFull  = isStudio ? 1 : p.BathroomsFull;
+    const bathsHalf  = isStudio ? 0 : p.BathroomsHalf;
+    const bathsTotal = bathsFull != null ? bathsFull + (bathsHalf ?? 0) * 0.5 : undefined;
+
     console.info('[mock] buyer.submit — RESO payload', {
       Verity_VPID: vpid,
       PropertyType: derived?.PropertyType,
@@ -165,12 +173,10 @@ export const requestService = {
       StateOrProvince: p.StateOrProvince,
       Country: 'NG',
       LotSizeSquareMeters: p.LotSizeSquareMeters,
-      BedroomsTotal: p.BedroomsTotal,
-      BathroomsFull: p.BathroomsFull,
-      BathroomsHalf: p.BathroomsHalf,
-      BathroomsTotal: p.BathroomsFull != null
-        ? p.BathroomsFull + (p.BathroomsHalf ?? 0) * 0.5
-        : undefined,
+      BedroomsTotal: bedrooms,
+      BathroomsFull: bathsFull,
+      BathroomsHalf: bathsHalf,
+      BathroomsTotal: bathsTotal,
       Verity_NG_LandZoning: derived?.Verity_NG_LandZoning,
       Verity_NG_LandFeature: p.landFeatures[0] ?? 'None',
       Verity_NG_HouseStyle: p.houseStyle ?? undefined,

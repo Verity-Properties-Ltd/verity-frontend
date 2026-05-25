@@ -21,13 +21,13 @@ export default function TypeStep() {
   const isApartment = cat === 'ApartmentFlat';
   const isStudio    = isApartment && draft.apartmentStyle === 'Studio';
   const showsBQ        = isHouse || isApartment;
-  const showsBedsBaths = isHouse || (isApartment && !!draft.apartmentStyle);
-  const showsBedrooms  = isHouse || (isApartment && !isStudio);
-  const showsHalfBaths = isHouse || (isApartment && !isStudio);
+  // Studio implies 0 bedrooms + 1 full bath — no user input needed.
+  const showsBedsBaths = isHouse || (isApartment && !!draft.apartmentStyle && !isStudio);
+  const showsBedrooms  = showsBedsBaths;
+  const showsHalfBaths = showsBedsBaths;
 
   const bedsBathsValid =
-    !showsBedsBaths ||
-    ((!showsBedrooms || !!draft.BedroomsTotal) && !!draft.BathroomsFull);
+    !showsBedsBaths || (!!draft.BedroomsTotal && !!draft.BathroomsFull);
 
   const level2Valid =
     cat === 'LandedProperty' ? !!draft.landSubCategory :
@@ -117,10 +117,15 @@ export default function TypeStep() {
             <SectionLabel>Apartment style</SectionLabel>
             <ApartmentStyleSelector
               value={draft.apartmentStyle}
-              onChange={(v) =>
-                // Reset BedroomsTotal when switching to Studio — a studio has 0 bedrooms by definition.
-                update({ apartmentStyle: v, BedroomsTotal: v === 'Studio' ? null : draft.BedroomsTotal })
-              }
+              onChange={(v) => {
+                // Studio implies 0 bedrooms + 1 full bath (set at submit time);
+                // clear any prior user-entered beds/baths state.
+                if (v === 'Studio') {
+                  update({ apartmentStyle: v, BedroomsTotal: null, BathroomsFull: null, BathroomsHalf: null });
+                } else {
+                  update({ apartmentStyle: v });
+                }
+              }}
             />
           </section>
         )}

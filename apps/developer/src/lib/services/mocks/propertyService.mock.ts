@@ -457,6 +457,13 @@ export const propertyService = {
 
     const derived = derive ? derivePropertySubType(derive) : null;
 
+    // Studio implies 0 bedrooms + 1 full bath (RESO §5.3 standard layout).
+    const isStudio = draft.category === 'ApartmentFlat' && draft.apartmentStyle === 'Studio';
+    const bedrooms     = isStudio ? 0 : draft.BedroomsTotal ?? undefined;
+    const bathsFull    = isStudio ? 1 : draft.BathroomsFull ?? undefined;
+    const bathsHalf    = isStudio ? 0 : draft.BathroomsHalf ?? undefined;
+    const bathsTotal   = bathsFull != null ? bathsFull + (bathsHalf ?? 0) * 0.5 : undefined;
+
     const payload: Partial<RESOProperty> = {
       Verity_VPID: vpid,
       PropertyType: derived?.PropertyType,
@@ -467,12 +474,10 @@ export const propertyService = {
       StateOrProvince: draft.StateOrProvince,
       Country: 'NG',
       LotSizeSquareMeters: draft.LotSizeSquareMeters ?? undefined,
-      BedroomsTotal: draft.BedroomsTotal ?? undefined,
-      BathroomsFull: draft.BathroomsFull ?? undefined,
-      BathroomsHalf: draft.BathroomsHalf ?? undefined,
-      BathroomsTotal: draft.BathroomsFull != null
-        ? draft.BathroomsFull + (draft.BathroomsHalf ?? 0) * 0.5
-        : undefined,
+      BedroomsTotal: bedrooms,
+      BathroomsFull: bathsFull,
+      BathroomsHalf: bathsHalf,
+      BathroomsTotal: bathsTotal,
       Verity_NG_LandZoning: derived?.Verity_NG_LandZoning,
       Verity_NG_LandFeature: draft.landFeatures[0] ?? 'None',
       Verity_NG_HouseStyle: draft.houseStyle ?? undefined,
