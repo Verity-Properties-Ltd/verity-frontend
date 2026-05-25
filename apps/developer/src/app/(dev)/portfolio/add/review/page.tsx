@@ -4,10 +4,13 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { WizardCard } from '@/components/wizard/WizardCard';
 import { WizardFooter } from '@/components/wizard/WizardFooter';
+import { ResoTag } from '@/components/property/ResoTag';
 import { useAddPropertyDraft } from '@/lib/hooks/useAddPropertyDraft';
 import { propertyService } from '@/lib/services';
 import { DOCUMENT_LABELS, type DocumentSlot } from '@/lib/types/add';
-import { UI_CATEGORY_LABEL } from '@/lib/types/reso';
+import { derivePropertySubType, type DeriveInput, type DeriveOutput, UI_CATEGORY_LABEL } from '@/lib/types/reso';
+
+type Row = { label: string; field: string; value: React.ReactNode };
 
 export default function ReviewStep() {
   const router = useRouter();
@@ -15,23 +18,52 @@ export default function ReviewStep() {
   const [submitting, setSubmitting] = useState(false);
 
   const docCount = Object.keys(draft.documents).length;
-  const categoryLabel = draft.category ? UI_CATEGORY_LABEL[draft.category] : '—';
-  const level2 =
-    draft.category === 'LandedProperty' ? draft.landSubCategory ?? '—' :
-    draft.category === 'ResidentialHouse' ? `${draft.houseStyle ?? '—'} · ${draft.houseAttachment ?? '—'}` :
-    draft.category === 'ApartmentFlat' ? draft.apartmentStyle ?? '—' :
-    '—';
-  const rows: [string, React.ReactNode][] = [
-    ['Category', categoryLabel],
-    ['Detail',   level2],
-    ['Address',  draft.UnparsedAddress || '—'],
-    ['State · LGA', `${draft.StateOrProvince} · ${draft.CountyOrParish || '—'}`],
-    ['Size',     draft.LotSizeSquareMeters ? `${draft.LotSizeSquareMeters.toLocaleString()} m²` : '—'],
-    ['Boys\' Quarters', draft.hasBQ ? `${draft.bqConfig ?? '—'}${draft.bqSeparateTitle ? ' · separate title' : ''}` : 'None'],
-    ['Documents', `${docCount} of 4 attached`],
-    ['Reference', draft.ref || '—'],
-    ['Tier',     draft.tier === 'premium' ? 'Premium · cohort credit' : 'Standard · cohort credit'],
+
+  // Build the derive input from the draft. If incomplete, leave derived null
+  // so the review still renders gracefully.
+  const derive: DeriveInput | null =
+    draft.category === 'LandedProperty' && draft.landSubCategory
+      ? { category: 'LandedProperty', landSubCategory: draft.landSubCategory }
+    : draft.category === 'ResidentialHouse' && draft.houseStyle && draft.houseAttachment
+      ? { category: 'ResidentialHouse', houseStyle: draft.houseStyle, attachment: draft.houseAttachment }
+    : draft.category === 'ApartmentFlat' && draft.apartmentStyle
+      ? { category: 'ApartmentFlat', apartmentStyle: draft.apartmentStyle }
+      : null;
+
+  const derived: DeriveOutput | null = derive ? derivePropertySubType(derive) : null;
+
+  const rows: Row[] = [
+    { label: 'Category',           field: '—',                            value: draft.category ? UI_CATEGORY_LABEL[draft.category] : '—' },
+    { label: 'Property type',      field: 'PropertyType',                 value: derived?.PropertyType ?? '—' },
+    { label: 'Property sub-type',  field: 'PropertySubType',              value: derived?.PropertySubType ?? '—' },
+    { label: 'Address',            field: 'UnparsedAddress',              value: draft.UnparsedAddress || '—' },
+    { label: 'State',              field: 'StateOrProvince',              value: draft.StateOrProvince },
+    { label: 'LGA',                field: 'CountyOrParish',               value: draft.CountyOrParish || '—' },
+    { label: 'Lot size',           field: 'LotSizeSquareMeters',          value: draft.LotSizeSquareMeters ? `${draft.LotSizeSquareMeters.toLocaleString()} m²` : '—' },
   ];
+
+  if (draft.category === 'LandedProperty') {
+    rows.push({ label: 'Land zoning', field: 'Verity_NG_LandZoning', value: derived?.Verity_NG_LandZoning ?? '—' });
+    if (draft.landFeatures.length > 0) {
+      rows.push({ label: 'Land feature', field: 'Verity_NG_LandFeature', value: draft.landFeatures.join(', ') });
+    }
+  }
+  if (draft.category === 'ResidentialHouse') {
+    rows.push({ label: 'House style', field: 'Verity_NG_HouseStyle',      value: draft.houseStyle ?? '—' });
+    rows.push({ label: 'Attachment',  field: 'Verity_NG_HouseAttachment', value: draft.houseAttachment ?? '—' });
+  }
+  if (draft.category === 'ApartmentFlat') {
+    rows.push({ label: 'Apartment style', field: 'Verity_NG_ApartmentStyle', value: draft.apartmentStyle ?? '—' });
+  }
+  if (draft.hasBQ) {
+    rows.push({ label: 'Boys\' Quarters',  field: 'Verity_NG_HasBQ',           value: 'Yes' });
+    rows.push({ label: 'BQ config',        field: 'Verity_NG_BQConfig',        value: draft.bqConfig ?? '—' });
+    rows.push({ label: 'BQ separate title', field: 'Verity_NG_BQSeparateTitle', value: draft.bqSeparateTitle ? 'Yes' : 'No' });
+  }
+
+  rows.push({ label: 'Documents', field: '—', value: `${docCount} of 4 attached` });
+  rows.push({ label: 'Reference', field: '—', value: draft.ref || '—' });
+  rows.push({ label: 'Tier',      field: '—', value: draft.tier === 'premium' ? 'Premium · cohort credit' : 'Standard · cohort credit' });
 
   async function onSubmit() {
     if (submitting) return;
@@ -47,11 +79,38 @@ export default function ReviewStep() {
       title={<>Review and <em>submit</em>.</>}
       lede="Once you submit, we'll start the verification workflow. You'll receive an email when each stage completes."
     >
+      {draft.bqSeparateTitle && (
+        <div className="alert alert-warning" style={{ marginTop: 18 }}>
+          <span className="alert-icon">!</span>
+          <div>
+            <strong>BQ separate title flagged.</strong>
+            The BQ title document must be uploaded and verified independently. Our analyst team will reach
+            out within 24 hours.
+          </div>
+        </div>
+      )}
+
       <div style={{ marginTop: 20, border: '1px solid var(--line)', background: '#fff' }}>
-        {rows.map(([k, v], i) => (
-          <div key={k} style={{ padding: '14px 18px', borderBottom: i < rows.length - 1 ? '1px solid var(--line)' : 'none', display: 'flex', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
-            <span style={{ fontFamily: 'var(--f-meta)', fontSize: 10, color: 'var(--slate)', letterSpacing: '0.22em', textTransform: 'uppercase' }}>{k}</span>
-            <span style={{ fontSize: 13, color: 'var(--navy)', textAlign: 'right' }}>{v}</span>
+        {rows.map((r, i) => (
+          <div
+            key={`${r.label}-${i}`}
+            style={{
+              padding: '14px 18px',
+              borderBottom: i < rows.length - 1 ? '1px solid var(--line)' : 'none',
+              display: 'flex',
+              justifyContent: 'space-between',
+              gap: 16,
+              flexWrap: 'wrap',
+              alignItems: 'baseline',
+            }}
+          >
+            <span style={{ display: 'inline-flex', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
+              <span style={{ fontFamily: 'var(--f-meta)', fontSize: 10, color: 'var(--slate)', letterSpacing: '0.22em', textTransform: 'uppercase' }}>
+                {r.label}
+              </span>
+              {r.field !== '—' && <ResoTag field={r.field} />}
+            </span>
+            <span style={{ fontSize: 13, color: 'var(--navy)', textAlign: 'right' }}>{r.value}</span>
           </div>
         ))}
       </div>

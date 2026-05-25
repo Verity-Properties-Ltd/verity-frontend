@@ -5,14 +5,16 @@ import Link from 'next/link';
 import { propertyService } from '@/lib/services';
 import type { CsvParseResult } from '@/lib/types/property';
 
-const SAMPLE = `address,type,state,ref
-Lekki Block A · Plot 12,Land,Lagos,LKI-A-12
-Ikoyi Foreshore · Unit 7B,Apartment,Lagos,IKY-FS-07B
-Victoria Island Tower II · Fl 14,Apartment,Lagos,VI-T2-14
-Banana Island · Villa 3,Villa,Lagos,BNI-V03
-Surulere Block C · Plot 04,Land,Lagos,SUR-C-04
-Magodo Phase II · Plot 18,Land,Lagos,MGD-2-18
-Yaba Heights · Unit 22,Apartment,Lagos,YBH-22`;
+const SAMPLE = `Verity_VPID,PropertyType,PropertySubType,UnparsedAddress,CountyOrParish,StateOrProvince,Verity_NG_HouseStyle,Verity_NG_LandZoning,LotSizeSquareMeters,ref
+,Land,VacantLand,Lekki Block A · Plot 12,Eti-Osa,Lagos,,Residential,1250,LKI-A-12
+,Residential,Apartment,Ikoyi Foreshore · Unit 7B,Eti-Osa,Lagos,,,180,IKY-FS-07B
+,Residential,Apartment,Victoria Island Tower II · Fl 14,Eti-Osa,Lagos,,,240,VI-T2-14
+,Residential,SingleFamilyResidence,Banana Island · Villa 3,Eti-Osa,Lagos,Duplex,,1240,BNI-V03
+,Land,CommercialLand,Surulere Block C · Plot 04,Surulere,Lagos,,Commercial,1120,SUR-C-04
+,Land,VacantLand,Magodo Phase II · Plot 18,Kosofe,Lagos,,Residential,540,MGD-2-18
+,Residential,Apartment,Yaba Heights · Unit 22,Lagos Mainland,Lagos,,,95,YBH-22`;
+
+const COLUMN_HINT = 'Verity_VPID · PropertyType · PropertySubType · UnparsedAddress · CountyOrParish · StateOrProvince · Verity_NG_HouseStyle · Verity_NG_LandZoning · LotSizeSquareMeters · ref';
 
 export function CsvImportClient() {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -56,7 +58,7 @@ export function CsvImportClient() {
             </svg>
           </div>
           <div className="h">{parsing ? 'Parsing…' : 'Drop a CSV file or tap to browse'}</div>
-          <div className="sub">Required columns: address · type · state · ref</div>
+          <div className="sub">RESO columns · {COLUMN_HINT}</div>
         </button>
         <input
           ref={inputRef}
@@ -93,10 +95,10 @@ export function CsvImportClient() {
       <div className="dv-csv-table">
         <div className="dv-csv-row head">
           <span />
-          <span>Property address</span>
-          <span>Type</span>
-          <span>State</span>
-          <span>Internal ref</span>
+          <span>UnparsedAddress</span>
+          <span>PropertyType · SubType</span>
+          <span>CountyOrParish</span>
+          <span>ref</span>
           <span>Validation</span>
         </div>
         {result.rows.map((r) => (
@@ -104,9 +106,12 @@ export function CsvImportClient() {
             <span style={{ fontFamily: 'var(--f-meta)', fontSize: 10, color: 'var(--slate)', letterSpacing: '0.12em' }}>
               {String(r.index).padStart(2, '0')}
             </span>
-            <span style={{ color: 'var(--navy)', fontWeight: 500 }}>{r.address}</span>
-            <span style={{ color: 'var(--slate)' }}>{r.type}</span>
-            <span style={{ color: 'var(--slate)' }}>{r.state}</span>
+            <span style={{ color: 'var(--navy)', fontWeight: 500 }}>{r.UnparsedAddress}</span>
+            <span style={{ color: 'var(--slate)' }}>
+              {r.PropertyType}
+              {r.PropertySubType ? ` · ${r.PropertySubType}` : ''}
+            </span>
+            <span style={{ color: 'var(--slate)' }}>{r.CountyOrParish || r.StateOrProvince}</span>
             <span style={{ fontFamily: 'var(--f-meta)', fontSize: 11, color: 'var(--navy)', letterSpacing: '0.06em' }}>{r.ref}</span>
             <span>
               {r.validation.kind === 'ok' && (

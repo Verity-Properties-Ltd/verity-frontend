@@ -192,6 +192,11 @@ export const certificateService = {
         plotNo: seed.property.plotNo,
         type: propertyTypeLabel(seed.property.type, seed.property.sizeSqm),
         sizeSqm: seed.property.sizeSqm,
+        // RESO-named fields surfaced on the public cert (§9.4).
+        PropertyType: seed.property.PropertyType,
+        PropertySubType: seed.property.PropertySubType,
+        StandardStatus: 'Active',
+        Verity_LGA: seed.property.lga,
       },
       verifiedAt: fmtVerifiedDate(verifiedIso),
       band: seed.band,

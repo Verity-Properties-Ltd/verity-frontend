@@ -103,9 +103,14 @@ export type PropertyDetail = PropertySummary & Partial<RESOProperty> & {
 
 export type CsvParsedRow = {
   index: number;
-  address: string;
-  type: string;
-  state: string;
+  UnparsedAddress: string;
+  PropertyType: string;
+  PropertySubType?: string;
+  StateOrProvince: string;
+  CountyOrParish?: string;
+  Verity_NG_HouseStyle?: string;
+  Verity_NG_LandZoning?: string;
+  LotSizeSquareMeters?: number;
   ref: string;
   validation: { kind: 'ok' } | { kind: 'warn'; message: string } | { kind: 'dup'; message: string };
 };

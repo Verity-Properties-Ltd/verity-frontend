@@ -11,7 +11,8 @@ import type {
   PropertySummary,
   VerificationEvent,
 } from '@/lib/types/property';
-import type { RESOProperty } from '@/lib/types/reso';
+import type { AddPropertyDraft } from '@/lib/types/add';
+import { derivePropertySubType, type DeriveInput, type RESOProperty } from '@/lib/types/reso';
 
 const KPIS: KpiSnapshot = {
   total: 87,
@@ -437,10 +438,46 @@ export const propertyService = {
     return record ? detailFor(record) : null;
   },
 
-  async submit(_draft: unknown): Promise<{ vpid: string }> {
+  async submit(draft: AddPropertyDraft): Promise<{ vpid: string }> {
     await new Promise((r) => setTimeout(r, 600));
     const vpid = fakeVpid();
-    console.info('[mock] propertyService.submit', { vpid });
+
+    // Build a RESO-shaped payload from the wizard draft. Once the backend is
+    // wired this is what the POST /api/v1/properties request body will look
+    // like (brief §9.1). The derive call here mirrors the same one running
+    // in the wizard so an invalid combo is impossible to submit.
+    const derive: DeriveInput | null =
+      draft.category === 'LandedProperty' && draft.landSubCategory
+        ? { category: 'LandedProperty', landSubCategory: draft.landSubCategory }
+      : draft.category === 'ResidentialHouse' && draft.houseStyle && draft.houseAttachment
+        ? { category: 'ResidentialHouse', houseStyle: draft.houseStyle, attachment: draft.houseAttachment }
+      : draft.category === 'ApartmentFlat' && draft.apartmentStyle
+        ? { category: 'ApartmentFlat', apartmentStyle: draft.apartmentStyle }
+      : null;
+
+    const derived = derive ? derivePropertySubType(derive) : null;
+
+    const payload: Partial<RESOProperty> = {
+      Verity_VPID: vpid,
+      PropertyType: derived?.PropertyType,
+      PropertySubType: derived?.PropertySubType,
+      StandardStatus: 'Incomplete',
+      UnparsedAddress: draft.UnparsedAddress,
+      CountyOrParish: draft.CountyOrParish,
+      StateOrProvince: draft.StateOrProvince,
+      Country: 'NG',
+      LotSizeSquareMeters: draft.LotSizeSquareMeters ?? undefined,
+      Verity_NG_LandZoning: derived?.Verity_NG_LandZoning,
+      Verity_NG_LandFeature: draft.landFeatures[0] ?? 'None',
+      Verity_NG_HouseStyle: draft.houseStyle ?? undefined,
+      Verity_NG_HouseAttachment: draft.houseAttachment ?? undefined,
+      Verity_NG_ApartmentStyle: draft.apartmentStyle ?? undefined,
+      Verity_NG_HasBQ: draft.hasBQ,
+      Verity_NG_BQConfig: draft.bqConfig ?? undefined,
+      Verity_NG_BQSeparateTitle: draft.bqSeparateTitle,
+    };
+
+    console.info('[mock] propertyService.submit — RESO payload', payload);
     return { vpid };
   },
 
@@ -448,13 +485,31 @@ export const propertyService = {
     await new Promise((r) => setTimeout(r, 600));
     const text = await file.text();
     const lines = text.split(/\r?\n/).filter((l) => l.trim().length > 0);
+    const header = (lines[0] || '').split(',').map((s) => s.trim());
+    const idx = (k: string) => header.indexOf(k);
     const rows: CsvParsedRow[] = lines.slice(1).map((line, i) => {
-      const [addr, type, state, ref] = line.split(',').map((s) => s.trim());
+      const cells = line.split(',').map((s) => s.trim());
+      const get = (k: string) => (idx(k) >= 0 ? cells[idx(k)] : '');
+      const ref = get('ref');
+      const addr = get('UnparsedAddress');
+      const sizeRaw = get('LotSizeSquareMeters');
       const validation: CsvParsedRow['validation'] =
         ref === 'SUR-C-04' ? { kind: 'dup', message: 'Duplicate of VRT-LA-2024-0089' } :
         addr?.toLowerCase().includes('banana') ? { kind: 'warn', message: 'Address ambiguous' } :
         { kind: 'ok' };
-      return { index: i + 1, address: addr || '', type: type || '', state: state || 'Lagos', ref: ref || '', validation };
+      return {
+        index: i + 1,
+        UnparsedAddress: addr || '',
+        PropertyType: get('PropertyType') || '',
+        PropertySubType: get('PropertySubType') || undefined,
+        StateOrProvince: get('StateOrProvince') || 'Lagos',
+        CountyOrParish: get('CountyOrParish') || undefined,
+        Verity_NG_HouseStyle: get('Verity_NG_HouseStyle') || undefined,
+        Verity_NG_LandZoning: get('Verity_NG_LandZoning') || undefined,
+        LotSizeSquareMeters: sizeRaw ? Number(sizeRaw) : undefined,
+        ref: ref || '',
+        validation,
+      };
     });
     const ok = rows.filter((r) => r.validation.kind === 'ok').length;
     const warn = rows.filter((r) => r.validation.kind === 'warn').length;
