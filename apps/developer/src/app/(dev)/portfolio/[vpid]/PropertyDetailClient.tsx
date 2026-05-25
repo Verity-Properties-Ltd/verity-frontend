@@ -6,6 +6,7 @@ import { useSearchParams } from 'next/navigation';
 import { propertyService } from '@/lib/services';
 import type { PropertyDetail } from '@/lib/types/property';
 import { PropertyHero } from '@/components/property/PropertyHero';
+import { PropertyOverview } from '@/components/property/PropertyOverview';
 import { TabStrip } from '@/components/property/TabStrip';
 import { VerificationHistory } from '@/components/property/VerificationHistory';
 import { DistributionLog } from '@/components/property/DistributionLog';
@@ -53,6 +54,20 @@ export function PropertyDetailClient({ vpid }: { vpid: string }) {
 
       <div className="dv-prop">
         <div>
+          {tab === 'overview' && (
+            <div style={{ marginBottom: 40 }}>
+              <div className="dv-block-head">
+                <h3 style={{ fontFamily: 'var(--f-mark)', fontSize: 14, letterSpacing: '0.22em', textTransform: 'uppercase', color: 'var(--navy)', fontWeight: 400, margin: 0 }}>
+                  Property information · RESO Data Dictionary v2.0
+                </h3>
+                <span style={{ fontFamily: 'var(--f-meta)', fontSize: 10, color: 'var(--slate)', letterSpacing: '0.18em' }}>
+                  PropertyType · {property.PropertyType ?? '—'}
+                </span>
+              </div>
+              <PropertyOverview property={property} />
+            </div>
+          )}
+
           {(tab === 'overview' || tab === 'history') && (
             <>
               <div className="dv-block-head">

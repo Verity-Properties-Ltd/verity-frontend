@@ -23,4 +23,9 @@
   --warning:#B8862A;
   --danger:#A8302A;
   --info:#3C5A9C;
+
+  /* Teal — RESO Verity_NG_HasBQ ("Includes BQ" pill, NG-namespaced reso-tags) */
+  --teal:#2E7D7A;
+  --teal-soft:#D5E8E7;
+  --teal-deep:#1F5957;
 }

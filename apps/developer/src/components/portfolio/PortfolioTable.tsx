@@ -10,6 +10,19 @@ function isExpiryWarning(p: PropertySummary): boolean {
   return p.status === 'expiring' || p.status === 'expired';
 }
 
+function PropertyTagRow({ p }: { p: PropertySummary }) {
+  const tags: React.ReactNode[] = [];
+  if (p.Verity_NG_HouseStyle) tags.push(<span key="hs" className="tag">{p.Verity_NG_HouseStyle}</span>);
+  if (p.Verity_NG_ApartmentStyle) tags.push(<span key="as" className="tag">{p.Verity_NG_ApartmentStyle}</span>);
+  if (p.Verity_NG_LandZoning) tags.push(<span key="lz" className="tag">{p.Verity_NG_LandZoning}</span>);
+  if (p.Verity_NG_LandFeature && p.Verity_NG_LandFeature !== 'None') {
+    tags.push(<span key="lf" className="badge badge-gold">{p.Verity_NG_LandFeature}</span>);
+  }
+  if (p.Verity_NG_HasBQ) tags.push(<span key="bq" className="badge-bq">Includes BQ</span>);
+  if (tags.length === 0) return null;
+  return <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 6 }}>{tags}</div>;
+}
+
 export function PortfolioTable({ properties }: { properties: PropertySummary[] }) {
   const [selected, setSelected] = useState<Set<string>>(new Set());
 
@@ -72,6 +85,7 @@ export function PortfolioTable({ properties }: { properties: PropertySummary[] }
                 <td className="addr">
                   <div className="name">{p.address}</div>
                   {p.ref && <div className="ref">REF · {p.ref}</div>}
+                  <PropertyTagRow p={p} />
                 </td>
                 <td className="vpid">{p.vpid}</td>
                 <td><BandPill band={p.band} /></td>

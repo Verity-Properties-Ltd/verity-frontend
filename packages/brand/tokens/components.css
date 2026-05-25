@@ -78,6 +78,15 @@ code,kbd{font-family:var(--f-mono);font-size:12px;background:var(--cream-shade);
 .badge-solid{background:var(--navy);color:var(--cream)}
 .tag{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:3px;font-family:var(--f-serif);font-size:13px;background:var(--cream-shade);color:var(--navy);border:1px solid var(--line)}
 
+/* RESO field-name pill — appears alongside human labels on property
+   detail and review surfaces (brief §9.5 / §9.8). PascalCase RESO field
+   name is preserved verbatim. .ng variant tints teal for Verity_NG_* fields. */
+.reso-tag{display:inline-block;font-family:var(--f-mono);font-size:9px;letter-spacing:0.14em;background:var(--cream-shade);color:var(--slate);padding:2px 6px;border-radius:2px;border:1px solid var(--line);vertical-align:middle}
+.reso-tag.ng{background:var(--teal-soft);color:var(--teal-deep);border-color:rgba(46,125,122,0.18)}
+.badge-teal{background:var(--teal-soft);color:var(--teal-deep)}
+.badge-bq{display:inline-flex;align-items:center;gap:6px;padding:3px 9px;border-radius:999px;font-family:var(--f-mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;background:var(--teal-soft);color:var(--teal-deep)}
+.badge-bq::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor}
+
 /* ===== ALERT ===== */
 .alert{display:flex;gap:14px;padding:18px 22px;border-radius:4px;font-family:var(--f-serif);font-size:14px;border-left:3px solid;align-items:flex-start;line-height:1.5}
 .alert .alert-icon{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:var(--f-mono);font-size:12px;font-weight:500}

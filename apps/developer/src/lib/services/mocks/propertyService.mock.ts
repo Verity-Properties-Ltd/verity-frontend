@@ -340,6 +340,12 @@ function toSummary(r: MockRecord): PropertySummary {
     views30d: r.views30d,
     tier: r.tier,
     ref: r.ref,
+    PropertyType: r.PropertyType,
+    Verity_NG_HouseStyle: r.Verity_NG_HouseStyle,
+    Verity_NG_ApartmentStyle: r.Verity_NG_ApartmentStyle,
+    Verity_NG_LandZoning: r.Verity_NG_LandZoning,
+    Verity_NG_LandFeature: r.Verity_NG_LandFeature,
+    Verity_NG_HasBQ: r.Verity_NG_HasBQ,
   };
 }
 

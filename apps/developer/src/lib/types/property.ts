@@ -15,6 +15,14 @@ export type PropertySummary = {
   tier?: 'standard' | 'premium';
   /** Internal developer reference (e.g. LKI-A-12). */
   ref?: string;
+  // Subset of RESO + Verity_NG_* surfaced as secondary tags on the
+  // portfolio row (brief §9.5).
+  PropertyType?: RESOProperty['PropertyType'];
+  Verity_NG_HouseStyle?: RESOProperty['Verity_NG_HouseStyle'];
+  Verity_NG_ApartmentStyle?: RESOProperty['Verity_NG_ApartmentStyle'];
+  Verity_NG_LandZoning?: RESOProperty['Verity_NG_LandZoning'];
+  Verity_NG_LandFeature?: RESOProperty['Verity_NG_LandFeature'];
+  Verity_NG_HasBQ?: boolean;
 };
 
 export type BandTotals = Record<Band, number>;

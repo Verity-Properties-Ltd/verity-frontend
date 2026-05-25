@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { BandPill } from '@/components/dashboard/BandPill';
+import { ResoTag } from './ResoTag';
 import type { PropertyDetail } from '@/lib/types/property';
 
 export function PropertyHero({ property }: { property: PropertyDetail }) {
@@ -17,7 +18,18 @@ export function PropertyHero({ property }: { property: PropertyDetail }) {
             {property.cityLong} · {property.sizeSqm.toLocaleString()} sqm · {property.type}
           </div>
           <div className="meta-row">
-            <div><span style={{ color: 'var(--slate)' }}>VPID · </span><span className="v" style={{ fontWeight: 500 }}>{property.vpid}</span></div>
+            <div>
+              <span style={{ color: 'var(--slate)' }}>VPID · </span>
+              <span className="v" style={{ fontWeight: 500 }}>{property.vpid}</span>
+              <ResoTag field="Verity_VPID" />
+            </div>
+            {property.PropertyType && (
+              <div>
+                <span style={{ color: 'var(--slate)' }}>TYPE · </span>
+                <span className="v">{property.PropertyType}{property.PropertySubType ? ` · ${property.PropertySubType}` : ''}</span>
+                <ResoTag field="PropertyType" />
+              </div>
+            )}
             <div><span style={{ color: 'var(--slate)' }}>VERIFIED · </span><span className="v">{(property.verifiedAt || '—').toUpperCase()}</span></div>
             <div><span style={{ color: 'var(--slate)' }}>EXPIRES · </span><span className="v">{(property.expiresAt || '—').toUpperCase()}</span></div>
             <div><span style={{ color: 'var(--slate)' }}>STATUS · </span><span className="v" style={{ color: statusColor }}>● {statusLabel}</span></div>

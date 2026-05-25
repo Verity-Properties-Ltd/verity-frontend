@@ -2,12 +2,19 @@
 
 import { useState } from 'react';
 
+/**
+ * Filter chips — labels are buyer-friendly; the `field` carries the
+ * canonical RESO/Verity_NG_* field name that the backend will receive
+ * once OData $filter execution lands (brief §9.1).
+ */
 const FILTERS = [
-  { id: 'band', label: 'Band' },
-  { id: 'status', label: 'Status' },
-  { id: 'type', label: 'Type' },
-  { id: 'verified', label: 'Last verified' },
-  { id: 'expiry', label: 'Expiry' },
+  { id: 'band',          label: 'Band',           field: 'Verity_BandTier' },
+  { id: 'status',        label: 'Status',         field: 'StandardStatus' },
+  { id: 'propertyType',  label: 'Property type',  field: 'PropertyType' },
+  { id: 'houseStyle',    label: 'House style',    field: 'Verity_NG_HouseStyle' },
+  { id: 'landFeature',   label: 'Land feature',   field: 'Verity_NG_LandFeature' },
+  { id: 'verified',      label: 'Last verified',  field: 'ModificationTimestamp' },
+  { id: 'expiry',        label: 'Expiry',         field: 'Verity_ExpiresAt' },
 ] as const;
 
 export function FilterBar({ totalCount }: { totalCount: number }) {
@@ -32,7 +39,7 @@ export function FilterBar({ totalCount }: { totalCount: number }) {
         All <span className="ct">{totalCount}</span>
       </span>
       {FILTERS.map((f) => (
-        <span key={f.id} className="dv-chip">
+        <span key={f.id} className="dv-chip" title={`RESO field · ${f.field}`}>
           {f.label} <span className="caret">▾</span>
         </span>
       ))}
