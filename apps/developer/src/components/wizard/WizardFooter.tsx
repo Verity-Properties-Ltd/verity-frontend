@@ -5,9 +5,12 @@ import Link from 'next/link';
 export function WizardFooter({
   back,
   primary,
+  saveDraft,
 }: {
   back?: { href: string; label: string };
   primary: { label: React.ReactNode; onClick?: () => void; href?: string; disabled?: boolean; variant?: 'primary' | 'gold' };
+  /** Wires the Save Draft button. Omit (or null) to hide it. */
+  saveDraft?: { onClick: () => void; disabled?: boolean } | null;
 }) {
   const PrimaryEl = primary.href ? (
     <Link href={primary.href} className={`dv-btn ${primary.variant || 'primary'}`} style={{ textDecoration: 'none' }}>
@@ -26,7 +29,16 @@ export function WizardFooter({
         </Link>
       ) : <span />}
       <div style={{ display: 'flex', gap: 8 }}>
-        <button type="button" className="dv-btn outline">Save draft</button>
+        {saveDraft && (
+          <button
+            type="button"
+            className={`dv-btn outline${saveDraft.disabled ? ' disabled' : ''}`}
+            onClick={saveDraft.onClick}
+            disabled={saveDraft.disabled}
+          >
+            Save draft
+          </button>
+        )}
         {PrimaryEl}
       </div>
     </div>

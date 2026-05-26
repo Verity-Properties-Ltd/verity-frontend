@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { WizardCard } from '@/components/wizard/WizardCard';
 import { WizardFooter } from '@/components/wizard/WizardFooter';
-import { useAddPropertyDraft } from '@/lib/hooks/useAddPropertyDraft';
+import { commitDraft, useAddPropertyDraft } from '@/lib/hooks/useAddPropertyDraft';
 import type { VerificationTier } from '@/lib/types/add';
 
 const TIERS: { id: VerificationTier; label: string; price: string; sla: string; features: string[]; maxBand: string }[] = [
@@ -88,6 +88,17 @@ export default function TierStep() {
           label: <>Continue · review <span className="arrow">→</span></>,
           onClick: () => router.push('/portfolio/add/review'),
           disabled: !hydrated,
+        }}
+        saveDraft={{
+          disabled: !hydrated || !draft.category,
+          onClick: () => {
+            const resumeVpid =
+              typeof window !== 'undefined'
+                ? window.sessionStorage.getItem('verity:dev-add-resume-vpid') || undefined
+                : undefined;
+            const { vpid } = commitDraft(draft, resumeVpid);
+            router.push(`/portfolio?just-saved=${vpid}`);
+          },
         }}
       />
     </WizardCard>

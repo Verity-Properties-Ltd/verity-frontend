@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { WizardCard } from '@/components/wizard/WizardCard';
 import { WizardFooter } from '@/components/wizard/WizardFooter';
 import { ResoTag } from '@/components/property/ResoTag';
-import { useAddPropertyDraft } from '@/lib/hooks/useAddPropertyDraft';
+import { commitDraft, useAddPropertyDraft } from '@/lib/hooks/useAddPropertyDraft';
 import { propertyService } from '@/lib/services';
 import { DOCUMENT_LABELS, type DocumentSlot } from '@/lib/types/add';
 import {
@@ -163,7 +163,14 @@ export default function ReviewStep() {
   async function onSubmit() {
     if (submitting) return;
     setSubmitting(true);
-    const { vpid } = await propertyService.submit(draft);
+    const fromDraftVpid =
+      typeof window !== 'undefined'
+        ? window.sessionStorage.getItem('verity:dev-add-resume-vpid') || undefined
+        : undefined;
+    const { vpid } = await propertyService.submit(draft, { fromDraftVpid });
+    if (typeof window !== 'undefined') {
+      window.sessionStorage.removeItem('verity:dev-add-resume-vpid');
+    }
     clear();
     router.push(`/portfolio/${vpid}?just-added=1`);
   }
@@ -231,6 +238,17 @@ export default function ReviewStep() {
           onClick: onSubmit,
           disabled: !hydrated || submitting,
           variant: 'gold',
+        }}
+        saveDraft={{
+          disabled: !hydrated || submitting || !draft.category,
+          onClick: () => {
+            const resumeVpid =
+              typeof window !== 'undefined'
+                ? window.sessionStorage.getItem('verity:dev-add-resume-vpid') || undefined
+                : undefined;
+            const { vpid } = commitDraft(draft, resumeVpid);
+            router.push(`/portfolio?just-saved=${vpid}`);
+          },
         }}
       />
     </WizardCard>

@@ -1,6 +1,7 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { WizardCard } from '@/components/wizard/WizardCard';
 import { WizardFooter } from '@/components/wizard/WizardFooter';
 import { AddressSection } from '@/components/wizard/AddressSection';
@@ -12,13 +13,29 @@ import { HouseStyleSelector } from '@/components/wizard/HouseStyleSelector';
 import { LandSubCategorySelector } from '@/components/wizard/LandSubCategorySelector';
 import { LivingAreaSection } from '@/components/wizard/LivingAreaSection';
 import { LotSizeSection } from '@/components/wizard/LotSizeSection';
-import { useAddPropertyDraft } from '@/lib/hooks/useAddPropertyDraft';
+import { commitDraft, loadDraft, useAddPropertyDraft } from '@/lib/hooks/useAddPropertyDraft';
 import { derivePropertySubType, type UICategory } from '@verity/reso';
 import type { FlatNumberMode } from '@/components/wizard/AddressSection';
 
 export default function TypeStep() {
   const router = useRouter();
-  const { draft, update, hydrated } = useAddPropertyDraft();
+  const searchParams = useSearchParams();
+  const resumeVpid = searchParams.get('draft');
+  const { draft, update, hydrated, hydrateFromRecord } = useAddPropertyDraft();
+
+  // Resume flow: if ?draft=DRAFT-XYZ is in the URL, hydrate the wizard from
+  // that saved record exactly once on mount. The resumed vpid is stashed in
+  // sessionStorage so the review step can pass it to submit() for cleanup.
+  useEffect(() => {
+    if (!hydrated || !resumeVpid) return;
+    const saved = loadDraft(resumeVpid);
+    if (saved) {
+      hydrateFromRecord(saved);
+      if (typeof window !== 'undefined') {
+        window.sessionStorage.setItem('verity:dev-add-resume-vpid', resumeVpid);
+      }
+    }
+  }, [hydrated, resumeVpid, hydrateFromRecord]);
 
   const cat = draft.category;
   const isHouse     = cat === 'ResidentialHouse';
@@ -261,6 +278,14 @@ export default function TypeStep() {
           label: <>Continue · documents <span className="arrow">→</span></>,
           onClick: onContinue,
           disabled: !hydrated || !valid,
+        }}
+        saveDraft={{
+          // Need at least a category before a draft is meaningful in the portfolio.
+          disabled: !hydrated || !cat,
+          onClick: () => {
+            const { vpid } = commitDraft(draft, resumeVpid ?? undefined);
+            router.push(`/portfolio?just-saved=${vpid}`);
+          },
         }}
       />
     </WizardCard>

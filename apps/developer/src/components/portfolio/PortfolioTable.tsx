@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { BandPill } from '@/components/dashboard/BandPill';
 import { StatusPill } from './StatusPill';
 import { BulkBar } from './BulkBar';
@@ -83,7 +84,17 @@ export function PortfolioTable({ properties }: { properties: PropertySummary[] }
                   />
                 </td>
                 <td className="addr">
-                  <div className="name">{p.address}</div>
+                  {p.status === 'draft' ? (
+                    <Link
+                      href={`/portfolio/add/type?draft=${p.vpid}`}
+                      className="name"
+                      style={{ color: 'var(--navy)', textDecoration: 'none', borderBottom: '1px dashed var(--gold-soft)' }}
+                    >
+                      {p.address || 'Untitled draft'}
+                    </Link>
+                  ) : (
+                    <div className="name">{p.address}</div>
+                  )}
                   {p.ref && <div className="ref">REF · {p.ref}</div>}
                   <PropertyTagRow p={p} />
                 </td>

@@ -4,7 +4,7 @@ import { useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { WizardCard } from '@/components/wizard/WizardCard';
 import { WizardFooter } from '@/components/wizard/WizardFooter';
-import { useAddPropertyDraft } from '@/lib/hooks/useAddPropertyDraft';
+import { commitDraft, useAddPropertyDraft } from '@/lib/hooks/useAddPropertyDraft';
 import { DOCUMENT_LABELS, type DocumentSlot } from '@/lib/types/add';
 
 function fmtSize(bytes: number) {
@@ -98,6 +98,17 @@ export default function DocumentsStep() {
           label: <>Continue · tier <span className="arrow">→</span></>,
           onClick: () => router.push('/portfolio/add/tier'),
           disabled: !hydrated || !hasAllRequired,
+        }}
+        saveDraft={{
+          disabled: !hydrated || !draft.category,
+          onClick: () => {
+            const resumeVpid =
+              typeof window !== 'undefined'
+                ? window.sessionStorage.getItem('verity:dev-add-resume-vpid') || undefined
+                : undefined;
+            const { vpid } = commitDraft(draft, resumeVpid);
+            router.push(`/portfolio?just-saved=${vpid}`);
+          },
         }}
       />
     </WizardCard>
