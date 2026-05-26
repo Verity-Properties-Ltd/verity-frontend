@@ -62,6 +62,21 @@ export type VerityNG_LandFeature     = 'Waterfront' | 'Reclaimed' | 'None';
 export type VerityNG_BQConfig        = 'Attached' | 'Detached' | 'Rooftop';
 
 // ───────────────────────────────────────────────────────────────────────────
+// RESO Area & Measurement Implementation v1 (§2)
+// ───────────────────────────────────────────────────────────────────────────
+
+export type RESO_AreaUnits =
+  | 'SquareMeters' | 'Hectares' | 'Acres' | 'SquareFeet';
+
+export type RESO_LotSizeSource =
+  | 'Survey' | 'Assessor' | 'PublicRecords'
+  | 'Estimated' | 'Owner' | 'Builder' | 'Other';
+
+export type RESO_LivingAreaSource =
+  | 'Appraiser' | 'Assessor' | 'Builder' | 'Owner'
+  | 'Plans' | 'PublicRecords' | 'Estimated' | 'Other';
+
+// ───────────────────────────────────────────────────────────────────────────
 // UI category (Level 1) — the 5 user-facing cards in the wizard.
 // NOT a RESO field — the RESO PropertyType/PropertySubType is *derived* from
 // (category + Level 2 inputs) by derivePropertySubType().
@@ -122,7 +137,23 @@ export interface RESOProperty {
   BathroomsTotalInteger?: number;
   /** Derived (DB trigger): BathroomsFull + BathroomsHalf * 0.5 — primary field for bank LOS comparables. */
   BathroomsTotalDecimal?: number;
+  // RESO Area & Measurement Standard v1 §2.1 — Lot size (Land + House only)
+  LotSizeArea?: number;
+  LotSizeUnits?: RESO_AreaUnits;
+  LotSizeDimensions?: string;
+  LotSizeSource?: RESO_LotSizeSource;
+  /** Derived (DB-generated column per §5.3). Always SquareMeters. */
   LotSizeSquareMeters?: number;
+
+  // RESO Area & Measurement Standard v1 §2.2 — Living area (House + Apartment only)
+  LivingArea?: number;
+  /** Residential standard per §8.3 — always 'SquareMeters' in NG. */
+  LivingAreaUnits?: RESO_AreaUnits;
+  LivingAreaSource?: RESO_LivingAreaSource;
+  /** Bank-LOS comparable. Mirrors LivingArea in NG (no basements, §2.3). */
+  AboveGradeFinishedArea?: number;
+  AboveGradeFinishedAreaUnits?: RESO_AreaUnits;
+
   YearBuilt?: number;
 
   // Verity_NG_* — Nigeria-specific
@@ -223,6 +254,40 @@ export const APARTMENT_STYLE_TOOLTIP: Record<VerityNG_ApartmentStyle, string> = 
   StandardFlat: 'Mini-Flat (1-bed)',
   Penthouse:    '',
   Maisonette:   '',
+};
+
+// Area & Measurement v1 §3.4 / §7 — conversion to canonical SquareMeters
+export const SQM_PER_UNIT: Record<RESO_AreaUnits, number> = {
+  SquareMeters: 1,
+  Hectares:     10000,
+  Acres:        4046.86,
+  SquareFeet:   0.092903,
+};
+
+export function toSquareMeters(area: number, units: RESO_AreaUnits): number {
+  return area * SQM_PER_UNIT[units];
+}
+
+// §8.5 — tooltip strings for the source dropdowns
+export const LOT_SIZE_SOURCE_LABEL: Record<RESO_LotSizeSource, string> = {
+  Survey:        'Survey — licensed surveyor (highest confidence)',
+  Assessor:      "Assessor — government assessor's recorded value",
+  PublicRecords: 'Public records — C of O, Deed of Assignment',
+  Builder:       'Builder — stated by the developer',
+  Owner:         'Owner — stated by the current owner',
+  Estimated:     'Estimated — best estimate; no formal documentation',
+  Other:         'Other',
+};
+
+export const LIVING_AREA_SOURCE_LABEL: Record<RESO_LivingAreaSource, string> = {
+  Appraiser:     'Appraiser — formal appraisal report',
+  Assessor:      "Assessor — government assessor's value",
+  Builder:       'Builder — stated by the developer',
+  Owner:         'Owner — stated by the current owner',
+  Plans:         'Plans — from approved building plans',
+  PublicRecords: 'Public records — registered document',
+  Estimated:     'Estimated — best estimate; no formal documentation',
+  Other:         'Other',
 };
 
 // UI labels for the 5 Level-1 cards.
