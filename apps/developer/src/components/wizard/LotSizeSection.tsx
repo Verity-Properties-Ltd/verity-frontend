@@ -44,11 +44,15 @@ export function LotSizeSection({
       <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
         <div className="row">
           <div className="dv-field">
-            <label className="lbl" htmlFor="lotSizeArea">Area</label>
+            <label className="lbl" htmlFor="lotSizeArea">
+              Area <span className="req" aria-hidden="true">*</span>
+            </label>
             <input
               id="lotSizeArea"
               className="dv-input mono"
               type="number"
+              inputMode="decimal"
+              min={0}
               placeholder="600"
               value={value.LotSizeArea ?? ''}
               onChange={(e) => {
@@ -62,7 +66,9 @@ export function LotSizeSection({
             />
           </div>
           <div className="dv-field">
-            <label className="lbl" htmlFor="lotSizeUnits">Units</label>
+            <label className="lbl" htmlFor="lotSizeUnits">
+              Units <span className="req" aria-hidden="true">*</span>
+            </label>
             <select
               id="lotSizeUnits"
               className="dv-input"
@@ -76,9 +82,15 @@ export function LotSizeSection({
           </div>
         </div>
 
+        {normalizedSqm != null && (
+          <div className="dv-field-note">
+            ≈ {normalizedSqm.toLocaleString()} sqm (normalized)
+          </div>
+        )}
+
         <div className="dv-field full">
           <label className="lbl" htmlFor="lotSizeDimensions">
-            Dimensions <span style={{ fontSize: 10, color: 'var(--slate)' }}>(optional)</span>
+            Dimensions <span className="opt">(optional)</span>
           </label>
           <input
             id="lotSizeDimensions"
@@ -90,7 +102,9 @@ export function LotSizeSection({
         </div>
 
         <div className="dv-field full">
-          <label className="lbl" htmlFor="lotSizeSource">Source</label>
+          <label className="lbl" htmlFor="lotSizeSource">
+            Source <span className="req" aria-hidden="true">*</span>
+          </label>
           <select
             id="lotSizeSource"
             className="dv-input"
@@ -107,19 +121,6 @@ export function LotSizeSection({
             ))}
           </select>
         </div>
-
-        {normalizedSqm != null && (
-          <div
-            style={{
-              fontFamily: 'var(--f-meta)',
-              fontSize: 11,
-              color: 'var(--slate)',
-              letterSpacing: '0.04em',
-            }}
-          >
-            ≈ {normalizedSqm.toLocaleString()} sqm (normalized)
-          </div>
-        )}
       </div>
     </section>
   );

@@ -67,7 +67,7 @@ export function AddressSection({
       <div className="row">
         <div className="dv-field">
           <label className="lbl" htmlFor="plotNo">
-            Plot / Block number <span style={{ fontSize: 10, color: 'var(--slate)' }}>(optional)</span>
+            Plot / Block number <span className="opt">(optional)</span>
           </label>
           <input
             id="plotNo"
@@ -83,8 +83,8 @@ export function AddressSection({
             <label className="lbl" htmlFor="unitNo">
               Flat / Unit number{' '}
               {flatNumberMode === 'required'
-                ? <span style={{ color: 'var(--gold-deep)' }}>*</span>
-                : <span style={{ fontSize: 10, color: 'var(--slate)' }}>(optional)</span>}
+                ? <span className="req" aria-hidden="true">*</span>
+                : <span className="opt">(optional)</span>}
             </label>
             <input
               id="unitNo"
@@ -94,9 +94,7 @@ export function AddressSection({
               onChange={(e) => onChange({ UnitNumber: e.target.value })}
             />
             {flatNumberMode === 'required' && !value.UnitNumber.trim() && (
-              <span style={{ fontSize: 11, color: 'var(--gold-deep)', marginTop: 4 }}>
-                Apartments need a flat or unit identifier.
-              </span>
+              <span className="help">Apartments need a flat or unit identifier.</span>
             )}
           </div>
         )}
@@ -104,7 +102,7 @@ export function AddressSection({
 
       <div className="dv-field full">
         <label className="lbl" htmlFor="neighborhood">
-          Neighbourhood or estate name <span style={{ fontSize: 10, color: 'var(--slate)' }}>(optional)</span>
+          Neighbourhood or estate name <span className="opt">(optional)</span>
         </label>
         <input
           id="neighborhood"
@@ -169,7 +167,7 @@ export function AddressSection({
         </div>
         <div className="dv-field">
           <label className="lbl" htmlFor="postcode">
-            Postal code <span style={{ fontSize: 10, color: 'var(--slate)' }}>(optional)</span>
+            Postal code <span className="opt">(optional)</span>
           </label>
           <input
             id="postcode"
@@ -181,9 +179,7 @@ export function AddressSection({
             onChange={(e) => onPostalChange(e.target.value)}
           />
           {postalInvalid && (
-            <span style={{ fontSize: 11, color: 'var(--gold-deep)', marginTop: 4 }}>
-              Postal code must be 6 digits.
-            </span>
+            <span className="help">Postal code must be 6 digits.</span>
           )}
         </div>
       </div>

@@ -33,11 +33,15 @@ export function LivingAreaSection({
       <SectionLabel>Living Area</SectionLabel>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
         <div className="dv-field full">
-          <label className="lbl" htmlFor="livingArea">Area (m²)</label>
+          <label className="lbl" htmlFor="livingArea">
+            Area (m²) <span className="req" aria-hidden="true">*</span>
+          </label>
           <input
             id="livingArea"
             className="dv-input mono"
             type="number"
+            inputMode="decimal"
+            min={0}
             placeholder="380"
             value={value.LivingArea ?? ''}
             onChange={(e) =>
@@ -47,7 +51,9 @@ export function LivingAreaSection({
         </div>
 
         <div className="dv-field full">
-          <label className="lbl" htmlFor="livingAreaSource">Source</label>
+          <label className="lbl" htmlFor="livingAreaSource">
+            Source <span className="req" aria-hidden="true">*</span>
+          </label>
           <select
             id="livingAreaSource"
             className="dv-input"
