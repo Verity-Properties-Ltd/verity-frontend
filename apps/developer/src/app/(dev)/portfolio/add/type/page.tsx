@@ -10,8 +10,11 @@ import { BQToggle } from '@/components/wizard/BQToggle';
 import { CategorySelector } from '@/components/wizard/CategorySelector';
 import { HouseStyleSelector } from '@/components/wizard/HouseStyleSelector';
 import { LandSubCategorySelector } from '@/components/wizard/LandSubCategorySelector';
+import { LivingAreaSection } from '@/components/wizard/LivingAreaSection';
+import { LotSizeSection } from '@/components/wizard/LotSizeSection';
 import { useAddPropertyDraft } from '@/lib/hooks/useAddPropertyDraft';
 import { derivePropertySubType, type UICategory } from '@verity/reso';
+import type { FlatNumberMode } from '@/components/wizard/AddressSection';
 
 export default function TypeStep() {
   const router = useRouter();
@@ -37,18 +40,39 @@ export default function TypeStep() {
     false;
 
   const bqValid = !draft.hasBQ || !!draft.bqConfig;
+
+  // Address Capture §4.6 — flat/unit number visibility + requirement by category.
+  const flatNumberMode: FlatNumberMode =
+    cat === 'ApartmentFlat'  ? 'required' :
+    cat === 'LandedProperty' ? 'hidden'   :
+    'optional';
+  const unitNumberValid = flatNumberMode !== 'required' || !!draft.UnitNumber.trim();
+
   const addressValid =
     !!draft.streetAddressInput.trim() &&
     !!draft.City.trim() &&
     !!draft.CountyOrParish.trim() &&
     !!draft.StateOrProvince.trim() &&
     (draft.PostalCode === '' || /^\d{6}$/.test(draft.PostalCode));
-  const sizeValid = !!draft.LotSizeSquareMeters;
 
-  const valid = !!cat && level2Valid && bedsBathsValid && bqValid && addressValid && sizeValid;
+  // Area & Measurement §4 — required fields per category.
+  const lotValid =
+    cat === 'ApartmentFlat' ? true :
+    !!draft.LotSizeArea && !!draft.LotSizeUnits && !!draft.LotSizeSource;
+  const livingValid =
+    cat === 'LandedProperty' ? true :
+    !!draft.LivingArea && !!draft.LivingAreaSource;
+  const sizeValid = lotValid && livingValid;
+
+  const valid =
+    !!cat && level2Valid && bedsBathsValid && bqValid && addressValid && unitNumberValid && sizeValid;
 
   function onCategoryChange(next: UICategory) {
     // Reset Level-2, beds/baths, and BQ selections when category changes.
+    // Also clear category-incompatible area + unit-number fields per Area §4 and Address §4.6.
+    const clearsLot     = next === 'ApartmentFlat';
+    const clearsLiving  = next === 'LandedProperty';
+    const clearsUnitNum = next === 'LandedProperty';
     update({
       category: next,
       landSubCategory: null,
@@ -65,6 +89,13 @@ export default function TypeStep() {
       Verity_NG_BQBedroomsTotal: null,
       Verity_NG_BQBathroomsFull: null,
       Verity_NG_BQBathroomsHalf: null,
+      ...(clearsUnitNum && { UnitNumber: '' }),
+      ...(clearsLot && {
+        LotSizeArea: null, LotSizeUnits: null, LotSizeDimensions: '', LotSizeSource: null,
+      }),
+      ...(clearsLiving && {
+        LivingArea: null, LivingAreaSource: null,
+      }),
     });
   }
 
@@ -200,25 +231,29 @@ export default function TypeStep() {
               PostalCode: draft.PostalCode,
             }}
             onChange={(patch) => update(patch)}
+            flatNumberMode={flatNumberMode}
           />
         </section>
 
-        <section>
-          <SectionLabel>Lot size</SectionLabel>
-          <div className="dv-field full">
-            <label className="lbl" htmlFor="sizeSqm">Lot size (m²)</label>
-            <input
-              id="sizeSqm"
-              className="dv-input mono"
-              type="number"
-              placeholder="1250"
-              value={draft.LotSizeSquareMeters ?? ''}
-              onChange={(e) =>
-                update({ LotSizeSquareMeters: e.target.value ? Number(e.target.value) : null })
-              }
-            />
-          </div>
-        </section>
+        <LotSizeSection
+          category={cat}
+          value={{
+            LotSizeArea: draft.LotSizeArea,
+            LotSizeUnits: draft.LotSizeUnits,
+            LotSizeDimensions: draft.LotSizeDimensions,
+            LotSizeSource: draft.LotSizeSource,
+          }}
+          onChange={(patch) => update(patch)}
+        />
+
+        <LivingAreaSection
+          category={cat}
+          value={{
+            LivingArea: draft.LivingArea,
+            LivingAreaSource: draft.LivingAreaSource,
+          }}
+          onChange={(patch) => update(patch)}
+        />
       </div>
 
       <WizardFooter

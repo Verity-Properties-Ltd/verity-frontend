@@ -1,4 +1,7 @@
 import type {
+  RESO_AreaUnits,
+  RESO_LivingAreaSource,
+  RESO_LotSizeSource,
   UICategory,
   UILandSubCategory,
   VerityNG_ApartmentStyle,
@@ -64,7 +67,19 @@ export type AddPropertyDraft = {
   /** NIPOST 6-digit postal code. */
   PostalCode: string;
 
-  LotSizeSquareMeters: number | null;
+  // RESO Area & Measurement v1 §2 — Lot size (Land + House); Living area (House + Apartment).
+  /** §2.1 — area in source units. */
+  LotSizeArea: number | null;
+  /** §2.1 — unit enum. Defaults to 'SquareMeters' on first interaction. */
+  LotSizeUnits: RESO_AreaUnits | null;
+  /** §2.1 — free-text dimensions e.g. "30m × 20m". '' when blank. */
+  LotSizeDimensions: string;
+  /** §2.1 — provenance enum (Survey/Assessor/PublicRecords/…). */
+  LotSizeSource: RESO_LotSizeSource | null;
+  /** §2.2 — habitable interior in sqm. Units always 'SquareMeters' per §8.3. */
+  LivingArea: number | null;
+  LivingAreaSource: RESO_LivingAreaSource | null;
+
   /** Required for Residential House and for Apartment when style ≠ Studio. `5` represents "5+". */
   BedroomsTotal: number | null;
   /** Required for Residential House and for Apartment. `5` represents "5+". */
@@ -103,7 +118,12 @@ export const EMPTY_ADD_DRAFT: AddPropertyDraft = {
   CountyOrParish: '',
   StateOrProvince: 'Lagos',
   PostalCode: '',
-  LotSizeSquareMeters: null,
+  LotSizeArea: null,
+  LotSizeUnits: null,
+  LotSizeDimensions: '',
+  LotSizeSource: null,
+  LivingArea: null,
+  LivingAreaSource: null,
   BedroomsTotal: null,
   BathroomsFull: null,
   BathroomsHalf: null,

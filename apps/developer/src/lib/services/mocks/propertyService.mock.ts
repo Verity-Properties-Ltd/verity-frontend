@@ -16,6 +16,7 @@ import {
   buildUnparsedAddress,
   derivePropertySubType,
   parseStreetAddress,
+  toSquareMeters,
   type DeriveInput,
   type RESOProperty,
 } from '@verity/reso';
@@ -577,7 +578,23 @@ export const propertyService = {
       StateOrProvince: draft.StateOrProvince,
       Country: 'NG',
       PostalCode: draft.PostalCode || undefined,
-      LotSizeSquareMeters: draft.LotSizeSquareMeters ?? undefined,
+      // Area & Measurement v1 §2.1 — Lot size (Land + House only)
+      LotSizeArea:        draft.LotSizeArea ?? undefined,
+      LotSizeUnits:       draft.LotSizeUnits ?? undefined,
+      LotSizeDimensions:  draft.LotSizeDimensions || undefined,
+      LotSizeSource:      draft.LotSizeSource ?? undefined,
+      // §5.3 derived sqm — mirrors the future generated column
+      LotSizeSquareMeters:
+        draft.LotSizeArea && draft.LotSizeUnits
+          ? toSquareMeters(draft.LotSizeArea, draft.LotSizeUnits)
+          : undefined,
+      // §2.2 — Living area (House + Apartment only); sqm implicit per §8.3
+      LivingArea:                  draft.LivingArea ?? undefined,
+      LivingAreaUnits:             draft.LivingArea != null ? 'SquareMeters' : undefined,
+      LivingAreaSource:            draft.LivingAreaSource ?? undefined,
+      // §2.3 — AboveGradeFinishedArea mirrors LivingArea (no basements in NG)
+      AboveGradeFinishedArea:      draft.LivingArea ?? undefined,
+      AboveGradeFinishedAreaUnits: draft.LivingArea != null ? 'SquareMeters' : undefined,
       BedroomsTotal: bedrooms,
       BathroomsFull: bathsFull,
       BathroomsHalf: bathsHalf,

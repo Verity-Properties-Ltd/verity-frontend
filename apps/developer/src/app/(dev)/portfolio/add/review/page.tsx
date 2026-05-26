@@ -8,7 +8,14 @@ import { ResoTag } from '@/components/property/ResoTag';
 import { useAddPropertyDraft } from '@/lib/hooks/useAddPropertyDraft';
 import { propertyService } from '@/lib/services';
 import { DOCUMENT_LABELS, type DocumentSlot } from '@/lib/types/add';
-import { derivePropertySubType, parseStreetAddress, type DeriveInput, type DeriveOutput, UI_CATEGORY_LABEL } from '@verity/reso';
+import {
+  derivePropertySubType,
+  parseStreetAddress,
+  toSquareMeters,
+  UI_CATEGORY_LABEL,
+  type DeriveInput,
+  type DeriveOutput,
+} from '@verity/reso';
 
 type Row = { label: string; field: string; value: React.ReactNode };
 
@@ -55,8 +62,31 @@ export default function ReviewStep() {
   if (draft.PostalCode)
     rows.push({ label: 'Postal code', field: 'PostalCode', value: draft.PostalCode });
 
-  rows.push({ label: 'Lot size', field: 'LotSizeSquareMeters',
-    value: draft.LotSizeSquareMeters ? `${draft.LotSizeSquareMeters.toLocaleString()} m²` : '—' });
+  // Area & Measurement v1 §4 — category-conditional area rows.
+  if (draft.category !== 'ApartmentFlat') {
+    const lotLabel = draft.category === 'LandedProperty' ? 'Lot' : 'Plot';
+    rows.push({ label: `${lotLabel} area`, field: 'LotSizeArea',
+      value: draft.LotSizeArea != null ? draft.LotSizeArea.toLocaleString() : '—' });
+    rows.push({ label: `${lotLabel} units`, field: 'LotSizeUnits',
+      value: draft.LotSizeUnits ?? '—' });
+    if (draft.LotSizeDimensions) {
+      rows.push({ label: `${lotLabel} dimensions`, field: 'LotSizeDimensions',
+        value: draft.LotSizeDimensions });
+    }
+    rows.push({ label: `${lotLabel} source`, field: 'LotSizeSource',
+      value: draft.LotSizeSource ?? '—' });
+    if (draft.LotSizeArea && draft.LotSizeUnits && draft.LotSizeUnits !== 'SquareMeters') {
+      rows.push({ label: 'Normalized', field: 'LotSizeSquareMeters',
+        value: `${toSquareMeters(draft.LotSizeArea, draft.LotSizeUnits).toLocaleString()} m²` });
+    }
+  }
+
+  if (draft.category === 'ResidentialHouse' || draft.category === 'ApartmentFlat') {
+    rows.push({ label: 'Living area', field: 'LivingArea',
+      value: draft.LivingArea ? `${draft.LivingArea.toLocaleString()} m²` : '—' });
+    rows.push({ label: 'Living source', field: 'LivingAreaSource',
+      value: draft.LivingAreaSource ?? '—' });
+  }
 
   if (draft.category === 'LandedProperty') {
     rows.push({ label: 'Land zoning', field: 'Verity_NG_LandZoning', value: derived?.Verity_NG_LandZoning ?? '—' });

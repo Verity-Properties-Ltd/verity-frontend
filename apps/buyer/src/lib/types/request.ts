@@ -54,7 +54,6 @@ export type RequestProperty = {
   StateOrProvince: string;
   PostalCode?: string;
 
-  LotSizeSquareMeters?: number;
   /** Required for Residential House and for Apartment when style ≠ Studio. `5` represents "5+". */
   BedroomsTotal?: number;
   /** Required for Residential House and for Apartment. `5` represents "5+". */

@@ -16,14 +16,24 @@ export type AddressFormValue = {
 
 export type AddressFormPatch = Partial<AddressFormValue>;
 
+/**
+ * Per Area & Measurement v1 §4 + Address Capture §4.6:
+ * - `hidden`   → Landed Property has no unit.
+ * - `required` → Apartment / Flat must identify the unit to be addressable.
+ * - `optional` → House (default) — a unit number may or may not exist.
+ */
+export type FlatNumberMode = 'hidden' | 'optional' | 'required';
+
 const POSTAL_REGEX = /^\d{0,6}$/;
 
 export function AddressSection({
   value,
   onChange,
+  flatNumberMode = 'optional',
 }: {
   value: AddressFormValue;
   onChange: (patch: AddressFormPatch) => void;
+  flatNumberMode?: FlatNumberMode;
 }) {
   const lgaOptions = useMemo(() => lgasFor(value.StateOrProvince), [value.StateOrProvince]);
   const hasLgaDropdown = lgaOptions.length > 0;
@@ -67,18 +77,28 @@ export function AddressSection({
             onChange={(e) => onChange({ Verity_NG_PlotNumber: e.target.value || undefined })}
           />
         </div>
-        <div className="bf-field">
-          <label className="bf-label" htmlFor="unitNo">
-            Flat / Unit number <span style={{ fontSize: 10, color: 'var(--slate)' }}>(optional)</span>
-          </label>
-          <input
-            id="unitNo"
-            className="bf-input"
-            placeholder="Flat 3"
-            value={value.UnitNumber ?? ''}
-            onChange={(e) => onChange({ UnitNumber: e.target.value || undefined })}
-          />
-        </div>
+        {flatNumberMode !== 'hidden' && (
+          <div className="bf-field">
+            <label className="bf-label" htmlFor="unitNo">
+              Flat / Unit number{' '}
+              {flatNumberMode === 'required'
+                ? <span style={{ color: 'var(--gold-deep)' }}>*</span>
+                : <span style={{ fontSize: 10, color: 'var(--slate)' }}>(optional)</span>}
+            </label>
+            <input
+              id="unitNo"
+              className="bf-input"
+              placeholder="Flat 3"
+              value={value.UnitNumber ?? ''}
+              onChange={(e) => onChange({ UnitNumber: e.target.value || undefined })}
+            />
+            {flatNumberMode === 'required' && !(value.UnitNumber ?? '').trim() && (
+              <span style={{ fontSize: 11, color: 'var(--gold-deep)', marginTop: 4 }}>
+                Apartments need a flat or unit identifier.
+              </span>
+            )}
+          </div>
+        )}
       </div>
 
       <div className="bf-field">

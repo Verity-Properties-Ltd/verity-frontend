@@ -85,7 +85,6 @@ function seedToRequestProperty(sp: VerificationSeed['property']): RequestPropert
     PostalCode: sp.PostalCode,
     StateOrProvince: sp.StateOrProvince ?? 'Lagos',
     CountyOrParish: sp.CountyOrParish ?? sp.lga ?? '',
-    LotSizeSquareMeters: sp.LotSizeSquareMeters ?? sp.sizeSqm,
   };
 }
 
@@ -216,7 +215,6 @@ export const requestService = {
       StateOrProvince: p.StateOrProvince,
       Country: 'NG',
       PostalCode: p.PostalCode,
-      LotSizeSquareMeters: p.LotSizeSquareMeters,
       BedroomsTotal: bedrooms,
       BathroomsFull: bathsFull,
       BathroomsHalf: bathsHalf,

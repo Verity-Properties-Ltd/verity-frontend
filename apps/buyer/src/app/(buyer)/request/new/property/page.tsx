@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useRequestDraft } from '@/lib/hooks/useRequestDraft';
 import type { RequestProperty } from '@/lib/types/request';
 import { WizardFooter } from '@/components/wizard/WizardFooter';
-import { AddressSection } from '@/components/wizard/AddressSection';
+import { AddressSection, type FlatNumberMode } from '@/components/wizard/AddressSection';
 import { CategorySelector } from '@/components/wizard/CategorySelector';
 import { LandSubCategorySelector } from '@/components/wizard/LandSubCategorySelector';
 import { HouseStyleSelector } from '@/components/wizard/HouseStyleSelector';
@@ -38,6 +38,13 @@ export default function PropertyStep() {
     false;
 
   const bqValid = !p.hasBQ || !!p.bqConfig;
+
+  const flatNumberMode: FlatNumberMode =
+    cat === 'ApartmentFlat'  ? 'required' :
+    cat === 'LandedProperty' ? 'hidden'   :
+    'optional';
+  const unitNumberValid = flatNumberMode !== 'required' || !!(p.UnitNumber ?? '').trim();
+
   const addressValid =
     !!p.streetAddressInput.trim() &&
     !!p.City.trim() &&
@@ -45,13 +52,15 @@ export default function PropertyStep() {
     !!p.StateOrProvince.trim() &&
     (!p.PostalCode || /^\d{6}$/.test(p.PostalCode));
 
-  const valid = !!cat && level2Valid && bedsBathsValid && bqValid && addressValid;
+  const valid =
+    !!cat && level2Valid && bedsBathsValid && bqValid && addressValid && unitNumberValid;
 
   function patchProperty(patch: Partial<RequestProperty>) {
     update((d) => ({ ...d, property: { ...d.property, ...patch } }));
   }
 
   function onCategoryChange(next: UICategory) {
+    const clearsUnitNum = next === 'LandedProperty';
     patchProperty({
       category: next,
       landSubCategory: null,
@@ -68,6 +77,7 @@ export default function PropertyStep() {
       Verity_NG_BQBedroomsTotal: undefined,
       Verity_NG_BQBathroomsFull: undefined,
       Verity_NG_BQBathroomsHalf: undefined,
+      ...(clearsUnitNum && { UnitNumber: undefined }),
     });
   }
 
@@ -205,24 +215,8 @@ export default function PropertyStep() {
               PostalCode: p.PostalCode,
             }}
             onChange={(patch) => patchProperty(patch)}
+            flatNumberMode={flatNumberMode}
           />
-        </section>
-
-        <section>
-          <SectionLabel>Lot size</SectionLabel>
-          <div className="bf-field">
-            <label className="bf-label" htmlFor="sizeSqm">
-              Lot size (m²) <span style={{ fontSize: 10, color: 'var(--slate)' }}>(optional)</span>
-            </label>
-            <input
-              id="sizeSqm"
-              className="bf-input mono"
-              type="number"
-              value={p.LotSizeSquareMeters ?? ''}
-              placeholder="640"
-              onChange={(e) => patchProperty({ LotSizeSquareMeters: e.target.value ? Number(e.target.value) : undefined })}
-            />
-          </div>
         </section>
       </div>
 
