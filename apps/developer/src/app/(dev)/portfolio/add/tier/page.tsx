@@ -83,7 +83,7 @@ export default function TierStep() {
       </div>
 
       <WizardFooter
-        back={{ href: '/portfolio/add/reference', label: 'Back to reference' }}
+        back={{ href: '/portfolio/add/documents', label: 'Back to documents' }}
         primary={{
           label: <>Continue · review <span className="arrow">→</span></>,
           onClick: () => router.push('/portfolio/add/review'),

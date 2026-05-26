@@ -158,7 +158,6 @@ export default function ReviewStep() {
   }
 
   rows.push({ label: 'Documents', field: '—', value: `${docCount} of 4 attached` });
-  rows.push({ label: 'Reference', field: '—', value: draft.ref || '—' });
   rows.push({ label: 'Tier',      field: '—', value: draft.tier === 'premium' ? 'Premium · cohort credit' : 'Standard · cohort credit' });
 
   async function onSubmit() {

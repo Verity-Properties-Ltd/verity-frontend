@@ -87,9 +87,8 @@ export type AddPropertyDraft = {
   /** Optional. A half bath has sink + toilet only. `3` represents "3+". */
   BathroomsHalf: number | null;
 
-  // Documents / reference / tier
+  // Documents / tier
   documents: Partial<Record<DocumentSlot, DocumentMeta>>;
-  ref: string;
   tier: VerificationTier;
 };
 
@@ -129,16 +128,14 @@ export const EMPTY_ADD_DRAFT: AddPropertyDraft = {
   BathroomsHalf: null,
 
   documents: {},
-  ref: '',
   tier: 'premium',
 };
 
 export const ADD_STEPS = [
   { slug: 'type',      num: '01', label: 'Property type & address' },
   { slug: 'documents', num: '02', label: 'Title documents' },
-  { slug: 'reference', num: '03', label: 'Internal reference' },
-  { slug: 'tier',      num: '04', label: 'Verification tier' },
-  { slug: 'review',    num: '05', label: 'Review & submit' },
+  { slug: 'tier',      num: '03', label: 'Verification tier' },
+  { slug: 'review',    num: '04', label: 'Review & submit' },
 ] as const;
 
 export type StepSlug = (typeof ADD_STEPS)[number]['slug'];
