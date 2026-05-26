@@ -49,8 +49,29 @@ export function DashboardClient() {
   const view = viewFor(status);
   const firstName = name.split(' ')[0];
 
+  // Mock-only demo footer — always rendered (matches the empty-state toggle
+  // pattern in PortfolioClient) so we can reset onboarding from the verified
+  // dashboard too.
+  const demoFooter = (
+    <div style={{ marginTop: 16, fontFamily: 'var(--f-meta)', fontSize: 10, color: 'var(--slate)', letterSpacing: '0.18em', textTransform: 'uppercase' }}>
+      Mock data only ·{' '}
+      <button
+        type="button"
+        onClick={onResetForDemo}
+        style={{ background: 'transparent', border: 0, padding: 0, color: 'var(--gold-deep)', letterSpacing: '0.18em', textTransform: 'uppercase', fontFamily: 'inherit', fontSize: 'inherit', cursor: 'pointer', borderBottom: '1px solid var(--gold)' }}
+      >
+        Reset KYC state
+      </button>
+    </div>
+  );
+
   if (view === 'verified') {
-    return <VerifiedDashboard name={name} />;
+    return (
+      <>
+        <VerifiedDashboard name={name} />
+        {demoFooter}
+      </>
+    );
   }
 
   const head = (() => {
@@ -179,16 +200,7 @@ export function DashboardClient() {
         </div>
       </div>
 
-      <div style={{ marginTop: 16, fontFamily: 'var(--f-meta)', fontSize: 10, color: 'var(--slate)', letterSpacing: '0.18em', textTransform: 'uppercase' }}>
-        Mock data only ·{' '}
-        <button
-          type="button"
-          onClick={onResetForDemo}
-          style={{ background: 'transparent', border: 0, padding: 0, color: 'var(--gold-deep)', letterSpacing: '0.18em', textTransform: 'uppercase', fontFamily: 'inherit', fontSize: 'inherit', cursor: 'pointer', borderBottom: '1px solid var(--gold)' }}
-        >
-          Reset KYC state
-        </button>
-      </div>
+      {demoFooter}
     </>
   );
 }
