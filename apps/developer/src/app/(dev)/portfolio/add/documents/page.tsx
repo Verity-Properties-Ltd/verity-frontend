@@ -95,8 +95,8 @@ export default function DocumentsStep() {
       <WizardFooter
         back={{ href: '/portfolio/add/type', label: 'Back to address' }}
         primary={{
-          label: <>Continue · tier <span className="arrow">→</span></>,
-          onClick: () => router.push('/portfolio/add/tier'),
+          label: <>Continue · review <span className="arrow">→</span></>,
+          onClick: () => router.push('/portfolio/add/review'),
           disabled: !hydrated || !hasAllRequired,
         }}
         saveDraft={{

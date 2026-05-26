@@ -522,7 +522,6 @@ function draftToSummary(r: DraftRecord): PropertySummary {
     band: 'unconf',
     status: 'draft',
     createdAt: r.createdAt,
-    tier: d.tier,
     PropertyType:
       d.category === 'LandedProperty' ? 'Land' :
       d.category === 'ResidentialHouse' || d.category === 'ApartmentFlat' ? 'Residential' :

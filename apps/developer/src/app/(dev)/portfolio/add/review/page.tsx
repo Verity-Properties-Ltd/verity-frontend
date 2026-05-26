@@ -158,7 +158,6 @@ export default function ReviewStep() {
   }
 
   rows.push({ label: 'Documents', field: '—', value: `${docCount} of 4 attached` });
-  rows.push({ label: 'Tier',      field: '—', value: draft.tier === 'premium' ? 'Premium · cohort credit' : 'Standard · cohort credit' });
 
   async function onSubmit() {
     if (submitting) return;
@@ -232,7 +231,7 @@ export default function ReviewStep() {
       )}
 
       <WizardFooter
-        back={{ href: '/portfolio/add/tier', label: 'Back to tier' }}
+        back={{ href: '/portfolio/add/documents', label: 'Back to documents' }}
         primary={{
           label: submitting ? 'Submitting…' : <>Submit for verification <span className="arrow">→</span></>,
           onClick: onSubmit,

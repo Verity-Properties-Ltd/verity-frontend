@@ -19,8 +19,6 @@ export type DocumentMeta = {
   type: string;
 };
 
-export type VerificationTier = 'standard' | 'premium';
-
 /**
  * Wizard draft state.
  *
@@ -87,9 +85,8 @@ export type AddPropertyDraft = {
   /** Optional. A half bath has sink + toilet only. `3` represents "3+". */
   BathroomsHalf: number | null;
 
-  // Documents / tier
+  // Documents
   documents: Partial<Record<DocumentSlot, DocumentMeta>>;
-  tier: VerificationTier;
 };
 
 export const EMPTY_ADD_DRAFT: AddPropertyDraft = {
@@ -128,14 +125,12 @@ export const EMPTY_ADD_DRAFT: AddPropertyDraft = {
   BathroomsHalf: null,
 
   documents: {},
-  tier: 'premium',
 };
 
 export const ADD_STEPS = [
   { slug: 'type',      num: '01', label: 'Property type & address' },
   { slug: 'documents', num: '02', label: 'Title documents' },
-  { slug: 'tier',      num: '03', label: 'Verification tier' },
-  { slug: 'review',    num: '04', label: 'Review & submit' },
+  { slug: 'review',    num: '03', label: 'Review & submit' },
 ] as const;
 
 export type StepSlug = (typeof ADD_STEPS)[number]['slug'];
