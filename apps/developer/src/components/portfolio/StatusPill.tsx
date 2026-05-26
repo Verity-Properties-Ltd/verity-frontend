@@ -1,6 +1,7 @@
 import type { PropertyStatus } from '@/lib/types/property';
 
 const MAP: Record<PropertyStatus, { label: string; cls: string }> = {
+  draft: { label: 'Draft', cls: 'draft' },
   verified: { label: 'Active', cls: 'active' },
   'in-verification': { label: 'In verification', cls: 'verifying' },
   'awaiting-docs': { label: 'Awaiting docs', cls: 'verifying' },

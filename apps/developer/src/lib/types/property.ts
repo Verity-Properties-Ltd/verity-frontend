@@ -1,7 +1,9 @@
 import type { Band } from '@/components/dashboard/BandPill';
 import type { RESOProperty } from '@verity/reso';
 
-export type PropertyStatus = 'verified' | 'in-verification' | 'awaiting-docs' | 'expiring' | 'expired';
+export type PropertyStatus =
+  | 'draft'
+  | 'verified' | 'in-verification' | 'awaiting-docs' | 'expiring' | 'expired';
 
 export type PropertySummary = {
   vpid: string;
@@ -11,6 +13,8 @@ export type PropertySummary = {
   status: PropertyStatus;
   verifiedAt?: string;
   expiresAt?: string;
+  /** ISO timestamp — used to sort drafts at the top of the portfolio. */
+  createdAt?: string;
   views30d?: number;
   tier?: 'standard' | 'premium';
   /** Internal developer reference (e.g. LKI-A-12). */

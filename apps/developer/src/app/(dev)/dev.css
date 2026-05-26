@@ -807,6 +807,15 @@
 .dv-status-pill.verifying .dot { background: var(--gold); }
 .dv-status-pill.expired .dot { background: #B07A4A; }
 .dv-status-pill.refresh .dot { background: #5C6BC0; }
+.dv-status-pill.draft .dot {
+  background: transparent;
+  border: 1px solid var(--slate-soft);
+}
+.dv-status-pill.draft .label {
+  color: var(--slate-soft);
+  font-style: italic;
+  letter-spacing: 0.04em;
+}
 .dv-status-pill .label { color: var(--slate); }
 
 /* ─── Bulk action bar ─── */
