@@ -12,6 +12,7 @@ import type {
   VerificationEvent,
 } from '@/lib/types/property';
 import type { AddPropertyDraft } from '@/lib/types/add';
+import { readDraftRecords, removeDraft, type DraftRecord } from '@/lib/hooks/useAddPropertyDraft';
 import {
   buildUnparsedAddress,
   derivePropertySubType,
@@ -504,10 +505,42 @@ function fakeVpid(): string {
   return `VRT-LA-2026-0${n}`;
 }
 
+/**
+ * Project a saved DraftRecord into the PortfolioSummary shape so unsubmitted
+ * work appears in the portfolio table alongside live records. Replaced by a
+ * server-side `property_drafts` query when Supabase swap (issue #1) lands.
+ */
+function draftToSummary(r: DraftRecord): PropertySummary {
+  const d = r.draft;
+  const street = (d.streetAddressInput || '').trim();
+  const address = street || d.Verity_NG_PlotNumber || 'Untitled property';
+  const city = d.City || d.CountyOrParish || '';
+  return {
+    vpid: r.vpid,
+    address,
+    city,
+    band: 'unconf',
+    status: 'draft',
+    createdAt: r.createdAt,
+    tier: d.tier,
+    PropertyType:
+      d.category === 'LandedProperty' ? 'Land' :
+      d.category === 'ResidentialHouse' || d.category === 'ApartmentFlat' ? 'Residential' :
+      undefined,
+    Verity_NG_HouseStyle: d.houseStyle ?? undefined,
+    Verity_NG_ApartmentStyle: d.apartmentStyle ?? undefined,
+    Verity_NG_HasBQ: d.hasBQ,
+  };
+}
+
 export const propertyService = {
   async list(): Promise<PropertySummary[]> {
     await new Promise((r) => setTimeout(r, 120));
-    return isEmptyMode() ? [] : PROPERTIES.map(toSummary);
+    if (isEmptyMode()) return [];
+    const drafts = Object.values(readDraftRecords())
+      .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+      .map(draftToSummary);
+    return [...drafts, ...PROPERTIES.map(toSummary)];
   },
 
   async get(vpid: string): Promise<PropertyDetail | null> {
@@ -516,9 +549,13 @@ export const propertyService = {
     return record ? detailFor(record) : null;
   },
 
-  async submit(draft: AddPropertyDraft): Promise<{ vpid: string }> {
+  async submit(
+    draft: AddPropertyDraft,
+    opts?: { fromDraftVpid?: string },
+  ): Promise<{ vpid: string }> {
     await new Promise((r) => setTimeout(r, 600));
     const vpid = fakeVpid();
+    if (opts?.fromDraftVpid) removeDraft(opts.fromDraftVpid);
 
     // Build a RESO-shaped payload from the wizard draft. Once the backend is
     // wired this is what the POST /api/v1/properties request body will look
