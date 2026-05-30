@@ -1,0 +1,10 @@
+/* Storybook canvas — load the design system fonts via Google Fonts
+   (mirrors the per-app layout.tsx <link>). */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@400;500;700&family=Tenor+Sans&display=swap');
+
+body {
+  font-family: var(--f-serif);
+  color: var(--navy);
+  background: var(--cream);
+  -webkit-font-smoothing: antialiased;
+}
