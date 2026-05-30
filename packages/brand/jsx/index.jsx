@@ -9,8 +9,16 @@ Object.assign(window, {
   Badge, Tag,
   // Alert
   Alert,
+  // Banner
+  Banner,
+  // Overlays
+  Modal, Toast, ToastRegion,
   // Card
   Card,
+  // Table
+  Table,
+  // Domain primitives
+  ConfidenceBand, BandDisplay, Vpid, Vpr,
   // Avatar
   Avatar, AvatarStack,
   // Form
