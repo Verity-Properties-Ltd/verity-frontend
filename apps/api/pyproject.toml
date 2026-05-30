@@ -1,0 +1,45 @@
+# Python tool config for apps/api/
+#
+# Lives here (not at repo root) so the Node/TS root tooling doesn't see
+# Python project metadata and try to do something with it. Future Ruff,
+# Black, Mypy, Pytest configuration also lands here so the team has one
+# canonical place for backend tool config.
+
+[tool.pylint.MASTER]
+# Alembic injects context.config, context.configure(), context.begin_transaction(),
+# context.run_migrations(), and context.is_offline_mode() onto alembic.context at
+# runtime via the migration runner — they're not statically defined on the module.
+# Pylint can't see them and emits E1101 (no-member) on every call site in env.py.
+# Whitelisting the wildcard tells Pylint these are valid dynamic members.
+generated-members = [
+  "alembic.context.*",
+]
+
+[tool.pylint."MESSAGES CONTROL"]
+# Reasonable defaults for an API service. Re-enable individual checks as needed.
+disable = [
+  "missing-module-docstring",
+  "missing-class-docstring",
+  "missing-function-docstring",
+  "too-few-public-methods",
+]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+addopts = "-ra --strict-markers"
+
+[tool.ruff]
+# Placeholder — full Ruff config lands with FND-02 §5 (CI Python job: ruff + black + mypy).
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+# Conservative starter set; expand when FND-02 wires Ruff in CI.
+select = ["E", "F", "W", "I"]
+ignore = []
+
+[tool.mypy]
+# Placeholder — full strict-mode config lands with FND-02 §5.
+python_version = "3.11"
+ignore_missing_imports = true
