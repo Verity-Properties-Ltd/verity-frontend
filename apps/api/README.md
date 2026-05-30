@@ -50,6 +50,35 @@ pytest tests/test_auth.py -v    # one file, verbose
 
 Tests are async (`pytest-asyncio`) and bootstrap via `tests/conftest.py`.
 
+## Local IDE setup (so Pylance + autocomplete resolve)
+
+The backend runs inside Docker, but your editor's Python language server (Pylance / Pyright / JetBrains) needs a **local venv** with the deps installed to provide intellisense, jump-to-definition, and type checking. Without this you'll see `Import "sqlalchemy" could not be resolved` on every backend file.
+
+One-time setup:
+
+```sh
+cd apps/api
+python3 -m venv .venv
+.venv/bin/pip install --upgrade pip
+.venv/bin/pip install -r requirements-dev.txt
+```
+
+Then point your editor at the venv interpreter:
+
+- **VSCode** — create `.vscode/settings.json` at the repo root (gitignored, local only):
+  ```json
+  {
+    "python.defaultInterpreterPath": "${workspaceFolder}/apps/api/.venv/bin/python",
+    "python.analysis.extraPaths": ["${workspaceFolder}/apps/api"]
+  }
+  ```
+  Then `Cmd+Shift+P` → *"Python: Restart Language Server"*.
+- **JetBrains (PyCharm)** — `Preferences → Project → Python Interpreter → Add → Existing → apps/api/.venv/bin/python`.
+
+The venv is gitignored (`.venv/`); it lives only on your machine. Production code runs from the Docker image regardless.
+
+Local Python version is up to you (3.10+ works for IDE resolution); the Docker image pins 3.11.
+
 ## Folder map
 
 ```
