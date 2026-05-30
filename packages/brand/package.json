@@ -5,11 +5,15 @@
   "type": "module",
   "files": [
     "tokens",
-    "logos"
+    "logos",
+    "jsx"
   ],
   "exports": {
     "./tokens/index.css": "./tokens/index.css",
     "./tokens/*.css": "./tokens/*.css",
+    "./tokens/tailwind.config": "./tokens/tailwind.config.ts",
+    "./tokens/tokens.json": "./tokens/tokens.json",
+    "./jsx/*": "./jsx/*",
     "./logos/*": "./logos/*"
   }
 }
