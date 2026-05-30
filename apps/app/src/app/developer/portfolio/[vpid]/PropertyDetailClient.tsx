@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { propertyService } from '@dev/lib/services';
 import type { PropertyDetail } from '@dev/lib/types/property';
+import { Vpid } from '@verity/brand/jsx';
 import { PropertyHero } from '@dev/components/property/PropertyHero';
 import { PropertyOverview } from '@dev/components/property/PropertyOverview';
 import { TabStrip } from '@dev/components/property/TabStrip';
@@ -31,7 +32,7 @@ export function PropertyDetailClient({ vpid }: { vpid: string }) {
       <div>
         <h1 style={{ fontFamily: 'var(--f-display)', fontSize: 28, color: 'var(--navy)' }}>Property not found</h1>
         <p style={{ color: 'var(--slate)', marginTop: 12 }}>
-          The VPID <span style={{ fontFamily: 'var(--f-meta)' }}>{vpid}</span> isn&rsquo;t in your portfolio.
+          The VPID <Vpid id={vpid} /> isn&rsquo;t in your portfolio.
         </p>
         <Link href="/developer/portfolio" className="dv-btn outline" style={{ display: 'inline-flex', marginTop: 16 }}>
           ← Back to portfolio
