@@ -1,10 +1,9 @@
 /**
- * Verity — Logo (mark + lockups). Canonical ES-module port of Logo.jsx.
+ * Verity — Logo (mark + lockups). Canonical ES-module surface.
  *
- * `verity-brand/jsx/Logo.jsx` is the Drive source; Drive ships .jsx with the
- * `Object.assign(window, ...)` global-injection pattern designed for the
- * HTML showcase. This .tsx is the consumable-by-Next-apps mirror — keep
- * prop signatures and DOM output in sync with the .jsx source.
+ * The sibling Logo.jsx uses the `Object.assign(window, ...)` global-injection
+ * pattern from the original HTML showcase and is kept for reference. Apps
+ * import the typed exports from this .tsx.
  */
 export type VerityMarkProps = {
   size?: number;

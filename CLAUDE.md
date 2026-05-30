@@ -4,7 +4,7 @@ Notion is the single source of truth for what to build. Four canonical documents
 
 - **PRD v2.1** — what to build, in what order, with what success criteria. https://app.notion.com/p/VERITY-Product-Requirements-Document-v2-1-36ffea3e5fa78182b51fc456b3bb2fa6
 - **UI/UX Architecture v1.3** — companion to PRD; IA, navigation, sitemap, URL structure. https://app.notion.com/p/VERITY-Phase-1-UI-UX-Architecture-v1-3-36ffea3e5fa781c89562f846d733bec2
-- **Design System & Brand Assets** — canonical source is `verity-brand/` Google Drive folder (synced to repo root, NOT in git). https://app.notion.com/p/Design-System-Brand-Assets-36cfea3e5fa7817cbde2eadc6093653a
+- **Design System & Brand Assets** — vendored canonically in `packages/brand/` (tokens, jsx, logos). Notion page mirrors the standards for reference: https://app.notion.com/p/Design-System-Brand-Assets-36cfea3e5fa7817cbde2eadc6093653a
 - **VERITY Build Backlog** — 104 user stories. https://app.notion.com/p/102f472f1bd742308da6bec987bdadf6
 
 PRD §How-to-read defines the document-vs-code governance rule: when this codebase and the PRD disagree, **the codebase is source of truth for current behaviour**, and the PRD must be updated with a dated Change Notice. The one exception is identifier formats (PRD §4.2 VPID Base-36 + Luhn, §4.3 VPR-YYYY-NNNNNN) — those are canonical in the PRD and the code must conform.
@@ -27,9 +27,8 @@ packages/
 ├── fixtures/    shared fixture data exported as @verity/fixtures
 └── reso/        RESO Data Dictionary v2.0 types + 774 NG LGAs as @verity/reso
 
-verity-brand/    Drive-synced design system (NOT git-tracked; don't edit here)
-
 docs/            VERITY_RESO_* implementation specs (back @verity/reso)
+                 + design-system-standards.md (voice / banned patterns / governance)
 docs/archive/    superseded flow plans (now in UI/UX §4 + §5)
 
 reference/landing-expansion/   raw mvp components for the LND-EXP-* backlog
@@ -75,7 +74,7 @@ Five locked rules:
 5. **Tenor Sans is reserved for the wordmark.** Cormorant for display/body, DM Mono for identifiers (VPID, VPR), DM Sans for rare UI utility.
 
 Banned patterns enforced by CI lint when wired (post-consolidation):
-- Off-token colour / font-size / spacing / radius literals (must come from `verity-brand/tokens/`).
+- Off-token colour / font-size / spacing / radius literals (must come from `packages/brand/tokens/`).
 - `linear-gradient` / `radial-gradient` outside `.seal`.
 - `box-shadow` on non-overlay selectors.
 - Tenor Sans usage outside the wordmark.

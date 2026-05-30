@@ -1,10 +1,11 @@
 /**
  * Canonical Verity design-system primitives — proper ES module exports.
  *
- * The .jsx files under this directory mirror verity-brand/jsx/ (the Drive
- * showcase source); the .tsx files here are the consumable-by-Next-apps
- * port. When a primitive needs to be used inside an app, port it to .tsx
- * with proper TypeScript typing and re-export from here.
+ * The .jsx files under this directory are the original HTML-showcase
+ * versions (global-injection pattern); the .tsx files here are the
+ * consumable-by-Next-apps port. When a primitive needs to be used inside
+ * an app, port it to .tsx with proper TypeScript typing and re-export
+ * from here.
  *
  * Trust-critical primitives (PRD §11.2 — founder-review required to change):
  *   Vpid, Vpr, ConfidenceBand, BandDisplay, VerityMark, VerityWordmark.

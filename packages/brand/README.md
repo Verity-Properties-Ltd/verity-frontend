@@ -3,10 +3,9 @@
 A complete, production-ready brand and UI system for Verity.
 
 ```
-verity-brand/
+packages/brand/
 ├── README.md                  ← this file
-├── index.html                 ← visual showcase of every asset
-├── logos/                     ← SVG master files
+├── logos/                     ← SVG master files + sized PNG exports
 │   ├── verity-mark.svg
 │   ├── verity-mark-cream.svg
 │   ├── verity-wordmark.svg
