@@ -27,9 +27,8 @@ packages/
 ├── fixtures/    shared fixture data exported as @verity/fixtures
 └── reso/        RESO Data Dictionary v2.0 types + 774 NG LGAs as @verity/reso
 
-docs/            VERITY_RESO_* implementation specs (back @verity/reso)
-                 + design-system-standards.md (voice / banned patterns / governance)
-docs/archive/    superseded flow plans (now in UI/UX §4 + §5)
+docs/            design-system-standards.md (voice / banned patterns / governance)
+                 RESO implementation specs live in Notion (see source-of-truth links above)
 
 reference/landing-expansion/   raw mvp components for the LND-EXP-* backlog
 ```
