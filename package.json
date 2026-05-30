@@ -9,16 +9,16 @@
     "packages/*"
   ],
   "scripts": {
-    "dev:landing": "npm run dev --workspace=@verity/landing",
-    "dev:app": "npm run dev --workspace=@verity/app",
-    "dev:public": "npm run dev --workspace=@verity/public-page",
-    "dev:storybook": "npm run dev --workspace=@verity/storybook",
-    "build:landing": "npm run build --workspace=@verity/landing",
-    "build:app": "npm run build --workspace=@verity/app",
-    "build:public": "npm run build --workspace=@verity/public-page",
-    "build:storybook": "npm run build --workspace=@verity/storybook",
-    "dev:api": "cd apps/api && docker compose up",
-    "dev:api:down": "cd apps/api && docker compose down",
+    "dev:landing": "node init && npm run dev --workspace=@verity/landing",
+    "dev:app": "node init && npm run dev --workspace=@verity/app",
+    "dev:public": "node init && npm run dev --workspace=@verity/public-page",
+    "dev:storybook": "node init && npm run dev --workspace=@verity/storybook",
+    "build:landing": "node init && npm run build --workspace=@verity/landing",
+    "build:app": "node init && npm run build --workspace=@verity/app",
+    "build:public": "node init && npm run build --workspace=@verity/public-page",
+    "build:storybook": "node init && npm run build --workspace=@verity/storybook",
+    "dev:api": "node init && cd apps/api && docker compose up",
+    "dev:api:down": "node init && cd apps/api && docker compose down",
     "test:api": "cd apps/api && pytest",
     "logs:api": "cd apps/api && docker compose logs -f api worker"
   }
