@@ -1,5 +1,5 @@
 import { Brand } from '@/components/brand/Brand';
-import { VerityMark } from '@/components/brand/VerityMark';
+import { VerityMark } from '@verity/brand/jsx';
 
 export function BuyerAuthShell({ children }: { children: React.ReactNode }) {
   return (

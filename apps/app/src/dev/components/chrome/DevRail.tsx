@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { VerityMarkCream } from '@dev/components/brand/VerityMarkCream';
+import { VerityMark } from '@verity/brand/jsx';
 import { authService } from '@dev/lib/services';
 
 const WORKSPACE = [
@@ -48,7 +48,7 @@ export function DevRail() {
   return (
     <aside className="dv-rail">
       <Link href="/developer" className="brand">
-        <VerityMarkCream size={28} />
+        <VerityMark size={28} fill="#F5F2ED" />
         <div>
           <div className="word">VERITY</div>
           <div className="meta">Developer · Lagos</div>

@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { VerityMark } from '@/components/brand/VerityMark';
+import { VerityMark } from '@verity/brand/jsx';
 import { authService } from '@/lib/services';
 
 const ITEMS = [

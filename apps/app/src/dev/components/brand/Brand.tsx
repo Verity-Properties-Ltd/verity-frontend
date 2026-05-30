@@ -1,4 +1,4 @@
-import { VerityMark } from './VerityMark';
+import { VerityMark } from '@verity/brand/jsx';
 
 export function Brand({ meta }: { meta?: string }) {
   return (

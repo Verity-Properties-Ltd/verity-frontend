@@ -1,5 +1,5 @@
 import { Brand } from '@dev/components/brand/Brand';
-import { VerityMarkCream } from '@dev/components/brand/VerityMarkCream';
+import { VerityMark } from '@verity/brand/jsx';
 
 export function DevAuthShell({ children }: { children: React.ReactNode }) {
   return (
@@ -10,7 +10,7 @@ export function DevAuthShell({ children }: { children: React.ReactNode }) {
 
       <aside className="dv-auth-brand">
         <div className="head">
-          <VerityMarkCream size={32} />
+          <VerityMark size={32} fill="#F5F2ED" />
           <div>
             <div className="word">VERITY</div>
             <div className="meta">Founding 50 · Cohort 014</div>

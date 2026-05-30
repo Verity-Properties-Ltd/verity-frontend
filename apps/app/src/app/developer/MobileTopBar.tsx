@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { VerityMark } from '@dev/components/brand/VerityMark';
+import { VerityMark } from '@verity/brand/jsx';
 import { authService } from '@dev/lib/services';
 
 export function MobileTopBar() {
