@@ -6,8 +6,9 @@ services:
       - .env
     environment:
       APP_ENV: local
-      FRONTEND_URL: http://localhost:5173
-      BACKEND_CORS_ORIGINS: '["http://localhost:5173","http://localhost:3000","http://localhost:5174"]'
+      FRONTEND_URL: http://localhost:3001
+      # Monorepo dev ports: 3000 landing · 3001 app (buyer + developer + internal) · 3002 public-page · 6006 Storybook
+      BACKEND_CORS_ORIGINS: '["http://localhost:3000","http://localhost:3001","http://localhost:3002","http://localhost:6006"]'
       DATABASE_URL: postgresql+asyncpg://verity:verity_dev@postgres:5432/verity_db
       MONGODB_URI: mongodb://mongo:27017/verity_docs
       REDIS_URL: redis://redis:6379/0
