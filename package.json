@@ -12,6 +12,8 @@
     "dev:public": "npm run dev --workspace=@verity/public-page",
     "build:landing": "npm run build --workspace=@verity/landing",
     "build:app": "npm run build --workspace=@verity/app",
-    "build:public": "npm run build --workspace=@verity/public-page"
+    "build:public": "npm run build --workspace=@verity/public-page",
+    "dev:storybook": "npm run dev --workspace=@verity/storybook",
+    "build:storybook": "npm run build --workspace=@verity/storybook"
   }
 }
