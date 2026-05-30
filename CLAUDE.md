@@ -20,7 +20,8 @@ apps/
 │       ├── buyer/                  UI/UX §4 — diaspora buyer journey
 │       ├── developer/              UI/UX §5 — Founding 50 portfolio
 │       └── internal/               UI/UX §7 — specialist · ops · admin · registry (Phase 4 scaffolds)
-└── public-page/ verity.properties/v/{VPID} — share-safe certificate (UI/UX §6)
+├── public-page/ verity.properties/v/{VPID} — share-safe certificate (UI/UX §6)
+└── api/         FastAPI backend (Python) — vendored via git subtree from Verity-Properties-Ltd/verity-backend
 
 packages/
 ├── brand/       design tokens (CSS) exported as @verity/brand
@@ -56,12 +57,17 @@ The buyer routes import from `@/components/*` and `@/lib/*`; the developer route
 ## Dev scripts
 
 ```
-npm run dev:landing   # port 3000
-npm run dev:app       # port 3001
-npm run dev:public    # port 3002
+npm run dev:landing    # port 3000
+npm run dev:app        # port 3001
+npm run dev:public     # port 3002
+npm run dev:storybook  # port 6006
+npm run dev:api        # port 8001 — docker compose up (postgres + redis + mongo + localstack + api + worker)
+npm run dev:api:down   # tear it down
+npm run test:api       # pytest in apps/api/
+npm run logs:api       # tail api + worker logs
 ```
 
-Build scripts: `build:landing`, `build:app`, `build:public`.
+Build scripts: `build:landing`, `build:app`, `build:public`, `build:storybook`.
 
 ## Design system discipline (PRD §11.3)
 
@@ -90,14 +96,36 @@ Voice (UI/UX §3.6 hybrid model):
 - **"We" voice on marketing surfaces** (landing, blog, press, social, founder bios). Warm, first-person.
 - **Institutional voice inside the product** (buyer dashboard, developer dashboard, certificate, public verification page, internal admin console, API docs, transactional emails). Restrained, evidence-led, no "we".
 
-## Mock service seams (open backend decision)
+## Backend — `apps/api/`
 
-All four authenticated-side services are mocked behind a clean interface:
+FastAPI service, vendored via `git subtree` from `Verity-Properties-Ltd/verity-backend`. Backend stack (FND-01 Option A — Python/FastAPI) per PRD §7.1.
+
+Stack: FastAPI · SQLAlchemy + Alembic · Postgres · Redis · MongoDB · `arq` background workers · JWT (RS256) · bcrypt · S3 (LocalStack in dev) · Docker Compose.
+
+Layout (inside `apps/api/`):
+- `app/main.py` — FastAPI entry; registers middleware + `/api/v1` router + startup health checks
+- `app/api/v1/` — versioned route handlers (auth, users, companies, properties, documents, orders, reports, verifications, admin, health)
+- `app/services/` — business-logic layer. **Route handlers stay thin and call services.**
+- `app/models/` — SQLAlchemy models
+- `app/schemas/` — Pydantic request / response schemas (the API contract)
+- `app/core/` — config, db, security, redis, mongo, session store
+- `app/workers/` — `arq` workers (OCR, report compilation, email)
+- `alembic/` — Postgres migrations
+- `tests/` — async API tests (pytest)
+- `SYSTEM_OVERVIEW.md` — comprehensive arch + every endpoint's contract
+
+Run locally: `npm run dev:api` (brings up the full stack on port 8001). Health check: `curl http://localhost:8001/api/v1/health`.
+
+When backend changes upstream: `cd apps/api && git subtree pull --prefix=apps/api https://github.com/Verity-Properties-Ltd/verity-backend.git main --squash`. Frontend dev keeps working against mock services regardless of backend state.
+
+## Mock service seams
+
+The authenticated-side services are mocked behind a clean interface:
 - `apps/app/src/lib/services/index.ts` — buyer-side (authService, requestService, certificateService, shareService)
 - `apps/app/src/dev/lib/services/index.ts` — developer-side (authService, propertyService, distributionService, kycService, accountService)
 - `apps/public-page/src/lib/services/index.ts` — public-side (certificateService only)
 
-The backend stack (FastAPI vs Supabase) is an open CTO decision per PRD §14.5 / FND-01. Don't introduce backend coupling in `services/*` until that decision lands — keep the mock interface as the abstraction boundary.
+The mock seams stay as the test + offline-dev path even after the backend wires in. Per-story BUY-* / DEV-* work swaps each mock to a real HTTP impl pointing at `localhost:8001/api/v1/` in dev.
 
 ## Local LocalStorage keys (mock services)
 
