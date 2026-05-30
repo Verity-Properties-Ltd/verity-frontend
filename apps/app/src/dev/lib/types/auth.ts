@@ -4,13 +4,15 @@
  * extract a shared auth package later, this becomes the canonical type.
  */
 
-export type Role = 'buyer' | 'developer';
+export type Role = 'buyer' | 'developer' | 'internal';
+export type InternalSubRole = 'specialist' | 'ops' | 'admin' | 'registry';
 
 export type Session = {
   userId: string;
   fullName: string;
   email: string;
   role: Role;
+  subRole?: InternalSubRole;
   createdAt: string;
 };
 
