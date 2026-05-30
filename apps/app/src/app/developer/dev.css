@@ -1424,3 +1424,233 @@ select.dv-input:focus {
 @media (min-width: 768px) {
   .dv-compliance-grid { grid-template-columns: repeat(3, 1fr) !important; }
 }
+
+/* ─── Verification panel (Phase 3 — workflow snapshot on property detail) ─── */
+
+.dv-verification {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  padding: 28px 0 8px;
+}
+.dv-verification-head {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; flex-wrap: wrap;
+}
+.dv-verification-head .pills {
+  display: inline-flex; align-items: center; gap: 10px;
+}
+.dv-verification-head .ana-ref {
+  font-family: var(--f-meta); font-size: 10px;
+  color: var(--slate); letter-spacing: 0.18em; text-transform: uppercase;
+}
+.dv-verification-head .ana-ref .v {
+  color: var(--navy); letter-spacing: 0.06em;
+}
+.dv-verification-summary {
+  font-family: var(--f-body); font-size: 15px; line-height: 1.65;
+  color: var(--navy); margin: 0; max-width: 78ch;
+}
+
+/* ── Risk + result pills ── */
+.dv-risk-pill, .dv-result-pill {
+  display: inline-flex; align-items: center;
+  font-family: var(--f-meta); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 3px;
+}
+.dv-risk-pill.tone-low      { background: rgba(58,122,92,0.10);  color: #2d5e44; border: 1px solid rgba(58,122,92,0.30); }
+.dv-risk-pill.tone-medium   { background: rgba(184,134,42,0.12); color: var(--gold-deep); border: 1px solid rgba(184,134,42,0.30); }
+.dv-risk-pill.tone-high     { background: rgba(168,48,42,0.10);  color: #8a2620; border: 1px solid rgba(168,48,42,0.30); }
+.dv-result-pill.tone-verified    { background: var(--navy); color: var(--cream); }
+.dv-result-pill.tone-conditional { background: var(--gold); color: var(--navy); }
+.dv-result-pill.tone-flagged     { background: rgba(168,48,42,0.12); color: #8a2620; }
+.dv-result-pill.tone-pending     { background: var(--cream-shade); color: var(--slate); }
+
+/* ── Step tracker ── */
+.dv-step-tracker {
+  display: flex; flex-direction: column; gap: 12px;
+  padding: 22px;
+  background: var(--cream);
+  border: 1px solid var(--line);
+}
+.dv-step-tracker-rail {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+  position: relative;
+}
+.dv-step {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 10px;
+  padding-top: 4px; position: relative;
+}
+.dv-step .marker {
+  width: 18px; height: 18px; border-radius: 999px;
+  background: var(--cream);
+  border: 1px solid var(--line-strong);
+  display: inline-flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.dv-step .marker .dot {
+  width: 6px; height: 6px; border-radius: 999px;
+  background: var(--slate-soft);
+}
+.dv-step.past .marker        { background: var(--gold); border-color: var(--gold); }
+.dv-step.past .marker .dot   { background: var(--navy); }
+.dv-step.current .marker     { background: var(--navy); border-color: var(--navy); }
+.dv-step.current .marker .dot { background: var(--gold); }
+
+.dv-step .meta { display: flex; flex-direction: column; gap: 2px; }
+.dv-step .label {
+  font-family: var(--f-meta); font-size: 10px; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--slate);
+}
+.dv-step.past .label, .dv-step.current .label { color: var(--navy); }
+.dv-step .desc {
+  font-family: var(--f-body); font-size: 12px; color: var(--slate);
+  line-height: 1.4;
+}
+.dv-step-eta {
+  font-family: var(--f-meta); font-size: 10px; color: var(--slate);
+  letter-spacing: 0.18em; text-transform: uppercase;
+}
+.dv-step-eta .v { color: var(--gold-deep); letter-spacing: 0.06em; }
+
+/* ── Verification grid layout (2 columns at desktop, stack on mobile) ── */
+.dv-verification-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+@media (min-width: 900px) {
+  .dv-verification-grid { grid-template-columns: 1fr 1fr; }
+  .dv-verification-grid .dv-section-wide { grid-column: 1 / -1; }
+}
+.dv-section { display: flex; flex-direction: column; gap: 12px; }
+.dv-section-head {
+  font-family: var(--f-meta); font-size: 10px; letter-spacing: 0.20em;
+  color: var(--slate); text-transform: uppercase;
+  margin: 0;
+  font-weight: 500;
+}
+
+/* ── AVM card ── */
+.dv-avm {
+  padding: 24px;
+  border: 1px solid var(--line);
+  background: #fff;
+  display: flex; flex-direction: column; gap: 12px;
+}
+.dv-avm-head {
+  display: flex; align-items: center; justify-content: space-between;
+}
+.dv-avm-head .lbl {
+  font-family: var(--f-meta); font-size: 10px; color: var(--gold-deep);
+  letter-spacing: 0.20em; text-transform: uppercase;
+}
+.dv-avm-head .aux {
+  font-family: var(--f-meta); font-size: 9px; color: var(--slate);
+  letter-spacing: 0.18em; text-transform: uppercase;
+}
+.dv-avm-value {
+  font-family: var(--f-display); font-size: 36px; line-height: 1.1;
+  color: var(--navy); font-weight: 500; letter-spacing: -0.01em;
+}
+.dv-avm-confidence {
+  display: flex; align-items: center; gap: 8px;
+  font-family: var(--f-meta); font-size: 11px; color: var(--slate);
+}
+.dv-avm-confidence .dot { width: 6px; height: 6px; border-radius: 999px; background: var(--gold); }
+.dv-avm-confidence .pct {
+  font-size: 13px; color: var(--navy); letter-spacing: 0.06em;
+}
+.dv-avm-confidence .cap { letter-spacing: 0.16em; text-transform: uppercase; font-size: 10px; }
+.dv-avm-meter {
+  height: 4px; background: var(--cream-shade); border-radius: 999px; overflow: hidden;
+}
+.dv-avm-meter .bar { height: 100%; background: var(--gold); }
+.dv-avm.tone-high    .bar { background: var(--gold); }
+.dv-avm.tone-medium  .bar { background: var(--gold-deep); }
+.dv-avm.tone-low     .bar { background: var(--slate); }
+
+/* ── Checks list ── */
+.dv-checks { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+.dv-check {
+  display: grid;
+  grid-template-columns: 28px 1fr auto;
+  align-items: center; gap: 14px;
+  padding: 14px 16px;
+  background: var(--cream);
+  border: 1px solid var(--line);
+}
+.dv-check-icon {
+  width: 24px; height: 24px;
+  border-radius: 999px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--cream-shade);
+  color: var(--slate);
+  font-size: 14px; font-weight: 600;
+}
+.dv-check.tone-pass    .dv-check-icon { background: rgba(58,122,92,0.18); color: #2d5e44; }
+.dv-check.tone-fail    .dv-check-icon { background: rgba(168,48,42,0.16); color: #8a2620; }
+.dv-check.tone-pending .dv-check-icon { background: var(--cream-shade); color: var(--slate); }
+.dv-check-body .name {
+  font-family: var(--f-body); font-size: 14px; color: var(--navy);
+  font-weight: 500;
+}
+.dv-check-body .desc {
+  font-family: var(--f-body); font-size: 12.5px; color: var(--slate);
+  margin-top: 2px; line-height: 1.5;
+}
+.dv-check-tag {
+  font-family: var(--f-meta); font-size: 9px; letter-spacing: 0.20em;
+  padding: 2px 8px;
+  border-radius: 3px;
+}
+.dv-check.tone-pass    .dv-check-tag { background: rgba(58,122,92,0.14); color: #2d5e44; }
+.dv-check.tone-fail    .dv-check-tag { background: rgba(168,48,42,0.14); color: #8a2620; }
+.dv-check.tone-pending .dv-check-tag { background: var(--cream-shade); color: var(--slate); }
+
+/* ── Extracted fields table ── */
+.dv-fields-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--f-body);
+  font-size: 13.5px;
+  color: var(--navy);
+}
+.dv-fields-table thead th {
+  text-align: left;
+  font-family: var(--f-meta); font-size: 9px; letter-spacing: 0.20em;
+  color: var(--slate); text-transform: uppercase;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--line);
+  font-weight: 500;
+}
+.dv-fields-table tbody td {
+  padding: 12px;
+  border-bottom: 1px solid var(--line);
+}
+.dv-fields-table tbody td.field { color: var(--slate); font-size: 12.5px; }
+.dv-fields-table tbody td.value { font-weight: 500; }
+.dv-fields-table .dv-conf-col { width: 110px; }
+
+.dv-conf-pill {
+  display: inline-flex; align-items: center;
+  font-family: var(--f-meta); font-size: 9px; letter-spacing: 0.18em;
+  padding: 3px 8px; border-radius: 3px;
+  text-transform: uppercase;
+}
+.dv-conf-pill.tone-high   { background: rgba(58,122,92,0.16); color: #2d5e44; }
+.dv-conf-pill.tone-medium { background: rgba(184,134,42,0.14); color: var(--gold-deep); }
+.dv-conf-pill.tone-low    { background: rgba(168,48,42,0.12); color: #8a2620; }
+
+/* ── Analyst notes ── */
+.dv-analyst-notes {
+  font-family: var(--f-body); font-size: 14px; line-height: 1.65;
+  color: var(--navy); margin: 0;
+  padding: 16px 20px;
+  background: var(--cream);
+  border-left: 2px solid var(--gold);
+  max-width: 78ch;
+}

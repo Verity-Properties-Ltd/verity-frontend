@@ -10,6 +10,7 @@ import type {
   PropertyDetail,
   PropertySummary,
   VerificationEvent,
+  VerificationWorkflow,
 } from '@dev/lib/types/property';
 import type { AddPropertyDraft } from '@dev/lib/types/add';
 import { readDraftRecords, removeDraft, type DraftRecord } from '@dev/lib/hooks/useAddPropertyDraft';
@@ -470,6 +471,69 @@ const HISTORY_FALLBACK: VerificationEvent[] = [
   },
 ];
 
+/** Workflow snapshot for a fully verified property — five checks pass, AVM
+ *  high-confidence, extracted fields high-confidence. Mirrors the analyst
+ *  console output once the backend is wired (PRD §5.5 / UI/UX §7.2). */
+const WORKFLOW_VERIFIED: VerificationWorkflow = {
+  currentStep: 'complete',
+  riskRating: 'low',
+  overallResult: 'verified',
+  summary:
+    'This property has been successfully verified. Title ownership is confirmed, no fraud indicators detected, and the AVM valuation is consistent with comparable properties in the area.',
+  avmValue: '₦185,000,000',
+  avmConfidence: 87,
+  checks: [
+    { id: 'title',       name: 'Title Authenticity',         description: 'Document verified against Lagos State Land Registry records.',          result: 'pass' },
+    { id: 'ownership',   name: 'Ownership Verification',     description: 'Registered owner confirmed — no conflicting claims found.',              result: 'pass' },
+    { id: 'duplicate',   name: 'Double-Selling Detection',   description: 'Address cross-checked against existing verified properties.',            result: 'pass' },
+    { id: 'boundary',    name: 'Boundary Dispute Check',     description: 'GPS coordinates verified — no boundary conflicts within 50m.',            result: 'pass' },
+    { id: 'price',       name: 'Price Anomaly Detection',    description: 'Listing price is within expected range for this LGA and property type.', result: 'pass' },
+  ],
+  extractedFields: [
+    { field: 'Title Number',     value: 'MO/2019/3421',         confidence: 'high'   },
+    { field: 'Registered Owner', value: 'Okonkwo Properties Ltd', confidence: 'high' },
+    { field: 'Date of Issue',    value: '12 March 2019',         confidence: 'high'  },
+    { field: 'Land Use',         value: 'Residential',           confidence: 'high'  },
+    { field: 'Plot Size',        value: '1,800 sqft',            confidence: 'medium' },
+    { field: 'LGA',              value: 'Eti-Osa',               confidence: 'high'  },
+  ],
+  analystNotes:
+    'All documents are consistent and authentic. Survey plan dimensions match the C of O description. No encumbrances or caveats noted at time of search.',
+  analystRef: 'VRT-ANA-0042',
+};
+
+/** Workflow snapshot for a property mid-verification — analyst review pending,
+ *  AVM provisional, two checks pending, extracted fields mostly high but plot
+ *  size is medium and registered owner is pending second review. */
+const WORKFLOW_IN_PROGRESS: VerificationWorkflow = {
+  currentStep: 'analyst-review',
+  estimatedCompletion: '~48 hours',
+  riskRating: 'medium',
+  overallResult: 'pending',
+  summary:
+    'AI extraction complete; awaiting senior analyst sign-off on ownership chain. No fraud indicators detected so far. Field visit scheduled for tomorrow.',
+  avmValue: '₦92,000,000',
+  avmConfidence: 71,
+  checks: [
+    { id: 'title',       name: 'Title Authenticity',         description: 'Document verified against Lagos State Land Registry records.',          result: 'pass'    },
+    { id: 'ownership',   name: 'Ownership Verification',     description: 'Awaiting second-analyst confirmation on assignment chain.',             result: 'pending' },
+    { id: 'duplicate',   name: 'Double-Selling Detection',   description: 'Address cross-checked against existing verified properties.',            result: 'pass'    },
+    { id: 'boundary',    name: 'Boundary Dispute Check',     description: 'Field-agent visit scheduled to confirm GPS coordinates.',                result: 'pending' },
+    { id: 'price',       name: 'Price Anomaly Detection',    description: 'Listing price is within expected range for this LGA and property type.', result: 'pass'    },
+  ],
+  extractedFields: [
+    { field: 'Title Number',     value: 'LS/2023/0918',           confidence: 'high'   },
+    { field: 'Registered Owner', value: 'Banana Island Holdings Ltd', confidence: 'medium' },
+    { field: 'Date of Issue',    value: '08 February 2023',       confidence: 'high'   },
+    { field: 'Land Use',         value: 'Residential',            confidence: 'high'   },
+    { field: 'Plot Size',        value: '1,240 sqm',              confidence: 'medium' },
+    { field: 'LGA',              value: 'Eti-Osa',                confidence: 'high'   },
+  ],
+  analystNotes:
+    'Title document extraction looks clean. One open question on the chain of assignment from the original 2003 grantor — pulled file from the registry; awaiting second analyst review.',
+  analystRef: 'VRT-ANA-0073',
+};
+
 const DISTRIBUTION_FALLBACK: DistributionEvent[] = [
   { id: 'd1', when: '11 May · 14:08', what: 'Public certificate viewed via', source: 'lekkiheights.com/lekki-block-a', channel: 'web' },
   { id: 'd2', when: '11 May · 11:42', what: 'PDF certificate downloaded by', source: 'sales@lekkiheights.com', channel: 'email' },
@@ -477,6 +541,12 @@ const DISTRIBUTION_FALLBACK: DistributionEvent[] = [
   { id: 'd4', when: '09 May · 09:31', what: 'QR code scanned at', source: 'On-site signage · Plot 12', channel: 'qr' },
   { id: 'd5', when: '07 May · 14:02', what: 'Public certificate viewed via', source: 'verity.properties/v/VRT-LA-2025-0184', channel: 'direct' },
 ];
+
+function workflowFor(r: MockRecord): VerificationWorkflow | undefined {
+  if (r.status === 'in-verification' || r.status === 'awaiting-docs') return WORKFLOW_IN_PROGRESS;
+  if (r.status === 'verified' || r.status === 'expiring' || r.status === 'expired') return WORKFLOW_VERIFIED;
+  return undefined;
+}
 
 function detailFor(r: MockRecord): PropertyDetail {
   return {
@@ -497,6 +567,7 @@ function detailFor(r: MockRecord): PropertyDetail {
     },
     history: HISTORY_FALLBACK,
     distribution: DISTRIBUTION_FALLBACK,
+    workflow: workflowFor(r),
   };
 }
 

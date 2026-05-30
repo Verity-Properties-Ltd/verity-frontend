@@ -88,6 +88,50 @@ export type SalesMetadata = {
   notes?: string;
 };
 
+/** Eight-stage workflow per PRD v2.1 §14.3 collapsed to a five-step status tracker
+ *  for the developer-facing surface (UI/UX v1.3 §5.6). */
+export type VerificationStep = 'uploaded' | 'under-review' | 'ai-processing' | 'analyst-review' | 'complete';
+
+export type RiskRating = 'low' | 'medium' | 'high';
+
+export type OverallResult = 'verified' | 'conditional' | 'flagged' | 'pending';
+
+export type ConfidenceLevel = 'high' | 'medium' | 'low';
+
+export type VerificationCheck = {
+  /** Stable id for keying. */
+  id: string;
+  /** Display name (one of the five evidence workstreams — title, ownership,
+   *  encumbrance, survey, risk — per UI/UX §7.2). */
+  name: string;
+  description: string;
+  result: 'pass' | 'fail' | 'pending';
+};
+
+export type ExtractedField = {
+  field: string;
+  value: string;
+  confidence: ConfidenceLevel;
+};
+
+/** The verification workflow snapshot rendered on a property's Verification tab.
+ *  Sourced from the analyst console once the backend is wired (PRD §5.5); for
+ *  now seeded from fixtures so the developer surface has UI parity with mvp. */
+export type VerificationWorkflow = {
+  currentStep: VerificationStep;
+  estimatedCompletion?: string;
+  riskRating: RiskRating;
+  overallResult: OverallResult;
+  summary: string;
+  avmValue: string;
+  avmConfidence: number;
+  checks: VerificationCheck[];
+  extractedFields: ExtractedField[];
+  analystNotes: string;
+  /** Internal analyst reference, e.g. VRT-ANA-0042. */
+  analystRef: string;
+};
+
 /**
  * Detailed property record.
  *
@@ -103,6 +147,9 @@ export type PropertyDetail = PropertySummary & Partial<RESOProperty> & {
   sales: SalesMetadata;
   history: VerificationEvent[];
   distribution: DistributionEvent[];
+  /** Most-recent verification workflow snapshot. Omitted for draft properties
+   *  that have never been submitted; otherwise present even while pending. */
+  workflow?: VerificationWorkflow;
 };
 
 export type CsvParsedRow = {

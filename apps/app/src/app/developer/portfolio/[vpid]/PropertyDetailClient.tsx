@@ -9,6 +9,7 @@ import { PropertyHero } from '@dev/components/property/PropertyHero';
 import { PropertyOverview } from '@dev/components/property/PropertyOverview';
 import { TabStrip } from '@dev/components/property/TabStrip';
 import { VerificationHistory } from '@dev/components/property/VerificationHistory';
+import { VerificationPanel } from '@dev/components/property/VerificationPanel';
 import { DistributionLog } from '@dev/components/property/DistributionLog';
 import { SalesMetadataCard } from '@dev/components/property/SalesMetadataCard';
 import { PublicUrlCard } from '@dev/components/property/PublicUrlCard';
@@ -46,6 +47,7 @@ export function PropertyDetailClient({ vpid }: { vpid: string }) {
         defaultTab="overview"
         tabs={[
           { id: 'overview', label: 'Overview' },
+          ...(property.workflow ? [{ id: 'verification', label: 'Verification' }] : []),
           { id: 'history', label: 'Verification history', count: property.history.length },
           { id: 'distribution', label: 'Distribution log', count: property.distribution.length },
           { id: 'edit', label: 'Edit metadata' },
@@ -65,6 +67,20 @@ export function PropertyDetailClient({ vpid }: { vpid: string }) {
                 </span>
               </div>
               <PropertyOverview property={property} />
+            </div>
+          )}
+
+          {tab === 'verification' && property.workflow && (
+            <div style={{ marginBottom: 40 }}>
+              <div className="dv-block-head">
+                <h3 style={{ fontFamily: 'var(--f-mark)', fontSize: 14, letterSpacing: '0.22em', textTransform: 'uppercase', color: 'var(--navy)', fontWeight: 400, margin: 0 }}>
+                  Verification workflow · most recent
+                </h3>
+                <span style={{ fontFamily: 'var(--f-meta)', fontSize: 10, color: 'var(--slate)', letterSpacing: '0.18em' }}>
+                  Stage {(['uploaded','under-review','ai-processing','analyst-review','complete'].indexOf(property.workflow.currentStep)) + 1} / 5
+                </span>
+              </div>
+              <VerificationPanel workflow={property.workflow} />
             </div>
           )}
 
