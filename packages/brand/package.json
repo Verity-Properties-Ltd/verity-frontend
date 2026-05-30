@@ -13,6 +13,7 @@
     "./tokens/*.css": "./tokens/*.css",
     "./tokens/tailwind.config": "./tokens/tailwind.config.ts",
     "./tokens/tokens.json": "./tokens/tokens.json",
+    "./jsx": "./jsx/index.ts",
     "./jsx/*": "./jsx/*",
     "./logos/*": "./logos/*"
   }
