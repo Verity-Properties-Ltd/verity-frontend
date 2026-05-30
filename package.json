@@ -7,7 +7,11 @@
     "packages/*"
   ],
   "scripts": {
-    "dev:buyer": "npm run dev --workspace=@verity/buyer",
-    "dev:developer": "npm run dev --workspace=@verity/developer"
+    "dev:landing": "npm run dev --workspace=@verity/landing",
+    "dev:app": "npm run dev --workspace=@verity/app",
+    "dev:public": "npm run dev --workspace=@verity/public-page",
+    "build:landing": "npm run build --workspace=@verity/landing",
+    "build:app": "npm run build --workspace=@verity/app",
+    "build:public": "npm run build --workspace=@verity/public-page"
   }
 }
