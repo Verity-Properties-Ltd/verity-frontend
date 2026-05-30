@@ -1,6 +1,17 @@
-/* Verity — Brand Tokens · aggregate entry
-   Import order matters: colors define the variables that typography and
-   components consume. */
+/* Verity — Tokens index. Import this single file. */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600;700&family=Tenor+Sans&display=swap');
 @import url('./colors.css');
 @import url('./typography.css');
+@import url('./spacing.css');
+@import url('./motion.css');
 @import url('./components.css');
+@import url('./patterns.css');
+
+body{
+  font-family:var(--f-serif);
+  background:var(--cream);
+  color:var(--navy);
+  -webkit-font-smoothing:antialiased;
+  font-size:16px;
+  line-height:1.6;
+}

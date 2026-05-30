@@ -1,0 +1,28 @@
+/* Verity — Motion & Breakpoint Tokens */
+:root{
+  /* Motion durations — restraint over flourish (Principle One: Trust is the product) */
+  --motion-instant:80ms;
+  --motion-fast:150ms;
+  --motion-base:200ms;
+  --motion-slow:320ms;
+  --motion-deliberate:480ms;
+
+  /* Easing */
+  --ease-standard:cubic-bezier(0.2,0.6,0.2,1);
+  --ease-out:cubic-bezier(0.16,1,0.3,1);
+  --ease-in:cubic-bezier(0.5,0,0.75,0);
+
+  /* Breakpoints (min-width). Mobile-first for buyers, desktop-primary for developers. */
+  --bp-sm:480px;
+  --bp-md:768px;
+  --bp-lg:1024px;
+  --bp-xl:1280px;
+  --bp-2xl:1536px;
+}
+
+@media (prefers-reduced-motion: reduce){
+  :root{
+    --motion-instant:0ms; --motion-fast:0ms; --motion-base:0ms;
+    --motion-slow:0ms; --motion-deliberate:0ms;
+  }
+}
