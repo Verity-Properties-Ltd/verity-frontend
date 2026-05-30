@@ -1,0 +1,30 @@
+@import 'tailwindcss';
+
+/* Map design-system tokens (loaded via @verity/brand/tokens/index.css) into
+   Tailwind's theme so utility classes like bg-navy, text-gold, border-cream
+   resolve to the canonical palette. Hex values stay in sync via verity-brand. */
+@theme {
+  --color-navy: #1e2260;
+  --color-navy-deep: #171a4a;
+  --color-navy-soft: #2c3078;
+  --color-cream: #f5f2ed;
+  --color-cream-shade: #eeeae0;
+  --color-gold: #c9a961;
+  --color-gold-soft: #e0c994;
+  --color-gold-deep: #a88a45;
+  --color-slate: #6b6f77;
+  --color-slate-soft: #9da1a8;
+
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
+  --font-sans: 'DM Sans', system-ui, sans-serif;
+  --font-mono: 'DM Mono', 'Menlo', monospace;
+  --font-display: 'Tenor Sans', sans-serif;
+}
+
+html,
+body {
+  background: var(--cream);
+  color: var(--navy);
+  font-family: var(--f-sans);
+  -webkit-font-smoothing: antialiased;
+}
