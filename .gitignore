@@ -6,3 +6,4 @@ storybook-static/
 *.log
 *.tsbuildinfo
 .env*.local
+config.bat

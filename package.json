@@ -1,5 +1,5 @@
 {
-  "name": "verity-dashboard",
+  "name": "verity-frontend",
   "private": true,
   "version": "0.0.0",
   "workspaces": [
@@ -7,13 +7,13 @@
     "packages/*"
   ],
   "scripts": {
-    "dev:landing": "npm run dev --workspace=@verity/landing",
-    "dev:app": "npm run dev --workspace=@verity/app",
-    "dev:public": "npm run dev --workspace=@verity/public-page",
-    "build:landing": "npm run build --workspace=@verity/landing",
-    "build:app": "npm run build --workspace=@verity/app",
-    "build:public": "npm run build --workspace=@verity/public-page",
-    "dev:storybook": "npm run dev --workspace=@verity/storybook",
-    "build:storybook": "npm run build --workspace=@verity/storybook"
+    "dev:landing": "node init && npm run dev --workspace=@verity/landing",
+    "dev:app": "node init && npm run dev --workspace=@verity/app",
+    "dev:public": "node init && npm run dev --workspace=@verity/public-page",
+    "build:landing": "node init && npm run build --workspace=@verity/landing",
+    "build:app": "node init && npm run build --workspace=@verity/app",
+    "build:public": "node init && npm run build --workspace=@verity/public-page",
+    "dev:storybook": "node init && npm run dev --workspace=@verity/storybook",
+    "build:storybook": "node init && npm run build --workspace=@verity/storybook"
   }
 }

@@ -17,7 +17,7 @@
 
 | Story | Status | Notes |
 |---|---|---|
-| **BUY-01** Submit a property via guided flow | 🟡 Partial | 5-step wizard at `/buyer/request/new/*` works end-to-end against mocks. Gaps: per-file document-type selector ([#7](https://github.com/Verity-Properties-Ltd/verity-dashboard/issues/7)), GPS capture ([#8](https://github.com/Verity-Properties-Ltd/verity-dashboard/issues/8)), "I don't have any documents yet" Bronze-ceiling path. |
+| **BUY-01** Submit a property via guided flow | 🟡 Partial | 5-step wizard at `/buyer/request/new/*` works end-to-end against mocks. Gaps: per-file document-type selector ([#7](https://github.com/Verity-Properties-Ltd/verity-frontend/issues/7)), GPS capture ([#8](https://github.com/Verity-Properties-Ltd/verity-frontend/issues/8)), "I don't have any documents yet" Bronze-ceiling path. |
 | **BUY-02** Autosave in-progress submission | 🟡 Partial | `useRequestDraft` autosaves to localStorage. Not surfaced as resumable drafts on the buyer Home — separate History page lists past requests instead. 30-day auto-purge not enforced. |
 | **BUY-03** Live status + ETA | ✅ Done | `/buyer/requests/[id]` + `StatusHead` + `InProgressView` cover the spec. Verify 8-stage gold/ink visual treatment matches UI/UX v1.3 §4.5. |
 | **BUY-04** Completed report verdict | 🟡 Partial | `CompleteView` + `/certificate` render band + score + evidence. Missing the one-line plain-language declaration under the band (*"The title is confirmed at the registry…"*). |
@@ -39,7 +39,7 @@
 | Story | Status | Notes |
 |---|---|---|
 | **DEV-01** Group properties into portfolio groupings | 🟡 Partial | Built has a flat portfolio table; **no groupings entity** in the data model, no `/developer/portfolios` (plural) surface. The "loose-tag a property into multiple portfolios" affordance is the structural gap. |
-| **DEV-02** Bulk-order verification | 🟡 Partial | CSV upload + row-level ok/warn/dup validation at `/developer/portfolio/add/csv`. Gaps: spec URL is `/developer/bulk-order`, downloadable template not exposed, title-type column ([#7](https://github.com/Verity-Properties-Ltd/verity-dashboard/issues/7)). |
+| **DEV-02** Bulk-order verification | 🟡 Partial | CSV upload + row-level ok/warn/dup validation at `/developer/portfolio/add/csv`. Gaps: spec URL is `/developer/bulk-order`, downloadable template not exposed, title-type column ([#7](https://github.com/Verity-Properties-Ltd/verity-frontend/issues/7)). |
 | **DEV-03** Portfolio overview across groupings | 🟡 Partial | `VerifiedDashboard` at `/developer` shows cross-portfolio KPIs + bands. Blocked from full completeness by DEV-01 (no groupings concept yet). |
 | **DEV-04** Invite team members | 🟡 Partial | Team section visible in Account. Invite-email flow + magic link (FND-13) + role enforcement absent. |
 | **DEV-05** Co-branded share link | 🟡 Partial | `/developer/distribute` exists with 5 formats incl. badge. Missing: `?cb=developer_slug` query param on public URL, `/developer/branding` setup (logo, colour), co-brand badge render on `apps/public-page`. |
