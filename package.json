@@ -1,5 +1,5 @@
 {
-  "name": "verity-dashboard",
+  "name": "verity-frontend",
   "private": true,
   "version": "0.0.0",
   "workspaces": [
