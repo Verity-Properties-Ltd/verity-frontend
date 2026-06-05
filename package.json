@@ -3,17 +3,23 @@
   "private": true,
   "version": "0.0.0",
   "workspaces": [
-    "apps/*",
+    "apps/landing",
+    "apps/app",
+    "apps/public-page",
     "packages/*"
   ],
   "scripts": {
     "dev:landing": "npm run dev --workspace=@verity/landing",
     "dev:app": "npm run dev --workspace=@verity/app",
     "dev:public": "npm run dev --workspace=@verity/public-page",
+    "dev:storybook": "npm run dev --workspace=@verity/storybook",
     "build:landing": "npm run build --workspace=@verity/landing",
     "build:app": "npm run build --workspace=@verity/app",
     "build:public": "npm run build --workspace=@verity/public-page",
-    "dev:storybook": "npm run dev --workspace=@verity/storybook",
-    "build:storybook": "npm run build --workspace=@verity/storybook"
+    "build:storybook": "npm run build --workspace=@verity/storybook",
+    "dev:api": "cd apps/api && docker compose up",
+    "dev:api:down": "cd apps/api && docker compose down",
+    "test:api": "cd apps/api && pytest",
+    "logs:api": "cd apps/api && docker compose logs -f api worker"
   }
 }

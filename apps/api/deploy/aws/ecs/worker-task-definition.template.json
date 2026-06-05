@@ -1,0 +1,29 @@
+{
+  "family": "verity-staging-worker",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "512",
+  "memory": "1024",
+  "executionRoleArn": "EXECUTION_ROLE_ARN",
+  "taskRoleArn": "TASK_ROLE_ARN",
+  "containerDefinitions": [
+    {
+      "name": "worker",
+      "image": "ACCOUNT_ID.dkr.ecr.REGION.amazonaws.com/verity-backend:staging",
+      "essential": true,
+      "command": ["arq", "app.workers.queue.WorkerSettings"],
+      "environment": [
+        { "name": "APP_ENV", "value": "staging" },
+        { "name": "AWS_SECRETS_MANAGER_PREFIX", "value": "verity/staging/" }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/verity-staging-worker",
+          "awslogs-region": "REGION",
+          "awslogs-stream-prefix": "ecs"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+# Python tool config for apps/api/
+#
+# Lives here (not at repo root) so the Node/TS root tooling doesn't see
+# Python project metadata and try to do something with it. Future Ruff,
+# Black, Mypy, Pytest configuration also lands here so the team has one
+# canonical place for backend tool config.
+
+[tool.pylint.MASTER]
+py-version = "3.11"
+# Codebase ignores: skip the venv, alembic-generated migration scripts.
+ignore-paths = [".venv/.*"]
+
+[tool.pylint.TYPECHECK]
+# Alembic injects context.config, context.configure(), context.begin_transaction(),
+# context.run_migrations(), and context.is_offline_mode() onto alembic.context at
+# runtime via the migration runner — they're not statically defined on the module.
+# Pylint can't see them and emits E1101 (no-member) on every call site in env.py.
+# ignored-modules tells Pylint to skip member-resolution on this module entirely.
+# (generated-members applies only to class attributes, not module-level dynamics.)
+ignored-modules = ["alembic.context"]
+
+[tool.pylint.FORMAT]
+max-line-length = 100
+
+[tool.pylint."MESSAGES CONTROL"]
+# Disables grouped by reason. Re-enable individually when they catch something real.
+disable = [
+  # Docstring policy is "doc only when non-obvious" — see CLAUDE.md
+  "missing-module-docstring",
+  "missing-class-docstring",
+  "missing-function-docstring",
+  # FastAPI + SQLAlchemy idioms that legitimately keep classes small
+  "too-few-public-methods",
+  # SQLAlchemy @declared_attr.directive on __tablename__ — cls is the right param,
+  # not self, but Pylint doesn't recognise the decorator's contract
+  "no-self-argument",
+  # Black + Ruff own formatting; Pylint should not duplicate
+  "line-too-long",
+  # Alembic env.py legitimately imports asyncio inside a function so async + sync
+  # offline paths stay independent
+  "import-outside-toplevel",
+]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+addopts = "-ra --strict-markers"
+
+[tool.ruff]
+# Full Ruff config lands with FND-02 §5 (CI Python job: ruff + black + mypy).
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+# Conservative starter set; expand when FND-02 wires Ruff in CI.
+select = ["E", "F", "W", "I"]
+ignore = []
+
+[tool.mypy]
+# Full strict-mode config lands with FND-02 §5.
+python_version = "3.11"
+ignore_missing_imports = true
